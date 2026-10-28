@@ -55,7 +55,7 @@
 
 ### [2026-10-28] Step 00 — Environment & Smoke Test Baseline {#step-00-environment--smoke-test-baseline}
 
-- **Base Commit:** `067df86` | **Raw Summary Artifact:** `results/00_environment/summary.json` (probed `2026-10-28T11:20:18Z`)
+- **Base Commit:** `a3f8364` | **Raw Summary Artifacts:** `results/00_environment/summary.json`, `results/00_environment/smoke_test_summary.json`
 - **Environment Config:** `pyproject.toml`, `docs/ENVIRONMENT.md`
 
 #### 1. Experimental Host Hardware & Software Specification (Paper "Experimental Setup" Table)
