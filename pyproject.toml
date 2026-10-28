@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trustfed-sdn"
+version = "0.1.0"
+description = "Privacy-preserving, verifiable, poisoning-robust federated learning for cross-tenant threat detection in SDN-enabled cloud networks."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "MD Naimur Rashid" },
+    { name = "Pritom Kumar Bhowmik" },
+    { name = "Saurav Chandra Das" },
+]
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "pyarrow>=14.0",
+    "scikit-learn>=1.4",
+    "scipy>=1.12",
+    "torch>=2.2",
+    "pyyaml>=6.0",
+    "matplotlib>=3.8",
+    "psutil>=5.9",
+    "cryptography>=42.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.4",
+    "black>=24.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["trustfed*"]
+
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "B", "UP"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"

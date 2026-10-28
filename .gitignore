@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Environments and secrets (never commit credentials, tokens, or keys)
+.venv/
+.venv-ryu/
+venv/
+.env
+.env.*
+
+# Datasets: never commit raw or processed data.
+# Only data/README.md and MANIFEST.md files are tracked.
+data/**
+!data/**/
+!data/README.md
+!data/**/MANIFEST.md
+!data/**/.gitkeep
+
+# Large experiment outputs (small CSV/JSON summaries in results/ stay tracked)
+results/**/*.log
+results/**/*.pt
+results/**/*.pth
+results/**/*.npy
+results/**/*.npz
+results/**/*.pcap
+results/**/*.pcapng
+
+# Testbed captures
+*.pcap
+*.pcapng
+
+# Notebooks and IDEs
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+# Website build output
+site/dist/
+site/node_modules/

@@ -1,0 +1,65 @@
+{
+  "timestamp_utc": "2026-10-28T11:20:18Z",
+  "os": {
+    "system": "Windows",
+    "release": "11",
+    "version": "10.0.26300",
+    "machine": "AMD64"
+  },
+  "python": {
+    "version": "3.12.7",
+    "executable": "D:\\StudyFolder\\UFTB\\study backup\\4th year\\Thesis\\TrustFed-SDN\\.venv\\Scripts\\python.exe"
+  },
+  "cpu": {
+    "model": "12th Gen Intel(R) Core(TM) i7-12700H",
+    "physical_cores": 14,
+    "logical_threads": 20
+  },
+  "ram": {
+    "total_gb": 15.67,
+    "available_gb": 3.66,
+    "percent_used": 76.6
+  },
+  "disks": [
+    {
+      "mount": "C:\\",
+      "fstype": "NTFS",
+      "total_gb": 475.6,
+      "free_gb": 149.6
+    },
+    {
+      "mount": "D:\\",
+      "fstype": "NTFS",
+      "total_gb": 953.9,
+      "free_gb": 475.4
+    }
+  ],
+  "gpus": [
+    {
+      "name": "NVIDIA GeForce RTX 3050 Ti Laptop GPU",
+      "vram_total": "4096 MiB",
+      "driver_version": "610.88"
+    }
+  ],
+  "virtualization": {
+    "host_system": "Windows",
+    "windows_hypervisor_present": true,
+    "vmware_vmrun": "C:\\Program Files (x86)\\VMware\\VMware Workstation\\vmrun.exe",
+    "wsl_available": true
+  },
+  "packages": {
+    "numpy": "2.5.4",
+    "pandas": "3.1.0",
+    "pyarrow": "26.0.0",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1",
+    "torch": "2.14.1",
+    "PyYAML": "6.0.3",
+    "matplotlib": "3.11.2",
+    "psutil": "7.2.2",
+    "cryptography": "50.0.2",
+    "pytest": "9.2.0",
+    "ruff": "0.17.3",
+    "black": "26.10.1"
+  }
+}
