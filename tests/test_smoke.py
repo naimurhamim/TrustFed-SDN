@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import ipaddress
+import json
+from pathlib import Path
 
 import trustfed
 from scripts.probe_hardware import collect_probe, format_markdown
@@ -53,3 +55,16 @@ def test_hardware_probe_structure() -> None:
     md = format_markdown(report)
     assert "## Hardware & Runtime Probe Output" in md
     assert "| `torch` |" in md
+
+
+def test_linux_sdn_smoke_test_artifacts_present() -> None:
+    """Verify Ubuntu 22.04 Mininet + OVS + OS-Ken smoke test logs are recorded and passed."""
+    root = Path(__file__).resolve().parents[1]
+    summary_path = root / "results" / "00_environment" / "smoke_test_summary.json"
+    assert summary_path.exists()
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    assert summary["status"] == "passed"
+    assert summary["loss_pct"] == 0.0
+    assert summary["pingall_received"] == summary["pingall_sent"] == 6
+    for rel_log in summary["source_logs"]:
+        assert (root / rel_log).exists()

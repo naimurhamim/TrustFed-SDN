@@ -5,3 +5,4 @@ if exist "C:\msys64\mingw64\bin\mingw32-make.exe" (
 ) else (
     mingw32-make %*
 )
+

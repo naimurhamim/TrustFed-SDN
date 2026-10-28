@@ -1,0 +1,5 @@
+8 RLock(s) were not greened, to fix this error make sure you run eventlet.monkey_patch() before importing any other modules.
+loading app /home/ubuntu/Desktop/docs/smoke_test/smoke_switch_13.py
+loading app os_ken.controller.ofp_handler
+instantiating app /home/ubuntu/Desktop/docs/smoke_test/smoke_switch_13.py of SmokeLearningSwitch13
+instantiating app os_ken.controller.ofp_handler of OFPHandler

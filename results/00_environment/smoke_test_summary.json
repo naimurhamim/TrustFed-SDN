@@ -1,0 +1,25 @@
+{
+  "timestamp_utc": "2026-10-28T12:39:44Z",
+  "status": "passed",
+  "guest_os": "Ubuntu 22.04 LTS",
+  "kernel": "5.15.0-25-generic",
+  "hypervisor": "VMware Workstation 17.6.0 / Player",
+  "mininet_version": "2.3.0",
+  "openvswitch_version": "2.17.12",
+  "controller_python": "3.10.12",
+  "controller_package": "os-ken==3.0.1",
+  "eventlet_version": "0.37.0",
+  "openflow_version": "1.3",
+  "topology": "SingleSwitchTopo(k=3)",
+  "pingall_sent": 6,
+  "pingall_received": 6,
+  "loss_pct": 0.0,
+  "installed_unicast_flows": 6,
+  "table_miss_packets": 20,
+  "table_miss_bytes": 1468,
+  "source_logs": [
+    "docs/smoke_test/versions.txt",
+    "docs/smoke_test/controller.log",
+    "docs/smoke_test/mininet_pingall.log"
+  ]
+}

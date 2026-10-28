@@ -67,18 +67,20 @@
 | System RAM | `15.67 GB` total (`3.66 GB` free during active desktop/IDE probe) | `results/00_environment/summary.json` |
 | Storage (Workspace `D:\`) | `475.4 GB` free of `953.9 GB` NTFS | `results/00_environment/summary.json` |
 | Accelerator GPU | NVIDIA GeForce RTX 3050 Ti Laptop GPU (`4096 MiB` VRAM, driver `610.88`) | `results/00_environment/summary.json` |
-| Hypervisor | VMware Workstation `17.6.0` (existing guest: Kali Linux 2025.2, `4 GB` RAM) | `docs/ENVIRONMENT.md` |
+| Hypervisor & SDN Testbed VM | VMware Workstation `17.6.0` running **Ubuntu 22.04 LTS** (`Linux 5.15.0-25-generic`) | `docs/smoke_test/versions.txt` |
+| SDN Data & Control Plane | Mininet `2.3.0`, Open vSwitch `2.17.12`, OpenFlow `1.3`, `os-ken==3.0.1` (`eventlet==0.37.0`) on Python `3.10.12` (`.venv-ryu`) | `results/00_environment/smoke_test_summary.json` |
 | ML / FL Python Runtime | Python `3.12.7` in project-local `.venv` | `results/00_environment/summary.json` |
 | Core Library Versions | PyTorch `2.14.1`, scikit-learn `1.9.1`, NumPy `2.5.4`, pandas `3.1.0`, SciPy `1.18.1`, cryptography `50.0.2` | `results/00_environment/summary.json` |
 
-#### 2. Testbed Safety & Isolation Baseline
+#### 2. Testbed Safety, Smoke Test & Isolation Baseline
 
 | Parameter | Value / Status | Notes |
 |---|---|---|
 | Isolated Testbed Supernet | `10.10.0.0/16` | Strictly private virtual testbed boundary |
 | Tenant Subnets (3 tenants) | `10.10.1.0/24` (Finance), `10.10.2.0/24` (Healthcare), `10.10.3.0/24` (Education) | Disjointness & RFC1918 privacy verified by `tests/test_smoke.py` |
 | Quality Check (`make check`) | `3 passed` (`pytest`), `0` lint/format errors (`ruff` + `black`) | Verified on Windows Python `3.12.7` |
-| Linux Mininet+OVS+RYU `pingall` | `unverified` on Windows host (`DEV-001`) | Automated script `scripts/smoke_test_linux.sh` + Ubuntu 22.04 VM fallback documented in `docs/smoke_test/README.md` |
-| Proposed Step 07 Isolation Level | **L1** (Ubuntu 22.04 Server VM, 4 GB RAM) + optional **Mixed L3** (Kali VM for Tenant 1) | Proposed based on `15.67 GB` host RAM constraint; awaiting explicit user approval |
+| Linux Mininet+OVS+RYU(OS-Ken) `pingAll` | **PASSED (`0.0%` loss, `6/6` packets received)** | OpenFlow `1.3` (`6` learned unicast flows + `priority=0` table-miss flow, `20` packets / `1468` B); logs in `docs/smoke_test/` |
+| Host RAM Under Active Ubuntu VM | `93.0%` used (`1.1 GB` free of `15.67 GB`) | Measured via `scripts/probe_hardware.py` while Ubuntu 22.04 Desktop VM was active |
+| Proposed Step 07 Isolation Level | **L1** (inside Ubuntu 22.04 VM: Mininet namespaces + per-tenant OVS + per-tenant OS-Ken controller) | Strongly justified by `93.0%` host RAM usage with 1 active Desktop VM; awaiting explicit user approval |
 
 

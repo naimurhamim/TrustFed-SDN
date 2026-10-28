@@ -1,45 +1,34 @@
-# Linux SDN Testbed Smoke Test (`Mininet + Open vSwitch + RYU`)
+# Linux SDN Testbed Smoke Test (`Mininet + Open vSwitch + OS-Ken / RYU`)
 
-## Current Status: `unverified` on Windows 11 Host (Documented Fallback Active)
+## Current Status: **VERIFIED (`0% dropped`, `6/6 received`)**
 
-- **Recorded on:** 2026-10-28 (Step 00)
-- **Deviation reference:** `DEV-001` in `docs/DEVIATIONS.md`
+- **Verified on (UTC):** `2026-10-28T12:39:44Z` (Step 00)
+- **VM Environment:** Ubuntu 22.04 LTS (`5.15.0-25-generic`, `x86_64`) on VMware Workstation 17
+- **Summary Artifact:** `results/00_environment/smoke_test_summary.json`
 
-### Why It Did Not Run Natively on This Host
+### Verified SDN Software Stack
 
-1. The primary development machine runs **Windows 11 Home (build 26300)**. Mininet requires a native Linux kernel with network namespaces (`unshare`/`ip netns`) and the Open vSwitch kernel module (`openvswitch`), so it cannot run natively on Windows (and `STEP_00` explicitly forbids faking Mininet on Windows).
-2. **WSL2** on this host currently contains only the `docker-desktop` utility VM (no Ubuntu distribution), and standard WSL2 kernels often lack full `openvswitch` kernel datapath modules out of the box.
-3. **VMware Workstation 17.6.0** is installed on this host with one powered-off Kali Linux 2025.2 VM (`4 GB RAM`). Per the approved project execution order (`docs/USER_PREFERENCES.md`), Steps 01–06 (datasets, baselines, FL core, poisoning defenses, adaptive DP, verifiable aggregation) run directly on Windows in `TrustFed-SDN/.venv` (Python 3.12.7), while a clean **Ubuntu 22.04 LTS Server VM** will be provisioned in VMware before Step 07.
+| Component | Verified Version | Isolation / Location |
+|---|---|---|
+| Guest OS & Kernel | Ubuntu 22.04 LTS (`Linux 5.15.0-25-generic`) | VMware Workstation 17 VM |
+| Mininet | `2.3.0` (`2.3.0-1ubuntu1`) | System package (`apt`) |
+| Open vSwitch | `2.17.12` (`ovs-vsctl`) | System service (`openvswitch-switch`) |
+| Controller Python | `Python 3.10.12` | Separate controller venv (`.venv-ryu`) |
+| SDN Controller Framework | `os-ken==3.0.1` + `eventlet==0.37.0` | Maintained OpenStack fork of RYU (`DEV-001`) |
+| OpenFlow Protocol & App | OpenFlow `1.3` (`SmokeLearningSwitch13`) | `testbed/ryu_apps/smoke_switch_13.py` on `127.0.0.1:6653` |
 
----
+### Why `os-ken==3.0.1` Is Used in `.venv-ryu`
 
-## Fallback & Verification Plan (Mandatory Gate Before Step 07)
+Per `PROJECT_PLAN.md` Section 8 (*"verify in Step 00, or use a maintained fork"*), we tested upstream `ryu==4.34` + `eventlet==0.30.2` on Ubuntu 22.04 (`Python 3.10.12`) first and confirmed it fails at runtime due to removed Python 3.10 `collections` aliases (`MutableMapping`). Switching `.venv-ryu` to **`os-ken==3.0.1`** (OpenStack's actively maintained fork of RYU with identical OpenFlow 1.3 `OFPFlowMod` / `OFPPacketIn` APIs and `osken-manager`) resolved the issue cleanly while keeping the SDN controller environment strictly separate from the ML `.venv`.
 
-### 1. Recommended VMware VM Specification
-
-- **Image:** Ubuntu 22.04 LTS Server (`amd64`) — preferred because Ubuntu 22.04 ships with Python 3.10 and battle-tested `mininet` + `openvswitch-switch` packages.
-- **Resources:** 4 vCPUs, 4–6 GB RAM, 40 GB virtual disk ( leaves ~10–11 GB RAM for Windows 11 on the 15.7 GB host).
-- **Network adapters:**
-  - During package installation only: NAT.
-  - During attack/testbed experiments (Steps 07–08): Host-Only / Custom isolated VMnet (never bridged to an external LAN).
-- **Controller Python compatibility fallback:** Upstream `ryu==4.34` requires Python <= 3.10 and `eventlet==0.30.2`. If Ubuntu 24.04 or Kali (Python 3.11/3.12+) is used instead, `scripts/smoke_test_linux.sh` automatically switches `.venv-ryu` to **`os-ken`** (the actively maintained OpenStack fork of RYU with an identical OpenFlow 1.3 `simple_switch_13` API).
-
-### 2. How to Verify (Exact Commands Inside the Linux VM)
+### How to Re-Run Inside the Ubuntu 22.04 VM
 
 ```bash
-# 1. Install system SDN packages (one-time)
-sudo apt-get update
-sudo apt-get install -y mininet openvswitch-switch python3-venv python3-pip
-
-# 2. Run the automated smoke test from the TrustFed-SDN root
 sudo bash scripts/smoke_test_linux.sh
 ```
 
-### 3. Expected Artifacts Generated in `docs/smoke_test/`
+### Saved Verification Logs in This Folder
 
-When `scripts/smoke_test_linux.sh` succeeds (`0% dropped` across 3 hosts through an OpenFlow 1.3 OVS bridge controlled remotely on `127.0.0.1:6653`), it writes:
-
-- `docs/smoke_test/versions.txt` — Linux kernel, Mininet, Open vSwitch, and `.venv-ryu` package versions
-- `docs/smoke_test/controller.log` — RYU / OS-Ken OpenFlow 1.3 learning-switch session log
-- `docs/smoke_test/mininet_pingall.log` — Mininet `pingall` output verifying `0% dropped`
-
+- `versions.txt` — Exact kernel, Mininet `2.3.0`, Open vSwitch `2.17.12`, and `.venv-ryu` `pip freeze` output
+- `controller.log` — `osken-manager` loading `SmokeLearningSwitch13` and `OFPHandler` on TCP `127.0.0.1:6653`
+- `mininet_pingall.log` — 3-host `SingleSwitchTopo(k=3)` `pingAll` log (`0% dropped (6/6 received)`) plus `ovs-ofctl -O OpenFlow13 dump-flows s1` showing 6 learned `priority=1` unicast MAC flows and the `priority=0 actions=CONTROLLER:65535` table-miss flow (`20` packets, `1468` bytes)

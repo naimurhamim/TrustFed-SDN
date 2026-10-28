@@ -15,11 +15,12 @@
   - `C:\` (NTFS): 149.6 GB free of 475.6 GB
   - `D:\` (NTFS, workspace drive): 475.4 GB free of 953.9 GB
 - **GPU:** NVIDIA GeForce RTX 3050 Ti Laptop GPU (`4096 MiB` VRAM, driver `610.88`)
-- **Virtualization Tooling:**
+- **Virtualization Tooling & Verified Linux Testbed VM:**
   - Windows Hypervisor Present: `true`
-  - VMware Workstation `17.6.0` (`C:\Program Files (x86)\VMware\VMware Workstation\vmrun.exe`)
-  - Existing VMware Guest: `kali-linux-2025.2-vmware-amd64` (4 GB RAM, powered off)
-  - WSL binary present (`docker-desktop` utility distro only; no Ubuntu WSL distro)
+  - VMware Workstation `17.6.0` / Player (`C:\Program Files (x86)\VMware\VMware Workstation\vmrun.exe`)
+  - **Verified SDN Testbed VM:** `Ubuntu 22.04 LTS` (`Linux 5.15.0-25-generic x86_64`), Mininet `2.3.0`, Open vSwitch `2.17.12`, Python `3.10.12`, `.venv-ryu` with `os-ken==3.0.1` + `eventlet==0.37.0` — verified `0% dropped (6/6 received)` OpenFlow 1.3 `pingAll` (`docs/smoke_test/mininet_pingall.log`, `results/00_environment/smoke_test_summary.json`)
+  - Additional VMware Guest: `kali-linux-2025.2-vmware-amd64` (4 GB RAM, powered off)
+  - Simultaneous Host + Ubuntu Desktop VM RAM measurement: `93.0%` host RAM used (`1.1 GB` available of `15.67 GB` while Windows 11 + Ubuntu 22.04 Desktop VM run together)
 
 ### Installed Python Package Versions (`TrustFed-SDN/.venv`)
 
@@ -80,3 +81,4 @@ Per `AGENTS.md` Rule 9, **attack traffic may NEVER leave the isolated virtual te
 
 ### Recommendation
 Approve **L1** inside a single **Ubuntu 22.04 LTS Server VM (4 GB RAM, 4 vCPUs)** as the guaranteed baseline for all 3 tenants in Step 07/08, with an optional **Mixed L3 attachment** of the existing Kali Linux VM for Tenant 1 if host free RAM allows (`>= 7 GB` free before VM boot), stating the exact setup transparently in the thesis.
+

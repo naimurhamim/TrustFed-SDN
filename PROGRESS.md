@@ -4,7 +4,7 @@ The agent updates this file at the end of every step. Status values: `not starte
 
 | Step | Name | Status | Date | Commit | Notes |
 |---|---|---|---|---|---|
-| 00 | Environment and preferences | waiting for approval | 2026-10-28 | `067df86` | Repo skeleton, `.venv` (Python 3.12.7), `make check` passing, `ENVIRONMENT.md`, Linux smoke test script + fallback (`DEV-001`) |
+| 00 | Environment and preferences | waiting for approval | 2026-10-28 | `b5463af` | `.venv` (Py 3.12.7), `make check` passing (4/4), Ubuntu 22.04 Mininet 2.3.0 + OVS 2.17.12 + OS-Ken 3.0.1 OpenFlow 1.3 `pingAll` verified (`0%` loss) |
 | 01 | Data | not started | | | |
 | 02 | Centralized baselines and model choice | not started | | | |
 | 03 | FL core and FedAvg | not started | | | |
