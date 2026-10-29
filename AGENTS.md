@@ -6,7 +6,7 @@ The owner of this project is a student team preparing a thesis and a research po
 
 ## Read order at the start of every session
 
-1. `PROGRESS.md` (where we are)
+1. `PROGRESS.md` and `docs/TEAM_CHECKLIST.md` (where we are, who worked last, and next unchecked sub-tasks)
 2. `PROJECT_PLAN.md` (the whole project)
 3. `docs/EXPERIMENT_SPEC.md` (shared definitions: metrics, attacks, seeds, configs)
 4. The current step file in `docs/steps/`
@@ -36,6 +36,10 @@ The owner of this project is a student team preparing a thesis and a research po
    - Do not store credentials, tokens, or private keys in the repository. Use environment variables or a git-ignored `.env`.
 10. **Code quality.** Python with type hints, `ruff` and `black` formatting, `pytest` tests for every module in the `trustfed/` core library, and a short README for every top-level folder. Prefer small, readable functions over clever code.
 11. **When blocked or in doubt:** stop and ask. Do not silently change the plan. If you must deviate, append an entry to `docs/DEVIATIONS.md` (what, why, impact) and tell the user.
+12. **Team collaboration & GitHub handoff (`@Naimur` & `@Pritom`).**
+    - Two teammates (`@Naimur` and `@Pritom`) collaborate on separate machines via `https://github.com/naimurhamim/TrustFed-SDN.git` (see `docs/TEAM_WORKFLOW.md`).
+    - **Start of every session:** run `python scripts/team_status.py` (`make status`) to compare local state against `origin/main`, verify `.venv` packages, check git-ignored dataset files against `data/MANIFEST.md`, and inspect the **Latest Handoff Note** in `docs/TEAM_CHECKLIST.md`. If remote commits exist, pull (`git pull --ff-only`) before editing; if dataset files or packages are missing on the current machine, report the exact missing items immediately.
+    - **End of every task / sub-task / step:** mark completed checkboxes `[x]` in `docs/TEAM_CHECKLIST.md` with the active teammate's tag (`@Naimur` or `@Pritom`) and date, update the **Latest Handoff Note** so the next teammate knows exactly what was finished and what comes next, commit cleanly, and push (`git push`) when requested or at session handoff.
 
 ## Decisions that always need explicit user approval
 
@@ -58,7 +62,7 @@ Post exactly these sections, then stop and wait:
 6. **Questions for the user**
 7. **Proposed next step** (name only, do not start it)
 
-Also update `PROGRESS.md` (status, date, commit hash, short notes) and ensure all experiment values, hyperparameters, evaluation metrics, and comparison tables are documented in `docs/EXPERIMENT_RESULTS_LOG.md` for paper and thesis writing.
+Also update `PROGRESS.md` (status, date, commit hash, short notes), update `docs/TEAM_CHECKLIST.md` (tick completed sub-tasks and update the Latest Handoff Note), and ensure all experiment values, hyperparameters, evaluation metrics, and comparison tables are documented in `docs/EXPERIMENT_RESULTS_LOG.md` for paper and thesis writing.
 
 ## Repository layout (target)
 

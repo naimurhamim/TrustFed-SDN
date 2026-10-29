@@ -51,8 +51,9 @@ TrustFed-SDN/
 | `EXPERIMENT_SPEC.md` | Shared definitions: tenants, partitions, model, FL defaults, aggregators, attacks, privacy, verification, metrics, statistics | present |
 | `DATASETS.md` | Dataset sources, download instructions, cleaning rules, feature selection | present |
 | `USER_PREFERENCES.md` | Answers given by the user (filled step by step) | present |
+| `TEAM_CHECKLIST.md`, `TEAM_WORKFLOW.md` | Granular `@Naimur` / `@Pritom` sub-task checklist, handoff board, and GitHub sync guide | present |
 | `EXPERIMENT_RESULTS_LOG.md` | Paper-ready log of every measured number | present |
-| `ENVIRONMENT.md`, `DEVIATIONS.md` | Environment versions, testbed address ranges, plan deviations | Step 00 |
+| `ENVIRONMENT.md`, `DEVIATIONS.md` | Environment versions, testbed address ranges, plan deviations | present |
 | `MODEL_DECISION.md` | Local model choice with evidence | Step 02 |
 | `DP_DESIGN.md` | DP granularity, sensitivity score, budget policy | Step 05 |
 | `VERIFY_DESIGN.md` | Verification threat model and protocol | Step 06 |

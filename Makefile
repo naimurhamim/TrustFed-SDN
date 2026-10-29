@@ -6,11 +6,12 @@ else
 	PIP := .venv/bin/pip
 endif
 
-.PHONY: help install lint format test check probe smoke-testbed testbed-up testbed-down demo reproduce reproduce-quick
+.PHONY: help install status lint format test check probe smoke-testbed testbed-up testbed-down demo reproduce reproduce-quick
 
 help:
 	@echo TrustFed-SDN Makefile targets:
 	@echo   install          Install editable package and dev dependencies into .venv
+	@echo   status           Compare GitHub sync, packages, datasets, and team checklist
 	@echo   lint             Run ruff and black --check
 	@echo   format           Format code with ruff --fix and black
 	@echo   test             Run pytest test suite
@@ -21,13 +22,16 @@ help:
 install:
 	$(PIP) install -e ".[dev]"
 
+status:
+	$(PYTHON) scripts/team_status.py
+
 lint:
 	$(PYTHON) -m ruff check trustfed scripts tests
 	$(PYTHON) -m black --check trustfed scripts tests
 
 format:
-	$(PYTHON) -m ruff check --fix trustfed scripts tests
 	$(PYTHON) -m black trustfed scripts tests
+	$(PYTHON) -m ruff check --fix trustfed scripts tests
 
 test:
 	$(PYTHON) -m pytest
