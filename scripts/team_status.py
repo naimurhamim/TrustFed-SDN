@@ -14,6 +14,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 from dataclasses import asdict, dataclass
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
@@ -425,6 +426,8 @@ def format_status_report(status: dict[str, Any]) -> str:
 
 def main() -> int:
     """CLI entry point for team sync and checklist report."""
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description="Check GitHub sync, datasets, and team checklist.")
     parser.add_argument("--no-fetch", action="store_true", help="Skip 'git fetch origin'.")
     parser.add_argument(
