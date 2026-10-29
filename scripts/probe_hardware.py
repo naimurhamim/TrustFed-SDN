@@ -276,6 +276,8 @@ def format_markdown(report: dict[str, Any]) -> str:
 
 def main() -> int:
     """CLI entry point for hardware probe."""
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description="Probe host hardware and Python environment.")
     parser.add_argument("--json", action="store_true", help="Print JSON instead of Markdown.")
     parser.add_argument(
