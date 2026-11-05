@@ -11,9 +11,9 @@
 
 - **Last Updated By:** `@Naimur`
 - **Date:** `2026-11-05`
-- **Active Step:** `Step 03 - FL Simulation Core & FedAvg Baseline` (starting Step 03: confirming FL defaults)
-- **What Was Just Completed:** Step 02 (`02.1`-`02.6`) approved (`GRU` selected as local model per spec) and tagged `step-02-done`. All 5-seed centralized and local-only baseline tables logged in `docs/MODEL_DECISION.md` and `docs/EXPERIMENT_RESULTS_LOG.md`.
-- **Next Task for Incoming Teammate:** Confirm Step 03 FL hyperparameter defaults (`03.1`), implement `Client`, `Server`, `Aggregator`, and `FedAvg` in `trustfed/fl/` (`03.2`), build `sim/run_experiment.py` (`03.3`), and run 5-seed non-IID & scalability (`N in {3, 5, 10}`) sweeps (`03.4`-`03.5`).
+- **Active Step:** `Step 03 - FL Simulation Core & FedAvg Baseline` (`03.1` confirmed; paused cleanly before `03.2` implementation)
+- **What Was Just Completed:** Step 02 (`02.1`-`02.6`) approved (`GRU` selected as local model per spec), tagged `step-02-done`, and pushed to GitHub. Step 03 defaults (`03.1`: `30` rounds, `3` local epochs, Adam `1e-3`, full client participation) confirmed.
+- **Next Task for Incoming Teammate:** Implement `Client`, `Server`, `Aggregator`, and `FedAvg` in `trustfed/fl/` (`03.2`), build `sim/run_experiment.py` (`03.3`), and run 5-seed non-IID & scalability (`N in {3, 5, 10}`) sweeps (`03.4`-`03.5`).
 
 ---
 
@@ -49,7 +49,7 @@
 - [x] `02.6` Pass `tests/test_models.py`, log tables to `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 02`, and tag `step-02-done` (@Naimur, 2026-11-05)
 
 ### Step 03 — FL Simulation Core & FedAvg Baseline (`docs/steps/STEP_03_fl_core_and_fedavg.md`)
-- [ ] `03.1` Confirm FL hyperparameter defaults (`30` rounds, `3` local epochs, batch `128`, Adam `1e-3`)
+- [x] `03.1` Confirm FL hyperparameter defaults (`30` rounds, `3` local epochs, batch `128`, Adam `1e-3`) (@Naimur, 2026-11-05)
 - [ ] `03.2` Implement `Client`, `Server`, pluggable flat-tensor `Aggregator` interface, and weighted `FedAvg` in `trustfed/fl/`
 - [ ] `03.3` Build config-driven runner `sim/run_experiment.py` with per-round metrics, serialized byte counts, and wall-clock timing
 - [ ] `03.4` Run FedAvg across natural non-IID, Dirichlet `{0.1, 0.5, 1.0}`, and IID for `N in {3, 5, 10}` (5 seeds) and plot convergence vs centralized/local-only
