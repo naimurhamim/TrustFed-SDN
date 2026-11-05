@@ -13,7 +13,7 @@
 - **Date:** `2026-11-05`
 - **Active Step:** `Step 01 - Data` (in progress: collecting Step 01 answers)
 - **What Was Just Completed:** Step 00 approved (`L1` isolation confirmed) and tagged `step-00-done`. Environment, smoke test, and GitHub team sync system are all in place.
-- **Next Task for Incoming Teammate:** `01.1` answer Step 01 questions (dataset availability, disk budget, download mode, tenant profiles), then `01.2` place raw InSDN/CICIDS2017 CSVs into `data/raw/`.
+- **Next Task for Incoming Teammate:** Raw InSDN + CICIDS2017 are in `data/raw/` with `data/MANIFEST.md` (`01.2` done). Next: approve tenant profiles (`01.1`) and the Step 01 plan, then implement loaders/profiling (`01.3`). Teammates must copy the same raw files (zip via Drive) and confirm `[DATA] OK` in `make status`.
 
 ---
 
@@ -31,7 +31,7 @@
 
 ### Step 01 — Data (`docs/steps/STEP_01_data.md`)
 - [ ] `01.1` Answer Step 01 questions (dataset availability, disk budget, download mode, tenant profiles) in `docs/USER_PREFERENCES.md`
-- [ ] `01.2` Acquire raw datasets (`InSDN` primary, `CICIDS2017` supplementary) into `data/raw/` and generate `data/MANIFEST.md` (size + SHA-256)
+- [x] `01.2` Acquire raw datasets (`InSDN` primary, `CICIDS2017` supplementary) into `data/raw/` and generate `data/MANIFEST.md` (size + SHA-256) (@Naimur, 2026-11-05)
 - [ ] `01.3` Implement dataset loaders (`trustfed/data/load.py`) and profiling script (`scripts/profile_dataset.py`) -> `results/01_data/`
 - [ ] `01.4` Implement ordered cleaning pipeline (`trustfed/data/clean.py`) and log row counts per rule to `results/01_data/cleaning_log.csv`
 - [ ] `01.5` Create binary & multi-class label mapping (`configs/data/label_map.yaml`) and stratified train/val/test split before any fitting

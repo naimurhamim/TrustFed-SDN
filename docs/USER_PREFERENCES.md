@@ -14,7 +14,7 @@ The agent fills this file during Step 00 and later steps. Do not ask again for a
 | Supervisor requirements and deadlines | No special mandatory requirements or restrictions from supervisor or department. | 00 |
 | Website hosting and DNS control | GitHub Pages at `https://trustfed.naimurrashid.dev/` (matching the existing `CNAME` and repository setup; user confirmed keeping this setup). | 00 |
 | Step order preference | Default recommended order: Steps 01-06 (data and FL algorithms on Windows) before Step 07 (SDN testbed on Linux VM). User asked the agent to follow the best/recommended order and choices. | 00 |
-| Datasets available / wanted | | 01 |
+| Datasets available / wanted | InSDN (primary) + CICIDS2017 (supplementary, `MachineLearningCSV.zip`). CICDDoS2019 skipped for now (optional, may be added later). Download mode: **manual** by the user into `data/raw/insdn/` and `data/raw/cicids2017/`; the agent verifies file names, row counts, and SHA-256 and writes `data/MANIFEST.md`. Disk: ~469 GB free on `D:\` (no constraint). | 01 |
 | Tenant profiles | | 01 |
 | Final local model | | 02 |
 | DP granularity, sensitivity score, budget policy | | 05 |
