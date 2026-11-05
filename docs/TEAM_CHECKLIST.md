@@ -11,9 +11,9 @@
 
 - **Last Updated By:** `@Naimur`
 - **Date:** `2026-11-05`
-- **Active Step:** `Step 02 - Centralized Baselines & Local Model Decision` (in progress: confirming Step 02 targets & tuning budget)
-- **What Was Just Completed:** Step 01 (`01.1`-`01.9`) approved and tagged `step-01-done` across all 3 datasets (`InSDN`, `ASEADOS-SDN-IoT` 2026, `CICIDS2017`). All stats logged in `docs/EXPERIMENT_RESULTS_LOG.md`.
-- **Next Task for Incoming Teammate:** Confirm Step 02 evaluation targets & tuning budget (`02.1`), then implement unified `DNN`, `GRU`, `LSTM` + metrics (`02.2`) and run 5-seed centralized & local-only baselines (`02.3`-`02.5`).
+- **Active Step:** `Step 03 - FL Simulation Core & FedAvg Baseline` (starting Step 03: confirming FL defaults)
+- **What Was Just Completed:** Step 02 (`02.1`-`02.6`) approved (`GRU` selected as local model per spec) and tagged `step-02-done`. All 5-seed centralized and local-only baseline tables logged in `docs/MODEL_DECISION.md` and `docs/EXPERIMENT_RESULTS_LOG.md`.
+- **Next Task for Incoming Teammate:** Confirm Step 03 FL hyperparameter defaults (`03.1`), implement `Client`, `Server`, `Aggregator`, and `FedAvg` in `trustfed/fl/` (`03.2`), build `sim/run_experiment.py` (`03.3`), and run 5-seed non-IID & scalability (`N in {3, 5, 10}`) sweeps (`03.4`-`03.5`).
 
 ---
 
@@ -41,12 +41,12 @@
 - [x] `01.9` Log Step 01 dataset stats to `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 01`, and tag `step-01-done` (@Naimur, 2026-11-05)
 
 ### Step 02 — Centralized Baselines & Local Model Decision (`docs/steps/STEP_02_centralized_baselines.md`)
-- [ ] `02.1` Confirm Step 02 evaluation targets (binary/multi-class) and tuning budget
-- [ ] `02.2` Implement `DNN`, `GRU`, and `LSTM` in `trustfed/models/` with unified input interface + `trustfed/metrics/`
-- [ ] `02.3` Train centralized pooled baselines across 5 seeds with equal tuning budget + classical context baselines (LogReg, RandomForest)
-- [ ] `02.4` Train local-only single-tenant baselines for every tenant across 5 seeds
-- [ ] `02.5` Record parameter counts, training time, inference latency per flow, and write evidence-based choice to `docs/MODEL_DECISION.md`
-- [ ] `02.6` Pass `tests/test_models.py`, log tables to `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 02`, and tag `step-02-done`
+- [x] `02.1` Confirm Step 02 evaluation targets (binary/multi-class) and tuning budget (@Naimur, 2026-11-05)
+- [x] `02.2` Implement `DNN`, `GRU`, and `LSTM` in `trustfed/models/` with unified input interface + `trustfed/metrics/` (@Naimur, 2026-11-05)
+- [x] `02.3` Train centralized pooled baselines across 5 seeds with equal tuning budget + classical context baselines (LogReg, RandomForest) (@Naimur, 2026-11-05)
+- [x] `02.4` Train local-only single-tenant baselines for every tenant across 5 seeds (@Naimur, 2026-11-05)
+- [x] `02.5` Record parameter counts, training time, inference latency per flow, and write evidence-based choice to `docs/MODEL_DECISION.md` (@Naimur, 2026-11-05)
+- [x] `02.6` Pass `tests/test_models.py`, log tables to `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 02`, and tag `step-02-done` (@Naimur, 2026-11-05)
 
 ### Step 03 — FL Simulation Core & FedAvg Baseline (`docs/steps/STEP_03_fl_core_and_fedavg.md`)
 - [ ] `03.1` Confirm FL hyperparameter defaults (`30` rounds, `3` local epochs, batch `128`, Adam `1e-3`)
