@@ -11,9 +11,9 @@
 
 - **Last Updated By:** `@Naimur`
 - **Date:** `2026-11-05`
-- **Active Step:** `Step 01 - Data` (waiting for `approved step 01`)
-- **What Was Just Completed:** Completed Step 01 (`01.1`-`01.8`) across **3 datasets**: `InSDN` (2020), **`ASEADOS-SDN-IoT` (2026)**, and `CICIDS2017` — including `data/MANIFEST.md` (14 files), `trustfed/data/{load,clean,partition}.py`, `scripts/profile_dataset.py`, `configs/data/{label_map,features_*}.yaml`, `results/01_data/` plots & logs, `data/processed/` arrays, and `tests/test_data.py` (`12/12` tests passing, `0` split hash overlap).
-- **Next Task for Incoming Teammate:** Reply `approved step 01` to check `01.9` and tag `step-01-done`, then begin **Step 02 - Centralized Baselines & Local Model Decision** (`02.1`-`02.6`). Teammates should copy `data/raw/` (or run `curl` for `ASEADOS_SDN_IoT.csv`) and run `.\make.cmd status`.
+- **Active Step:** `Step 02 - Centralized Baselines & Local Model Decision` (in progress: confirming Step 02 targets & tuning budget)
+- **What Was Just Completed:** Step 01 (`01.1`-`01.9`) approved and tagged `step-01-done` across all 3 datasets (`InSDN`, `ASEADOS-SDN-IoT` 2026, `CICIDS2017`). All stats logged in `docs/EXPERIMENT_RESULTS_LOG.md`.
+- **Next Task for Incoming Teammate:** Confirm Step 02 evaluation targets & tuning budget (`02.1`), then implement unified `DNN`, `GRU`, `LSTM` + metrics (`02.2`) and run 5-seed centralized & local-only baselines (`02.3`-`02.5`).
 
 ---
 
@@ -38,7 +38,7 @@
 - [x] `01.6` Run training-only top-k per-class feature selection and save `configs/data/features_*.yaml` + ranking plot (@Naimur, 2026-11-05)
 - [x] `01.7` Implement natural non-IID, Dirichlet (`alpha` in `{0.1, 0.5, 1.0}`), and IID partitions (`trustfed/data/partition.py`) + per-tenant class plots (@Naimur, 2026-11-05)
 - [x] `01.8` Implement privacy-preserving per-tenant local scaling (+ global-scaler ablation), save `data/processed/`, pass `tests/test_data.py` & leakage hash checks (@Naimur, 2026-11-05)
-- [ ] `01.9` Log Step 01 dataset stats to `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 01`, and tag `step-01-done`
+- [x] `01.9` Log Step 01 dataset stats to `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 01`, and tag `step-01-done` (@Naimur, 2026-11-05)
 
 ### Step 02 — Centralized Baselines & Local Model Decision (`docs/steps/STEP_02_centralized_baselines.md`)
 - [ ] `02.1` Confirm Step 02 evaluation targets (binary/multi-class) and tuning budget
