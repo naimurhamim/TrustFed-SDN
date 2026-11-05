@@ -10,10 +10,10 @@
 ## Latest Handoff Note
 
 - **Last Updated By:** `@Naimur`
-- **Date:** `2026-10-29`
-- **Active Step:** `Step 00 — Environment and User Preferences` (waiting for final `approved step 00` + `L1` isolation approval)
-- **What Was Just Completed:** Built full repository skeleton, Windows Python `3.12.7` `.venv`, `Makefile`/`make.cmd`, hardware probe, Ubuntu 22.04 LTS `Mininet 2.3.0 + OVS 2.17.12 + OS-Ken 3.0.1` OpenFlow 1.3 smoke test (`0%` packet loss), and the 2-person GitHub sync/checklist system (`scripts/team_status.py`).
-- **Next Task for Incoming Teammate:** Approve Step 00 (`00.8`), tag `step-00-done`, and begin **Step 01 — Data** (`01.1` answer Step 01 dataset questions & place raw InSDN/CICIDS2017 CSVs into `data/raw/`).
+- **Date:** `2026-11-05`
+- **Active Step:** `Step 01 - Data` (in progress: collecting Step 01 answers)
+- **What Was Just Completed:** Step 00 approved (`L1` isolation confirmed) and tagged `step-00-done`. Environment, smoke test, and GitHub team sync system are all in place.
+- **Next Task for Incoming Teammate:** `01.1` answer Step 01 questions (dataset availability, disk budget, download mode, tenant profiles), then `01.2` place raw InSDN/CICIDS2017 CSVs into `data/raw/`.
 
 ---
 
@@ -27,7 +27,7 @@
 - [x] `00.5` Run live Linux SDN testbed smoke test (`Mininet 2.3.0 + OVS 2.17.12 + OS-Ken 3.0.1` OpenFlow 1.3 `pingAll`, `0%` loss) on Ubuntu 22.04 VM and save logs in `docs/smoke_test/` (@Naimur, 2026-10-28)
 - [x] `00.6` Document isolated testbed IP ranges (`10.10.0.0/16`) and propose Step 07 isolation level (`L1`) in `docs/ENVIRONMENT.md` (@Naimur, 2026-10-28)
 - [x] `00.7` Pass `make check` (`ruff`, `black --check`, `pytest`, `import trustfed`) and set up GitHub team collaboration tools (@Naimur, 2026-10-29)
-- [ ] `00.8` Explicit user approval (`approved step 00` + `L1` isolation confirmation) and git tag `step-00-done`
+- [x] `00.8` Explicit user approval (`approved step 00` + `L1` isolation confirmation) and git tag `step-00-done` (@Naimur, 2026-11-05)
 
 ### Step 01 — Data (`docs/steps/STEP_01_data.md`)
 - [ ] `01.1` Answer Step 01 questions (dataset availability, disk budget, download mode, tenant profiles) in `docs/USER_PREFERENCES.md`

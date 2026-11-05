@@ -63,9 +63,9 @@ Per `AGENTS.md` Rule 9, **attack traffic may NEVER leave the isolated virtual te
 
 ---
 
-## 3. Proposed Testbed Isolation Level for Step 07 *(Proposal — Needs Explicit User Approval)*
+## 3. Testbed Isolation Level for Step 07 *(Approved: L1)*
 
-- **Decision Status:** **PROPOSED (not finalized; requires explicit user approval)**
+- **Decision Status:** **APPROVED — L1** (user approval: `L1 isolation ok, approved step 00`, 2026-11-05). The optional Mixed L1 + L3 Kali attachment remains optional and will be revisited at the Step 07 design checkpoint.
 
 ### Hardware Constraint Summary
 - CPU (`i7-12700H`, 14C/20T) and Disk (`475.4 GB` free on `D:\`) are abundant.

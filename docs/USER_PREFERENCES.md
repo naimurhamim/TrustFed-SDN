@@ -19,6 +19,6 @@ The agent fills this file during Step 00 and later steps. Do not ask again for a
 | Final local model | | 02 |
 | DP granularity, sensitivity score, budget policy | | 05 |
 | Verification scheme and dropout handling | | 06 |
-| Isolation level, tenants, attack tools, feature extractor | | 07 |
+| Isolation level, tenants, attack tools, feature extractor | Isolation level **L1 approved** at Step 00 close (2026-11-05): one Ubuntu 22.04 VM, per-tenant Mininet namespaces + per-tenant OVS bridges + per-tenant OS-Ken controllers (L3 with 9+ VMs is infeasible on 15.67 GB RAM). Optional Kali VM attachment (Mixed) may be reconsidered at Step 07 only if free RAM allows. Tenants, attack tools, and feature extractor still to be confirmed at Step 07. | 00 / 07 |
 | Communication stack and mitigation policy | | 08 |
 | Public/private decisions, license | | 10 |
