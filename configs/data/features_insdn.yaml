@@ -1,0 +1,139 @@
+dataset: insdn
+method: mutual_info_one_vs_rest_per_attack_class_train_only
+fitted_on_split: train_only
+k_per_class: 5
+num_candidate_features: 77
+num_selected_features: 19
+selected_features:
+- Bwd Header Len
+- Init Bwd Win Byts
+- Pkt Len Var
+- Pkt Len Std
+- Bwd Seg Size Avg
+- Bwd Pkt Len Mean
+- Pkt Len Max
+- Pkt Len Mean
+- Bwd Pkt Len Max
+- Pkt Size Avg
+- TotLen Bwd Pkts
+- Subflow Bwd Byts
+- Fwd Header Len
+- Bwd IAT Tot
+- Bwd IAT Max
+- Flow Duration
+- Flow IAT Min
+- Bwd IAT Mean
+- Fwd IAT Tot
+per_class_top_k:
+  DDoS:
+  - feature: Bwd Header Len
+    index: 35
+    mi_score: 0.296767
+  - feature: Bwd IAT Tot
+    index: 25
+    mi_score: 0.275129
+  - feature: Bwd IAT Max
+    index: 28
+    mi_score: 0.270675
+  - feature: Bwd IAT Mean
+    index: 26
+    mi_score: 0.213445
+  - feature: Init Bwd Win Byts
+    index: 66
+    mi_score: 0.210182
+  Probe:
+  - feature: Bwd Header Len
+    index: 35
+    mi_score: 0.44692
+  - feature: Init Bwd Win Byts
+    index: 66
+    mi_score: 0.374324
+  - feature: Fwd Header Len
+    index: 34
+    mi_score: 0.320279
+  - feature: Pkt Len Mean
+    index: 40
+    mi_score: 0.31151
+  - feature: Pkt Len Var
+    index: 42
+    mi_score: 0.309794
+  DoS:
+  - feature: Bwd Header Len
+    index: 35
+    mi_score: 0.374683
+  - feature: Init Bwd Win Byts
+    index: 66
+    mi_score: 0.373324
+  - feature: Pkt Len Max
+    index: 39
+    mi_score: 0.343717
+  - feature: Pkt Len Std
+    index: 41
+    mi_score: 0.342551
+  - feature: Pkt Len Var
+    index: 42
+    mi_score: 0.341461
+  BruteForce:
+  - feature: Init Bwd Win Byts
+    index: 66
+    mi_score: 0.177544
+  - feature: Bwd Pkt Len Mean
+    index: 12
+    mi_score: 0.141132
+  - feature: Bwd Seg Size Avg
+    index: 54
+    mi_score: 0.14018
+  - feature: Pkt Size Avg
+    index: 52
+    mi_score: 0.139419
+  - feature: Pkt Len Mean
+    index: 40
+    mi_score: 0.13935
+  WebAttack:
+  - feature: Init Bwd Win Byts
+    index: 66
+    mi_score: 0.038737
+  - feature: TotLen Bwd Pkts
+    index: 5
+    mi_score: 0.034682
+  - feature: Subflow Bwd Byts
+    index: 64
+    mi_score: 0.033297
+  - feature: Pkt Len Max
+    index: 39
+    mi_score: 0.032745
+  - feature: Bwd Pkt Len Mean
+    index: 12
+    mi_score: 0.032286
+  Botnet:
+  - feature: Init Bwd Win Byts
+    index: 66
+    mi_score: 0.061027
+  - feature: Pkt Size Avg
+    index: 52
+    mi_score: 0.034732
+  - feature: Pkt Len Mean
+    index: 40
+    mi_score: 0.034487
+  - feature: Pkt Len Var
+    index: 42
+    mi_score: 0.034226
+  - feature: Flow IAT Min
+    index: 19
+    mi_score: 0.034155
+  Exploitation_U2R:
+  - feature: Bwd Pkt Len Max
+    index: 10
+    mi_score: 0.006206
+  - feature: Subflow Bwd Byts
+    index: 64
+    mi_score: 0.005597
+  - feature: TotLen Bwd Pkts
+    index: 5
+    mi_score: 0.005565
+  - feature: Fwd IAT Tot
+    index: 20
+    mi_score: 0.005319
+  - feature: Flow Duration
+    index: 1
+    mi_score: 0.005317

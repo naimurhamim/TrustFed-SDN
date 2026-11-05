@@ -1,0 +1,84 @@
+dataset: aseados_sdn_iot
+method: mutual_info_one_vs_rest_per_attack_class_train_only
+fitted_on_split: train_only
+k_per_class: 5
+num_candidate_features: 77
+num_selected_features: 12
+selected_features:
+- Flow IAT Min
+- Bwd Pkts/s
+- Flow IAT Mean
+- Bwd Header Len
+- Fwd Header Len
+- Fwd Pkts/s
+- Flow Pkts/s
+- Flow IAT Max
+- Flow Duration
+- Pkt Len Max
+- Pkt Len Std
+- Pkt Len Var
+per_class_top_k:
+  DDoS:
+  - feature: Flow IAT Min
+    index: 19
+    mi_score: 0.154991
+  - feature: Flow IAT Mean
+    index: 16
+    mi_score: 0.134348
+  - feature: Fwd Pkts/s
+    index: 36
+    mi_score: 0.126938
+  - feature: Bwd Pkts/s
+    index: 37
+    mi_score: 0.124726
+  - feature: Flow Pkts/s
+    index: 15
+    mi_score: 0.119729
+  DoS:
+  - feature: Fwd Header Len
+    index: 34
+    mi_score: 0.349929
+  - feature: Bwd Header Len
+    index: 35
+    mi_score: 0.335325
+  - feature: Pkt Len Max
+    index: 39
+    mi_score: 0.327877
+  - feature: Pkt Len Std
+    index: 41
+    mi_score: 0.325301
+  - feature: Pkt Len Var
+    index: 42
+    mi_score: 0.324415
+  Probe:
+  - feature: Fwd Pkts/s
+    index: 36
+    mi_score: 0.124058
+  - feature: Flow IAT Min
+    index: 19
+    mi_score: 0.123093
+  - feature: Flow IAT Mean
+    index: 16
+    mi_score: 0.122495
+  - feature: Bwd Pkts/s
+    index: 37
+    mi_score: 0.121961
+  - feature: Flow IAT Max
+    index: 18
+    mi_score: 0.117618
+  Botnet:
+  - feature: Flow IAT Min
+    index: 19
+    mi_score: 0.221773
+  - feature: Bwd Pkts/s
+    index: 37
+    mi_score: 0.188519
+  - feature: Flow Duration
+    index: 1
+    mi_score: 0.188457
+  - feature: Flow IAT Max
+    index: 18
+    mi_score: 0.181206
+  - feature: Flow IAT Mean
+    index: 16
+    mi_score: 0.170414

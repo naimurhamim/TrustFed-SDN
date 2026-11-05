@@ -4,7 +4,7 @@ Raw datasets are git-ignored. This tracked manifest lets each teammate verify an
 identical local copy with `make status` (size check) or
 `python scripts/team_status.py --verify-hashes` (full SHA-256 check).
 
-- **Generated (UTC):** `2026-11-05T05:44:41Z` by `scripts/make_data_manifest.py`
+- **Generated (UTC):** `2026-11-05T06:07:53Z` by `scripts/make_data_manifest.py`
 - **Rows** = CSV data lines excluding the first header line (raw, before cleaning).
 - **Date** = local file modification date (download or extraction date).
 
@@ -12,6 +12,7 @@ identical local copy with `make status` (size check) or
 
 | path | size_bytes | sha256 | rows | source_url | date |
 |---|---|---|---|---|---|
+| `data/raw/aseados_sdn_iot/ASEADOS_SDN_IoT.csv` | 242144496 | `0faf2b7d5d8fad3469880d6cff4a59a14dce0fa2deb383d9c49ba047ad06779d` | 457044 | https://aseados.ucd.ie/datasets/SDN-IoT/ | 2026-11-05 |
 | `data/raw/cicids2017/MachineLearningCSV.zip` | 235102953 | `c3f26274b36c837ccf28ffd2dbf4582941c30b3ee70a635c6e5b2f87c4727928` | - | https://www.unb.ca/cic/datasets/ids-2017.html | 2026-11-05 |
 | `data/raw/cicids2017/MachineLearningCVE/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv` | 77123859 | `6ff1580f5f81c0ae28a26f7631721018577f5f7c5e0feac28b795fcfe7b411ee` | 225745 | https://www.unb.ca/cic/datasets/ids-2017.html | 2018-06-07 |
 | `data/raw/cicids2017/MachineLearningCVE/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv` | 76906168 | `ca1824c51bfbb7b3c72290a11be04366ba8815878c6a1cc5c44cb1cee269e99b` | 286467 | https://www.unb.ca/cic/datasets/ids-2017.html | 2018-06-07 |
@@ -28,6 +29,9 @@ identical local copy with `make status` (size check) or
 
 ## Sources, licenses, and citations
 
+- **ASEADOS-SDN-IoT (2026)** (`data/raw/aseados_sdn_iot/`): https://aseados.ucd.ie/datasets/SDN-IoT/
+  - License: CC BY-NC 4.0 (UCD ASEADOS Lab)
+  - Cite: T. Yasarathna et al., 'ASEADOS-SDN-IoT: A novel SDN-IoT network intrusion detection dataset and framework', Internet of Things (Elsevier), 2026, DOI 10.1016/j.iot.2026.101891
 - **CICIDS2017 (MachineLearningCSV)** (`data/raw/cicids2017/`): https://www.unb.ca/cic/datasets/ids-2017.html
   - License: See UNB CIC dataset terms (academic use, cite paper)
   - Cite: I. Sharafaldin, A. H. Lashkari, A. A. Ghorbani, 'Toward Generating a New Intrusion Detection Dataset and Intrusion Traffic Characterization', ICISSP 2018

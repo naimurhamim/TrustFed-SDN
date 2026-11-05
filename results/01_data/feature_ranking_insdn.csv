@@ -1,0 +1,78 @@
+rank,feature,index,aggregate_mi_score,selected_in_topk_union
+1,Bwd Header Len,35,1.298703,True
+2,Init Bwd Win Byts,66,1.237971,True
+3,Pkt Len Var,42,1.017834,True
+4,Pkt Len Std,41,1.010207,True
+5,Bwd Seg Size Avg,54,0.998887,True
+6,Bwd Pkt Len Mean,12,0.995804,True
+7,Pkt Len Max,39,0.995529,True
+8,Pkt Len Mean,40,0.980263,True
+9,Bwd Pkt Len Max,10,0.980141,True
+10,Pkt Size Avg,52,0.977865,True
+11,TotLen Bwd Pkts,5,0.977118,True
+12,Subflow Bwd Byts,64,0.976955,True
+13,Bwd Pkt Len Std,13,0.97353,False
+14,Fwd Header Len,34,0.895992,True
+15,Fwd Seg Size Avg,53,0.798059,False
+16,Fwd Pkt Len Mean,8,0.785597,False
+17,Fwd Pkt Len Max,6,0.759991,False
+18,Subflow Fwd Byts,62,0.752635,False
+19,TotLen Fwd Pkts,4,0.745656,False
+20,Bwd IAT Tot,25,0.742036,True
+21,Subflow Fwd Pkts,61,0.72285,False
+22,Bwd IAT Max,28,0.722543,True
+23,Tot Fwd Pkts,2,0.720629,False
+24,Fwd Pkt Len Std,9,0.705584,False
+25,Tot Bwd Pkts,3,0.70296,False
+26,Subflow Bwd Pkts,63,0.700973,False
+27,Flow IAT Std,17,0.674915,False
+28,Fwd Pkts/s,36,0.672984,False
+29,Flow IAT Max,18,0.670693,False
+30,Flow Duration,1,0.667584,True
+31,Flow IAT Min,19,0.639167,True
+32,Bwd Pkts/s,37,0.615824,False
+33,Bwd IAT Mean,26,0.60523,True
+34,Fwd IAT Max,23,0.593346,False
+35,Flow Pkts/s,15,0.589338,False
+36,Fwd IAT Tot,20,0.581607,True
+37,Flow Byts/s,14,0.579779,False
+38,Fwd IAT Mean,21,0.544383,False
+39,Flow IAT Mean,16,0.541307,False
+40,Bwd IAT Std,27,0.47814,False
+41,Bwd IAT Min,29,0.477138,False
+42,Fwd IAT Min,24,0.419461,False
+43,Protocol,0,0.359634,False
+44,Idle Max,75,0.285899,False
+45,Fwd IAT Std,22,0.283234,False
+46,Idle Min,76,0.277442,False
+47,Idle Mean,73,0.275462,False
+48,FIN Flag Cnt,43,0.275147,False
+49,Down/Up Ratio,51,0.261107,False
+50,Active Max,71,0.248614,False
+51,Active Mean,69,0.247057,False
+52,Active Min,72,0.23394,False
+53,Fwd Act Data Pkts,67,0.153784,False
+54,Bwd Pkt Len Min,11,0.123937,False
+55,Fwd Pkt Len Min,7,0.110958,False
+56,Pkt Len Min,38,0.106723,False
+57,ACK Flag Cnt,47,0.096175,False
+58,Idle Std,74,0.086279,False
+59,SYN Flag Cnt,44,0.033913,False
+60,PSH Flag Cnt,46,0.031883,False
+61,Active Std,70,0.029236,False
+62,Bwd URG Flags,33,0.025207,False
+63,Bwd PSH Flags,31,0.024821,False
+64,URG Flag Cnt,48,0.022706,False
+65,RST Flag Cnt,45,0.005869,False
+66,Fwd PSH Flags,30,0.0,False
+67,Fwd URG Flags,32,0.0,False
+68,CWE Flag Count,49,0.0,False
+69,ECE Flag Cnt,50,0.0,False
+70,Fwd Byts/b Avg,55,0.0,False
+71,Fwd Pkts/b Avg,56,0.0,False
+72,Fwd Blk Rate Avg,57,0.0,False
+73,Bwd Byts/b Avg,58,0.0,False
+74,Bwd Pkts/b Avg,59,0.0,False
+75,Bwd Blk Rate Avg,60,0.0,False
+76,Init Fwd Win Byts,65,0.0,False
+77,Fwd Seg Size Min,68,0.0,False

@@ -11,9 +11,9 @@
 
 - **Last Updated By:** `@Naimur`
 - **Date:** `2026-11-05`
-- **Active Step:** `Step 01 - Data` (in progress: collecting Step 01 answers)
-- **What Was Just Completed:** Step 00 approved (`L1` isolation confirmed) and tagged `step-00-done`. Environment, smoke test, and GitHub team sync system are all in place.
-- **Next Task for Incoming Teammate:** Raw InSDN + CICIDS2017 are in `data/raw/` with `data/MANIFEST.md` (`01.2` done). Next: approve tenant profiles (`01.1`) and the Step 01 plan, then implement loaders/profiling (`01.3`). Teammates must copy the same raw files (zip via Drive) and confirm `[DATA] OK` in `make status`.
+- **Active Step:** `Step 01 - Data` (waiting for `approved step 01`)
+- **What Was Just Completed:** Completed Step 01 (`01.1`-`01.8`) across **3 datasets**: `InSDN` (2020), **`ASEADOS-SDN-IoT` (2026)**, and `CICIDS2017` — including `data/MANIFEST.md` (14 files), `trustfed/data/{load,clean,partition}.py`, `scripts/profile_dataset.py`, `configs/data/{label_map,features_*}.yaml`, `results/01_data/` plots & logs, `data/processed/` arrays, and `tests/test_data.py` (`12/12` tests passing, `0` split hash overlap).
+- **Next Task for Incoming Teammate:** Reply `approved step 01` to check `01.9` and tag `step-01-done`, then begin **Step 02 - Centralized Baselines & Local Model Decision** (`02.1`-`02.6`). Teammates should copy `data/raw/` (or run `curl` for `ASEADOS_SDN_IoT.csv`) and run `.\make.cmd status`.
 
 ---
 
@@ -30,14 +30,14 @@
 - [x] `00.8` Explicit user approval (`approved step 00` + `L1` isolation confirmation) and git tag `step-00-done` (@Naimur, 2026-11-05)
 
 ### Step 01 — Data (`docs/steps/STEP_01_data.md`)
-- [ ] `01.1` Answer Step 01 questions (dataset availability, disk budget, download mode, tenant profiles) in `docs/USER_PREFERENCES.md`
-- [x] `01.2` Acquire raw datasets (`InSDN` primary, `CICIDS2017` supplementary) into `data/raw/` and generate `data/MANIFEST.md` (size + SHA-256) (@Naimur, 2026-11-05)
-- [ ] `01.3` Implement dataset loaders (`trustfed/data/load.py`) and profiling script (`scripts/profile_dataset.py`) -> `results/01_data/`
-- [ ] `01.4` Implement ordered cleaning pipeline (`trustfed/data/clean.py`) and log row counts per rule to `results/01_data/cleaning_log.csv`
-- [ ] `01.5` Create binary & multi-class label mapping (`configs/data/label_map.yaml`) and stratified train/val/test split before any fitting
-- [ ] `01.6` Run training-only top-k per-class feature selection and save `configs/data/features_*.yaml` + ranking plot
-- [ ] `01.7` Implement natural non-IID, Dirichlet (`alpha` in `{0.1, 0.5, 1.0}`), and IID partitions (`trustfed/data/partition.py`) + per-tenant class plots
-- [ ] `01.8` Implement privacy-preserving per-tenant local scaling (+ global-scaler ablation), save `data/processed/`, pass `tests/test_data.py` & leakage hash checks
+- [x] `01.1` Answer Step 01 questions (dataset availability, disk budget, download mode, tenant profiles) in `docs/USER_PREFERENCES.md` (@Naimur, 2026-11-05)
+- [x] `01.2` Acquire raw datasets (`InSDN` primary, `ASEADOS-SDN-IoT` 2026 SDN, `CICIDS2017` supplementary) into `data/raw/` and generate `data/MANIFEST.md` (size + SHA-256) (@Naimur, 2026-11-05)
+- [x] `01.3` Implement dataset loaders (`trustfed/data/load.py`) and profiling script (`scripts/profile_dataset.py`) -> `results/01_data/` (@Naimur, 2026-11-05)
+- [x] `01.4` Implement ordered cleaning pipeline (`trustfed/data/clean.py`) and log row counts per rule to `results/01_data/cleaning_log.csv` (@Naimur, 2026-11-05)
+- [x] `01.5` Create binary & multi-class label mapping (`configs/data/label_map.yaml`) and stratified train/val/test split before any fitting (@Naimur, 2026-11-05)
+- [x] `01.6` Run training-only top-k per-class feature selection and save `configs/data/features_*.yaml` + ranking plot (@Naimur, 2026-11-05)
+- [x] `01.7` Implement natural non-IID, Dirichlet (`alpha` in `{0.1, 0.5, 1.0}`), and IID partitions (`trustfed/data/partition.py`) + per-tenant class plots (@Naimur, 2026-11-05)
+- [x] `01.8` Implement privacy-preserving per-tenant local scaling (+ global-scaler ablation), save `data/processed/`, pass `tests/test_data.py` & leakage hash checks (@Naimur, 2026-11-05)
 - [ ] `01.9` Log Step 01 dataset stats to `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 01`, and tag `step-01-done`
 
 ### Step 02 — Centralized Baselines & Local Model Decision (`docs/steps/STEP_02_centralized_baselines.md`)

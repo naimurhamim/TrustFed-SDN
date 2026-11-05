@@ -5,7 +5,7 @@ The agent updates this file at the end of every step. Status values: `not starte
 | Step | Name | Status | Date | Commit | Notes |
 |---|---|---|---|---|---|
 | 00 | Environment and preferences | approved | 2026-11-05 | `567b2f9` (tag `step-00-done`) | `.venv` (Py 3.12.7), `make check` passing (4/4), Ubuntu 22.04 Mininet 2.3.0 + OVS 2.17.12 + OS-Ken 3.0.1 OpenFlow 1.3 `pingAll` verified (`0%` loss); L1 isolation approved; team sync system on GitHub |
-| 01 | Data | in progress | 2026-11-05 | | Asking Step 01 questions (datasets, disk, download mode, tenant profiles) |
+| 01 | Data | waiting for approval | 2026-11-05 | | Processed `InSDN` (`184,855` cleaned), `ASEADOS-SDN-IoT` 2026 (`426,111` cleaned), and `CICIDS2017` (`2,232,894` cleaned); `0` split hash overlap; `12/12` pytest passing |
 | 02 | Centralized baselines and model choice | not started | | | |
 | 03 | FL core and FedAvg | not started | | | |
 | 04 | Attacks and robust aggregation | not started | | | |

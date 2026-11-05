@@ -25,6 +25,16 @@ SOURCES: dict[str, dict[str, str]] = {
             "IEEE Access, vol. 8, pp. 165263-165284, 2020, DOI 10.1109/ACCESS.2020.3022633"
         ),
     },
+    "aseados_sdn_iot": {
+        "name": "ASEADOS-SDN-IoT (2026)",
+        "url": "https://aseados.ucd.ie/datasets/SDN-IoT/",
+        "license": "CC BY-NC 4.0 (UCD ASEADOS Lab)",
+        "citation": (
+            "T. Yasarathna et al., 'ASEADOS-SDN-IoT: A novel SDN-IoT network intrusion detection "
+            "dataset and framework', Internet of Things (Elsevier), 2026, "
+            "DOI 10.1016/j.iot.2026.101891"
+        ),
+    },
     "cicids2017": {
         "name": "CICIDS2017 (MachineLearningCSV)",
         "url": "https://www.unb.ca/cic/datasets/ids-2017.html",

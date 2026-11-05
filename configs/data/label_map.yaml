@@ -1,0 +1,124 @@
+# Canonical binary and multi-class label mappings for TrustFed-SDN datasets.
+# Binary mapping: 0 = Benign, 1 = Attack.
+# Multi-class mapping normalizes dataset-specific spellings, whitespace, and encoding quirks
+# into canonical attack families per dataset.
+
+binary_labels:
+  0: Benign
+  1: Attack
+
+benign_ canonical_names:
+  - Benign
+  - Normal
+  - BENIGN
+
+datasets:
+  insdn:
+    raw_to_canonical:
+      "Normal": "Benign"
+      "DDoS": "DDoS"
+      "DDoS ": "DDoS"
+      "DoS": "DoS"
+      "Probe": "Probe"
+      "BFA": "BruteForce"
+      "Web-Attack": "WebAttack"
+      "BOTNET": "Botnet"
+      "U2R": "Exploitation_U2R"
+    class_order:
+      - "Benign"
+      - "DDoS"
+      - "Probe"
+      - "DoS"
+      - "BruteForce"
+      - "WebAttack"
+      - "Botnet"
+      - "Exploitation_U2R"
+    tenant_natural_specialty:
+      tenant_1_finance:
+        - "BruteForce"
+        - "WebAttack"
+        - "Botnet"
+      tenant_2_healthcare:
+        - "DoS"
+        - "DDoS"
+      tenant_3_education:
+        - "Probe"
+        - "Exploitation_U2R"
+
+  aseados_sdn_iot:
+    raw_to_canonical:
+      "Normal": "Benign"
+      "Benign": "Benign"
+      "BENIGN": "Benign"
+      "DDoS": "DDoS"
+      "DDoS ": "DDoS"
+      "DoS": "DoS"
+      "Dos": "DoS"
+      "Probe": "Probe"
+      "Prob": "Probe"
+      "PortScan": "Probe"
+      "Bot": "Botnet"
+      "BOTNET": "Botnet"
+      "Botnet": "Botnet"
+      "BFA": "BruteForce"
+      "BruteForce": "BruteForce"
+      "Web-Attack": "WebAttack"
+      "U2R": "Exploitation_U2R"
+    class_order:
+      - "Benign"
+      - "DDoS"
+      - "DoS"
+      - "Probe"
+      - "Botnet"
+    tenant_natural_specialty:
+      tenant_1_finance:
+        - "Botnet"
+      tenant_2_healthcare:
+        - "DoS"
+        - "DDoS"
+      tenant_3_education:
+        - "Probe"
+
+  cicids2017:
+    raw_to_canonical:
+      "BENIGN": "Benign"
+      "DoS Hulk": "DoS"
+      "DoS GoldenEye": "DoS"
+      "DoS slowloris": "DoS"
+      "DoS Slowhttptest": "DoS"
+      "DDoS": "DDoS"
+      "PortScan": "Probe"
+      "FTP-Patator": "BruteForce"
+      "SSH-Patator": "BruteForce"
+      "Bot": "Botnet"
+      "Web Attack - Brute Force": "WebAttack"
+      "Web Attack - XSS": "WebAttack"
+      "Web Attack - Sql Injection": "WebAttack"
+      "Infiltration": "Infiltration"
+      "Heartbleed": "Exploitation_U2R"
+    # Prefix/substring fallback for corrupted Windows-1252 en-dash in CICIDS2017 Web Attack labels
+    substring_fallbacks:
+      "Web Attack": "WebAttack"
+    class_order:
+      - "Benign"
+      - "DoS"
+      - "Probe"
+      - "DDoS"
+      - "BruteForce"
+      - "WebAttack"
+      - "Botnet"
+      - "Infiltration"
+      - "Exploitation_U2R"
+    tenant_natural_specialty:
+      tenant_1_finance:
+        - "BruteForce"
+        - "WebAttack"
+        - "Botnet"
+      tenant_2_healthcare:
+        - "DoS"
+        - "DDoS"
+      tenant_3_education:
+        - "Probe"
+        - "Infiltration"
+        - "Exploitation_U2R"
+

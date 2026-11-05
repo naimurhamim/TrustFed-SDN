@@ -81,6 +81,85 @@
 | Quality Check (`make check`) | `3 passed` (`pytest`), `0` lint/format errors (`ruff` + `black`) | Verified on Windows Python `3.12.7` |
 | Linux Mininet+OVS+RYU(OS-Ken) `pingAll` | **PASSED (`0.0%` loss, `6/6` packets received)** | OpenFlow `1.3` (`6` learned unicast flows + `priority=0` table-miss flow, `20` packets / `1468` B); logs in `docs/smoke_test/` |
 | Host RAM Under Active Ubuntu VM | `93.0%` used (`1.1 GB` free of `15.67 GB`) | Measured via `scripts/probe_hardware.py` while Ubuntu 22.04 Desktop VM was active |
-| Proposed Step 07 Isolation Level | **L1** (inside Ubuntu 22.04 VM: Mininet namespaces + per-tenant OVS + per-tenant OS-Ken controller) | Strongly justified by `93.0%` host RAM usage with 1 active Desktop VM; awaiting explicit user approval |
+| Proposed Step 07 Isolation Level | **L1** (approved by user 2026-11-05: Mininet namespaces + per-tenant OVS + per-tenant OS-Ken controller inside Ubuntu 22.04 VM) | Strongly justified by `93.0%` host RAM usage with 1 active Desktop VM |
+
+---
+
+### [2026-11-05] Step 01 — Dataset Partitioning, Leakage-Free Cleaning & Feature Selection {#step-01-dataset-partitioning--statistics}
+
+- **Script:** `scripts/profile_dataset.py` | **Configs:** `configs/data/label_map.yaml`, `configs/data/features_{insdn,aseados_sdn_iot,cicids2017}.yaml`
+- **Raw Summaries:** `results/01_data/summary.json`, `results/01_data/cleaning_log.csv`, `results/01_data/profile_{insdn,aseados_sdn_iot,cicids2017}.json`
+- **Seed Used:** `42` (stratified `70% / 15% / 15%` train/validation/test split performed **before** any feature selection or scaler fitting)
+
+#### 1. Dataset Overview & Ordered Cleaning Pipeline Summary (`results/01_data/cleaning_log.csv`)
+
+| Dataset | Year / Source | Raw Rows | Raw Cols | Dropped Dup Header Cols (R1) | Dropped ID & Port Cols (R3) | Inf Cells / NaN Rows Dropped (R4) | Duplicate Feature Rows Removed (R6) | Final Unique Cleaned Rows | Candidate Numeric Features | Selected Top-$k$ Union Features ($k=5$/class) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| **InSDN** | 2020 (UCD ASEADOS) | `343,889` | `84` | `0` | `6` (`Flow ID`, `Src/Dst IP`, `Src/Dst Port`, `Timestamp`) | `0` / `0` | `159,034` (`46.25%`) | **`184,855`** | `77` | **`19`** |
+| **ASEADOS-SDN-IoT** | 2026 (UCD ASEADOS) | `457,044` | `84` | `0` | `6` (`Flow ID`, `Src/Dst IP`, `Src/Dst Port`, `Timestamp`) | `74` / `70` | `30,863` (`6.75%`) | **`426,111`** | `77` | **`12`** |
+| **CICIDS2017** | 2017 (UNB CIC) | `2,830,743` | `79` | `1` (`Fwd Header Length.1`) | `1` (`Destination Port`) | `4,376` / `2,867` | `594,982` (`21.02%`) | **`2,232,894`** | `76` | **`22`** |
+
+#### 2. Stratified Split Sizes & SHA-256 Zero-Leakage Verification (`results/01_data/summary.json`)
+
+| Dataset | Train Rows (`70%`) | Validation Rows (`15%`) | Test Rows (`15%`) | Train $\cap$ Val Hash Overlap | Train $\cap$ Test Hash Overlap | Val $\cap$ Test Hash Overlap |
+|---|---|---|---|---|---|---|
+| **InSDN** | `129,398` | `27,728` | `27,729` | **`0`** | **`0`** | **`0`** |
+| **ASEADOS-SDN-IoT (2026)** | `298,277` | `63,917` | `63,917` | **`0`** | **`0`** | **`0`** |
+| **CICIDS2017** | `1,563,025` | `334,934` | `334,935` | **`0`** | **`0`** | **`0`** |
+
+#### 3. Cleaned Multi-Class and Natural Non-IID Per-Tenant Training Distributions (`N=3`)
+
+**A. InSDN (`184,855` cleaned unique flows; `129,398` training flows):**
+
+| Canonical Class | Total Cleaned (`100%`) | Tenant 1: Finance (Train) | Tenant 2: Healthcare (Train) | Tenant 3: Education (Train) |
+|---|---|---|---|---|
+| `Benign` | `64,218` | `14,984` | `14,984` | `14,984` |
+| `Probe` | `67,068` | `7,042` | `7,042` | **`32,863`** *(70% specialty)* |
+| `DoS` | `50,310` | `5,283` | **`24,652`** *(70% specialty)* | `5,282` |
+| `DDoS` | `1,520` | `160` | **`745`** *(70% specialty)* | `159` |
+| `BruteForce` (`BFA`) | `1,375` | **`674`** *(70% specialty)* | `145` | `144` |
+| `WebAttack` | `183` | **`90`** *(70% specialty)* | `19` | `19` |
+| `Botnet` | `164` | **`80`** *(70% specialty)* | `18` | `17` |
+| `Exploitation_U2R` | `17` | `2` | `2` | **`8`** *(70% specialty)* |
+| **Total Flows** | **`184,855`** | **`28,315`** | **`47,607`** | **`53,476`** |
+
+**B. ASEADOS-SDN-IoT (2026) (`426,111` cleaned unique flows; `298,277` training flows):**
+
+| Canonical Class | Total Cleaned (`100%`) | Tenant 1: Finance (Train) | Tenant 2: Healthcare (Train) | Tenant 3: Education (Train) |
+|---|---|---|---|---|
+| `Benign` | `233,386` | `54,457` | `54,457` | `54,456` |
+| `DoS` | `126,201` | `13,251` | **`61,839`** *(70% specialty)* | `13,251` |
+| `DDoS` | `50,165` | `5,268` | **`24,580`** *(70% specialty)* | `5,267` |
+| `Botnet` | `8,957` | **`4,389`** *(70% specialty)* | `941` | `940` |
+| `Probe` | `7,402` | `777` | `777` | **`3,627`** *(70% specialty)* |
+| **Total Flows** | **`426,111`** | **`78,142`** | **`142,594`** | **`77,541`** |
+
+**C. CICIDS2017 (`2,232,894` cleaned unique flows; `1,563,025` training flows):**
+
+| Canonical Class | Total Cleaned (`100%`) | Tenant 1: Finance (Train) | Tenant 2: Healthcare (Train) | Tenant 3: Education (Train) |
+|---|---|---|---|---|
+| `Benign` | `1,896,512` | `442,520` | `442,519` | `442,519` |
+| `DoS` | `193,641` | `20,332` | **`94,884`** *(70% specialty)* | `20,332` |
+| `DDoS` | `128,014` | `13,442` | **`62,727`** *(70% specialty)* | `13,441` |
+| `BruteForce` | `9,150` | **`4,484`** *(70% specialty)* | `961` | `960` |
+| `WebAttack` | `2,143` | **`1,050`** *(70% specialty)* | `225` | `225` |
+| `Probe` (`PortScan`) | `1,956` | `206` | `205` | **`958`** *(70% specialty)* |
+| `Botnet` | `1,431` | **`701`** *(70% specialty)* | `151` | `150` |
+| `Infiltration` | `36` | `4` | `3` | **`18`** *(70% specialty)* |
+| `Exploitation_U2R` (`Heartbleed`) | `11` | `1` | `1` | **`6`** *(70% specialty)* |
+| **Total Flows** | **`2,232,894`** | **`482,740`** | **`601,676`** | **`478,609`** |
+
+#### 4. Selected Top-5-per-Attack-Class Feature Unions (Training Data Only)
+
+- **InSDN (`19` features, `configs/data/features_insdn.yaml`):** `Bwd Header Len`, `Init Bwd Win Byts`, `Pkt Len Var`, `Pkt Len Std`, `Bwd Seg Size Avg`, `Bwd Pkt Len Mean`, `Pkt Len Max`, `Pkt Len Mean`, `Bwd Pkt Len Max`, `Pkt Size Avg`, `TotLen Bwd Pkts`, `Subflow Bwd Byts`, `Fwd Header Len`, `Bwd IAT Tot`, `Bwd IAT Max`, `Flow Duration`, `Flow IAT Min`, `Bwd IAT Mean`, `Fwd IAT Tot`.
+- **ASEADOS-SDN-IoT 2026 (`12` features, `configs/data/features_aseados_sdn_iot.yaml`):** `Flow IAT Min`, `Bwd Pkts/s`, `Flow IAT Mean`, `Bwd Header Len`, `Fwd Header Len`, `Fwd Pkts/s`, `Flow Pkts/s`, `Flow IAT Max`, `Flow Duration`, `Pkt Len Max`, `Pkt Len Std`, `Pkt Len Var`.
+- **CICIDS2017 (`22` features, `configs/data/features_cicids2017.yaml`):** `Average Packet Size`, `Packet Length Mean`, `Total Length of Fwd Packets`, `Subflow Fwd Bytes`, `Packet Length Variance`, `Packet Length Std`, `Fwd Header Length`, `Init_Win_bytes_backward`, `Max Packet Length`, `Flow IAT Max`, `Fwd Packet Length Max`, `Total Length of Bwd Packets`, `Bwd Packets/s`, `Subflow Bwd Bytes`, `Bwd Packet Length Mean`, `Avg Bwd Segment Size`, `Bwd Packet Length Max`, `Flow IAT Std`, `Flow Packets/s`, `Flow IAT Mean`, `Fwd IAT Std`, `Init_Win_bytes_forward`.
+
+#### 5. Paper-Ready Dataset Quirks & Methodological Findings
+
+1. **Massive Feature-Vector Duplication in Raw `InSDN` (`46.25%`) and `CICIDS2017` (`21.02%`):** After stripping flow identifiers (`Flow ID`, `Src/Dst IP`, `Src/Dst Port`, `Timestamp`), `159,034` of `343,889` rows in `InSDN` (especially stateless single-packet DDoS floods, reducing `DDoS` from `121,942` raw rows to `1,520` unique feature vectors) and `594,982` of `2,830,743` rows in `CICIDS2017` (reducing `PortScan` from `158,930` raw rows to `1,956` unique feature vectors after dropping `Destination Port`) are byte-for-byte identical. Standard random train/test splits without deduplication leak nearly half of `InSDN` test samples into the training set; our Rule `R6` deduplication + SHA-256 row-hash check guarantees `0` train/val/test overlap.
+2. **Superior Diversity in 2026 `ASEADOS-SDN-IoT`:** Only `6.75%` (`30,863` of `457,044`) of rows in `ASEADOS-SDN-IoT` (2026) are duplicate feature vectors, yielding `426,111` unique flows with a near-balanced `54.8%` Benign / `45.2%` Attack ratio.
+3. **Label & Schema Quirks Resolved:** Trailing space in `InSDN` (`"DDoS "`), truncated spellings in `ASEADOS-SDN-IoT` (`"Dos"`, `"Prob"`), Windows-1252 `0x96` en-dash corruption in `CICIDS2017` Web Attack labels, `65` whitespace-padded column headers and duplicate `Fwd Header Length.1` in `CICIDS2017`, and `4,376` (`CICIDS2017`) + `74` (`ASEADOS-SDN-IoT`) infinite cells.
+
 
 

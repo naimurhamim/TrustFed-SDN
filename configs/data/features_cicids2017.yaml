@@ -1,0 +1,158 @@
+dataset: cicids2017
+method: mutual_info_one_vs_rest_per_attack_class_train_only
+fitted_on_split: train_only
+k_per_class: 5
+num_candidate_features: 76
+num_selected_features: 22
+selected_features:
+- Average Packet Size
+- Packet Length Mean
+- Total Length of Fwd Packets
+- Subflow Fwd Bytes
+- Packet Length Variance
+- Packet Length Std
+- Fwd Header Length
+- Init_Win_bytes_backward
+- Max Packet Length
+- Flow IAT Max
+- Fwd Packet Length Max
+- Total Length of Bwd Packets
+- Bwd Packets/s
+- Subflow Bwd Bytes
+- Bwd Packet Length Mean
+- Avg Bwd Segment Size
+- Bwd Packet Length Max
+- Flow IAT Std
+- Flow Packets/s
+- Flow IAT Mean
+- Fwd IAT Std
+- Init_Win_bytes_forward
+per_class_top_k:
+  DoS:
+  - feature: Average Packet Size
+    index: 51
+    mi_score: 0.363797
+  - feature: Packet Length Mean
+    index: 39
+    mi_score: 0.363427
+  - feature: Init_Win_bytes_backward
+    index: 65
+    mi_score: 0.363134
+  - feature: Subflow Bwd Bytes
+    index: 63
+    mi_score: 0.353366
+  - feature: Total Length of Bwd Packets
+    index: 4
+    mi_score: 0.350856
+  Probe:
+  - feature: Packet Length Mean
+    index: 39
+    mi_score: 0.238253
+  - feature: Flow IAT Std
+    index: 16
+    mi_score: 0.225992
+  - feature: Packet Length Variance
+    index: 41
+    mi_score: 0.225357
+  - feature: Packet Length Std
+    index: 40
+    mi_score: 0.224175
+  - feature: Bwd Packets/s
+    index: 36
+    mi_score: 0.220662
+  DDoS:
+  - feature: Average Packet Size
+    index: 51
+    mi_score: 0.444157
+  - feature: Subflow Fwd Bytes
+    index: 61
+    mi_score: 0.437271
+  - feature: Total Length of Fwd Packets
+    index: 3
+    mi_score: 0.436238
+  - feature: Packet Length Mean
+    index: 39
+    mi_score: 0.401504
+  - feature: Fwd Header Length
+    index: 33
+    mi_score: 0.378806
+  BruteForce:
+  - feature: Max Packet Length
+    index: 38
+    mi_score: 0.433075
+  - feature: Packet Length Std
+    index: 40
+    mi_score: 0.424355
+  - feature: Packet Length Variance
+    index: 41
+    mi_score: 0.423639
+  - feature: Packet Length Mean
+    index: 39
+    mi_score: 0.423069
+  - feature: Average Packet Size
+    index: 51
+    mi_score: 0.422219
+  WebAttack:
+  - feature: Bwd Packets/s
+    index: 36
+    mi_score: 0.283996
+  - feature: Flow IAT Mean
+    index: 15
+    mi_score: 0.273668
+  - feature: Flow Packets/s
+    index: 14
+    mi_score: 0.272756
+  - feature: Flow IAT Max
+    index: 17
+    mi_score: 0.271493
+  - feature: Flow IAT Std
+    index: 16
+    mi_score: 0.270897
+  Botnet:
+  - feature: Fwd Header Length
+    index: 33
+    mi_score: 0.237266
+  - feature: Total Length of Bwd Packets
+    index: 4
+    mi_score: 0.233542
+  - feature: Subflow Bwd Bytes
+    index: 63
+    mi_score: 0.232738
+  - feature: Packet Length Mean
+    index: 39
+    mi_score: 0.225272
+  - feature: Avg Bwd Segment Size
+    index: 53
+    mi_score: 0.210789
+  Infiltration:
+  - feature: Init_Win_bytes_forward
+    index: 64
+    mi_score: 0.010356
+  - feature: Init_Win_bytes_backward
+    index: 65
+    mi_score: 0.008638
+  - feature: Fwd Packet Length Max
+    index: 5
+    mi_score: 0.0076
+  - feature: Subflow Fwd Bytes
+    index: 61
+    mi_score: 0.00655
+  - feature: Total Length of Fwd Packets
+    index: 3
+    mi_score: 0.006517
+  Exploitation_U2R:
+  - feature: Bwd Packet Length Max
+    index: 9
+    mi_score: 0.005279
+  - feature: Bwd Packet Length Mean
+    index: 11
+    mi_score: 0.005245
+  - feature: Avg Bwd Segment Size
+    index: 53
+    mi_score: 0.005127
+  - feature: Fwd IAT Std
+    index: 21
+    mi_score: 0.004891
+  - feature: Max Packet Length
+    index: 38
+    mi_score: 0.004804

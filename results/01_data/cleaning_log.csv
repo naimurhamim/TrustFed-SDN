@@ -1,0 +1,19 @@
+dataset,rule_id,rule_name,rows_before,rows_after,rows_removed,cols_before,cols_after,details
+insdn,R1,strip_column_whitespace_and_resolve_duplicate_headers,343889,343889,0,84,84,Stripped column whitespace; no duplicate headers
+insdn,R2,remove_repeated_header_rows,343889,343889,0,84,84,Removed 0 embedded header rows
+insdn,R3,drop_identifier_and_leakage_columns,343889,343889,0,84,78,"Dropped 6 columns: ['Flow ID', 'Src IP', 'Src Port', 'Dst IP', 'Dst Port', 'Timestamp']"
+insdn,R4,replace_infinite_and_drop_missing_rows,343889,343889,0,78,78,Replaced 0 infinite cells with NaN; dropped 0 rows containing NaN
+insdn,R5,normalize_and_map_labels,343889,343889,0,78,80,"Mapped to 8 canonical classes: ['Benign', 'DDoS', 'Probe', 'DoS', 'BruteForce', 'WebAttack', 'Botnet', 'Exploitation_U2R']"
+insdn,R6,remove_duplicate_feature_rows,343889,184855,159034,80,80,Removed 159034 duplicate feature rows (including 158955 exact feature+label duplicates)
+aseados_sdn_iot,R1,strip_column_whitespace_and_resolve_duplicate_headers,457044,457044,0,84,84,Stripped column whitespace; no duplicate headers
+aseados_sdn_iot,R2,remove_repeated_header_rows,457044,457044,0,84,84,Removed 0 embedded header rows
+aseados_sdn_iot,R3,drop_identifier_and_leakage_columns,457044,457044,0,84,78,"Dropped 6 columns: ['Flow ID', 'Src IP', 'Src Port', 'Dst IP', 'Dst Port', 'Timestamp']"
+aseados_sdn_iot,R4,replace_infinite_and_drop_missing_rows,457044,456974,70,78,78,Replaced 74 infinite cells with NaN; dropped 70 rows containing NaN
+aseados_sdn_iot,R5,normalize_and_map_labels,456974,456974,0,78,80,"Mapped to 5 canonical classes: ['Benign', 'DDoS', 'DoS', 'Probe', 'Botnet']"
+aseados_sdn_iot,R6,remove_duplicate_feature_rows,456974,426111,30863,80,80,Removed 30863 duplicate feature rows (including 29930 exact feature+label duplicates)
+cicids2017,R1,strip_column_whitespace_and_resolve_duplicate_headers,2830743,2830743,0,79,78,Dropped duplicate header columns: ['Fwd Header Length.1']
+cicids2017,R2,remove_repeated_header_rows,2830743,2830743,0,78,78,Removed 0 embedded header rows
+cicids2017,R3,drop_identifier_and_leakage_columns,2830743,2830743,0,78,77,Dropped 1 columns: ['Destination Port']
+cicids2017,R4,replace_infinite_and_drop_missing_rows,2830743,2827876,2867,77,77,Replaced 4376 infinite cells with NaN; dropped 2867 rows containing NaN
+cicids2017,R5,normalize_and_map_labels,2827876,2827876,0,77,79,"Mapped to 9 canonical classes: ['Benign', 'DoS', 'Probe', 'DDoS', 'BruteForce', 'WebAttack', 'Botnet', 'Infiltration', 'Exploitation_U2R']"
+cicids2017,R6,remove_duplicate_feature_rows,2827876,2232894,594982,79,79,Removed 594982 duplicate feature rows (including 594712 exact feature+label duplicates)

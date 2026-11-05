@@ -1,0 +1,749 @@
+{
+  "dataset": "cicids2017",
+  "processed_at_utc": "2026-11-05T06:13:14Z",
+  "seed": 42,
+  "elapsed_seconds": 364.48,
+  "raw_rows": 2830743,
+  "cleaned_rows": 2232894,
+  "candidate_features_count": 76,
+  "selected_features_count": 22,
+  "selected_features": [
+    "Average Packet Size",
+    "Packet Length Mean",
+    "Total Length of Fwd Packets",
+    "Subflow Fwd Bytes",
+    "Packet Length Variance",
+    "Packet Length Std",
+    "Fwd Header Length",
+    "Init_Win_bytes_backward",
+    "Max Packet Length",
+    "Flow IAT Max",
+    "Fwd Packet Length Max",
+    "Total Length of Bwd Packets",
+    "Bwd Packets/s",
+    "Subflow Bwd Bytes",
+    "Bwd Packet Length Mean",
+    "Avg Bwd Segment Size",
+    "Bwd Packet Length Max",
+    "Flow IAT Std",
+    "Flow Packets/s",
+    "Flow IAT Mean",
+    "Fwd IAT Std",
+    "Init_Win_bytes_forward"
+  ],
+  "class_order": [
+    "Benign",
+    "DoS",
+    "Probe",
+    "DDoS",
+    "BruteForce",
+    "WebAttack",
+    "Botnet",
+    "Infiltration",
+    "Exploitation_U2R"
+  ],
+  "class_counts_cleaned": {
+    "Benign": 1896512,
+    "DoS": 193641,
+    "Probe": 1956,
+    "DDoS": 128014,
+    "BruteForce": 9150,
+    "WebAttack": 2143,
+    "Botnet": 1431,
+    "Infiltration": 36,
+    "Exploitation_U2R": 11
+  },
+  "binary_counts_cleaned": {
+    "Benign": 1896512,
+    "Attack": 336382
+  },
+  "split_sizes": {
+    "train": 1563025,
+    "val": 334934,
+    "test": 334935
+  },
+  "leakage_hash_check": {
+    "train_unique_hashes": 1563025,
+    "val_unique_hashes": 334934,
+    "test_unique_hashes": 334935,
+    "train_val_overlap": 0,
+    "train_test_overlap": 0,
+    "val_test_overlap": 0
+  },
+  "natural_n3_tenant_train_counts": {
+    "tenant_1_finance": {
+      "Benign": 442520,
+      "DoS": 20332,
+      "Probe": 206,
+      "DDoS": 13442,
+      "BruteForce": 4484,
+      "WebAttack": 1050,
+      "Botnet": 701,
+      "Infiltration": 4,
+      "Exploitation_U2R": 1
+    },
+    "tenant_2_healthcare": {
+      "Benign": 442519,
+      "DoS": 94884,
+      "Probe": 205,
+      "DDoS": 62727,
+      "BruteForce": 961,
+      "WebAttack": 225,
+      "Botnet": 151,
+      "Infiltration": 3,
+      "Exploitation_U2R": 1
+    },
+    "tenant_3_education": {
+      "Benign": 442519,
+      "DoS": 20332,
+      "Probe": 958,
+      "DDoS": 13441,
+      "BruteForce": 960,
+      "WebAttack": 225,
+      "Botnet": 150,
+      "Infiltration": 18,
+      "Exploitation_U2R": 6
+    }
+  },
+  "natural_n3_tenant_totals": {
+    "tenant_1_finance": 482740,
+    "tenant_2_healthcare": 601676,
+    "tenant_3_education": 478609
+  },
+  "partition_counts_n3": {
+    "natural_n3": {
+      "tenant_1_finance": {
+        "Benign": 442520,
+        "DoS": 20332,
+        "Probe": 206,
+        "DDoS": 13442,
+        "BruteForce": 4484,
+        "WebAttack": 1050,
+        "Botnet": 701,
+        "Infiltration": 4,
+        "Exploitation_U2R": 1
+      },
+      "tenant_2_healthcare": {
+        "Benign": 442519,
+        "DoS": 94884,
+        "Probe": 205,
+        "DDoS": 62727,
+        "BruteForce": 961,
+        "WebAttack": 225,
+        "Botnet": 151,
+        "Infiltration": 3,
+        "Exploitation_U2R": 1
+      },
+      "tenant_3_education": {
+        "Benign": 442519,
+        "DoS": 20332,
+        "Probe": 958,
+        "DDoS": 13441,
+        "BruteForce": 960,
+        "WebAttack": 225,
+        "Botnet": 150,
+        "Infiltration": 18,
+        "Exploitation_U2R": 6
+      }
+    },
+    "dirichlet_a0.1_n3": {
+      "tenant_01": {
+        "Benign": 112971,
+        "DoS": 3237,
+        "Probe": 8,
+        "DDoS": 0,
+        "BruteForce": 408,
+        "WebAttack": 22,
+        "Botnet": 0,
+        "Infiltration": 0,
+        "Exploitation_U2R": 0
+      },
+      "tenant_02": {
+        "Benign": 0,
+        "DoS": 131559,
+        "Probe": 0,
+        "DDoS": 56266,
+        "BruteForce": 5996,
+        "WebAttack": 1477,
+        "Botnet": 1001,
+        "Infiltration": 18,
+        "Exploitation_U2R": 0
+      },
+      "tenant_03": {
+        "Benign": 1214587,
+        "DoS": 752,
+        "Probe": 1361,
+        "DDoS": 33344,
+        "BruteForce": 1,
+        "WebAttack": 1,
+        "Botnet": 1,
+        "Infiltration": 7,
+        "Exploitation_U2R": 8
+      }
+    },
+    "dirichlet_a0.5_n3": {
+      "tenant_01": {
+        "Benign": 45,
+        "DoS": 48016,
+        "Probe": 842,
+        "DDoS": 55118,
+        "BruteForce": 100,
+        "WebAttack": 310,
+        "Botnet": 233,
+        "Infiltration": 0,
+        "Exploitation_U2R": 0
+      },
+      "tenant_02": {
+        "Benign": 598896,
+        "DoS": 341,
+        "Probe": 49,
+        "DDoS": 14253,
+        "BruteForce": 5936,
+        "WebAttack": 510,
+        "Botnet": 15,
+        "Infiltration": 18,
+        "Exploitation_U2R": 0
+      },
+      "tenant_03": {
+        "Benign": 728617,
+        "DoS": 87191,
+        "Probe": 478,
+        "DDoS": 20239,
+        "BruteForce": 369,
+        "WebAttack": 680,
+        "Botnet": 754,
+        "Infiltration": 7,
+        "Exploitation_U2R": 8
+      }
+    },
+    "dirichlet_a1.0_n3": {
+      "tenant_01": {
+        "Benign": 164429,
+        "DoS": 131036,
+        "Probe": 291,
+        "DDoS": 78015,
+        "BruteForce": 170,
+        "WebAttack": 654,
+        "Botnet": 730,
+        "Infiltration": 4,
+        "Exploitation_U2R": 0
+      },
+      "tenant_02": {
+        "Benign": 1095236,
+        "DoS": 2283,
+        "Probe": 198,
+        "DDoS": 5135,
+        "BruteForce": 709,
+        "WebAttack": 27,
+        "Botnet": 38,
+        "Infiltration": 11,
+        "Exploitation_U2R": 1
+      },
+      "tenant_03": {
+        "Benign": 67893,
+        "DoS": 2229,
+        "Probe": 880,
+        "DDoS": 6460,
+        "BruteForce": 5526,
+        "WebAttack": 819,
+        "Botnet": 234,
+        "Infiltration": 10,
+        "Exploitation_U2R": 7
+      }
+    },
+    "iid_n3": {
+      "tenant_01": {
+        "Benign": 442520,
+        "DoS": 45183,
+        "Probe": 457,
+        "DDoS": 29870,
+        "BruteForce": 2135,
+        "WebAttack": 500,
+        "Botnet": 334,
+        "Infiltration": 9,
+        "Exploitation_U2R": 3
+      },
+      "tenant_02": {
+        "Benign": 442519,
+        "DoS": 45183,
+        "Probe": 456,
+        "DDoS": 29870,
+        "BruteForce": 2135,
+        "WebAttack": 500,
+        "Botnet": 334,
+        "Infiltration": 8,
+        "Exploitation_U2R": 3
+      },
+      "tenant_03": {
+        "Benign": 442519,
+        "DoS": 45182,
+        "Probe": 456,
+        "DDoS": 29870,
+        "BruteForce": 2135,
+        "WebAttack": 500,
+        "Botnet": 334,
+        "Infiltration": 8,
+        "Exploitation_U2R": 2
+      }
+    }
+  },
+  "partition_counts_n10": {
+    "dirichlet_a0.1_n10": {
+      "tenant_01": {
+        "Benign": 0,
+        "DoS": 0,
+        "Probe": 198,
+        "DDoS": 350,
+        "BruteForce": 0,
+        "WebAttack": 0,
+        "Botnet": 0,
+        "Infiltration": 0,
+        "Exploitation_U2R": 6
+      },
+      "tenant_02": {
+        "Benign": 0,
+        "DoS": 73360,
+        "Probe": 0,
+        "DDoS": 343,
+        "BruteForce": 60,
+        "WebAttack": 98,
+        "Botnet": 25,
+        "Infiltration": 1,
+        "Exploitation_U2R": 0
+      },
+      "tenant_03": {
+        "Benign": 193930,
+        "DoS": 4003,
+        "Probe": 486,
+        "DDoS": 1076,
+        "BruteForce": 42,
+        "WebAttack": 181,
+        "Botnet": 392,
+        "Infiltration": 0,
+        "Exploitation_U2R": 1
+      },
+      "tenant_04": {
+        "Benign": 980613,
+        "DoS": 16534,
+        "Probe": 0,
+        "DDoS": 5,
+        "BruteForce": 4268,
+        "WebAttack": 0,
+        "Botnet": 0,
+        "Infiltration": 1,
+        "Exploitation_U2R": 0
+      },
+      "tenant_05": {
+        "Benign": 6,
+        "DoS": 57,
+        "Probe": 2,
+        "DDoS": 86300,
+        "BruteForce": 233,
+        "WebAttack": 1118,
+        "Botnet": 357,
+        "Infiltration": 0,
+        "Exploitation_U2R": 0
+      },
+      "tenant_06": {
+        "Benign": 9345,
+        "DoS": 10,
+        "Probe": 306,
+        "DDoS": 1253,
+        "BruteForce": 1784,
+        "WebAttack": 101,
+        "Botnet": 0,
+        "Infiltration": 0,
+        "Exploitation_U2R": 0
+      },
+      "tenant_07": {
+        "Benign": 0,
+        "DoS": 634,
+        "Probe": 376,
+        "DDoS": 260,
+        "BruteForce": 0,
+        "WebAttack": 0,
+        "Botnet": 0,
+        "Infiltration": 0,
+        "Exploitation_U2R": 0
+      },
+      "tenant_08": {
+        "Benign": 0,
+        "DoS": 1575,
+        "Probe": 0,
+        "DDoS": 16,
+        "BruteForce": 0,
+        "WebAttack": 1,
+        "Botnet": 214,
+        "Infiltration": 1,
+        "Exploitation_U2R": 0
+      },
+      "tenant_09": {
+        "Benign": 143663,
+        "DoS": 39375,
+        "Probe": 0,
+        "DDoS": 1,
+        "BruteForce": 17,
+        "WebAttack": 0,
+        "Botnet": 4,
+        "Infiltration": 6,
+        "Exploitation_U2R": 0
+      },
+      "tenant_10": {
+        "Benign": 1,
+        "DoS": 0,
+        "Probe": 1,
+        "DDoS": 6,
+        "BruteForce": 1,
+        "WebAttack": 1,
+        "Botnet": 10,
+        "Infiltration": 16,
+        "Exploitation_U2R": 1
+      }
+    },
+    "dirichlet_a0.5_n10": {
+      "tenant_01": {
+        "Benign": 53978,
+        "DoS": 176,
+        "Probe": 76,
+        "DDoS": 22726,
+        "BruteForce": 475,
+        "WebAttack": 295,
+        "Botnet": 53,
+        "Infiltration": 0,
+        "Exploitation_U2R": 0
+      },
+      "tenant_02": {
+        "Benign": 72467,
+        "DoS": 10565,
+        "Probe": 470,
+        "DDoS": 15913,
+        "BruteForce": 17,
+        "WebAttack": 4,
+        "Botnet": 31,
+        "Infiltration": 1,
+        "Exploitation_U2R": 0
+      },
+      "tenant_03": {
+        "Benign": 35407,
+        "DoS": 30850,
+        "Probe": 9,
+        "DDoS": 2383,
+        "BruteForce": 105,
+        "WebAttack": 0,
+        "Botnet": 153,
+        "Infiltration": 0,
+        "Exploitation_U2R": 0
+      },
+      "tenant_04": {
+        "Benign": 246994,
+        "DoS": 10017,
+        "Probe": 459,
+        "DDoS": 21266,
+        "BruteForce": 430,
+        "WebAttack": 40,
+        "Botnet": 129,
+        "Infiltration": 1,
+        "Exploitation_U2R": 2
+      },
+      "tenant_05": {
+        "Benign": 69329,
+        "DoS": 44052,
+        "Probe": 5,
+        "DDoS": 1488,
+        "BruteForce": 542,
+        "WebAttack": 1,
+        "Botnet": 62,
+        "Infiltration": 2,
+        "Exploitation_U2R": 1
+      },
+      "tenant_06": {
+        "Benign": 67474,
+        "DoS": 21415,
+        "Probe": 4,
+        "DDoS": 9248,
+        "BruteForce": 1194,
+        "WebAttack": 158,
+        "Botnet": 51,
+        "Infiltration": 3,
+        "Exploitation_U2R": 1
+      },
+      "tenant_07": {
+        "Benign": 4125,
+        "DoS": 2605,
+        "Probe": 4,
+        "DDoS": 1120,
+        "BruteForce": 200,
+        "WebAttack": 36,
+        "Botnet": 214,
+        "Infiltration": 0,
+        "Exploitation_U2R": 3
+      },
+      "tenant_08": {
+        "Benign": 212243,
+        "DoS": 6712,
+        "Probe": 178,
+        "DDoS": 555,
+        "BruteForce": 2040,
+        "WebAttack": 167,
+        "Botnet": 41,
+        "Infiltration": 0,
+        "Exploitation_U2R": 0
+      },
+      "tenant_09": {
+        "Benign": 425577,
+        "DoS": 1150,
+        "Probe": 129,
+        "DDoS": 74,
+        "BruteForce": 950,
+        "WebAttack": 46,
+        "Botnet": 15,
+        "Infiltration": 6,
+        "Exploitation_U2R": 0
+      },
+      "tenant_10": {
+        "Benign": 139964,
+        "DoS": 8006,
+        "Probe": 35,
+        "DDoS": 14837,
+        "BruteForce": 452,
+        "WebAttack": 753,
+        "Botnet": 253,
+        "Infiltration": 12,
+        "Exploitation_U2R": 1
+      }
+    },
+    "dirichlet_a1.0_n10": {
+      "tenant_01": {
+        "Benign": 9117,
+        "DoS": 19987,
+        "Probe": 361,
+        "DDoS": 471,
+        "BruteForce": 1146,
+        "WebAttack": 81,
+        "Botnet": 124,
+        "Infiltration": 0,
+        "Exploitation_U2R": 0
+      },
+      "tenant_02": {
+        "Benign": 144381,
+        "DoS": 10877,
+        "Probe": 148,
+        "DDoS": 1151,
+        "BruteForce": 379,
+        "WebAttack": 97,
+        "Botnet": 46,
+        "Infiltration": 0,
+        "Exploitation_U2R": 0
+      },
+      "tenant_03": {
+        "Benign": 103946,
+        "DoS": 14175,
+        "Probe": 162,
+        "DDoS": 413,
+        "BruteForce": 560,
+        "WebAttack": 45,
+        "Botnet": 5,
+        "Infiltration": 4,
+        "Exploitation_U2R": 1
+      },
+      "tenant_04": {
+        "Benign": 44261,
+        "DoS": 571,
+        "Probe": 27,
+        "DDoS": 2788,
+        "BruteForce": 532,
+        "WebAttack": 294,
+        "Botnet": 4,
+        "Infiltration": 5,
+        "Exploitation_U2R": 0
+      },
+      "tenant_05": {
+        "Benign": 161434,
+        "DoS": 30663,
+        "Probe": 5,
+        "DDoS": 33553,
+        "BruteForce": 722,
+        "WebAttack": 232,
+        "Botnet": 207,
+        "Infiltration": 2,
+        "Exploitation_U2R": 1
+      },
+      "tenant_06": {
+        "Benign": 45361,
+        "DoS": 17083,
+        "Probe": 86,
+        "DDoS": 6974,
+        "BruteForce": 1037,
+        "WebAttack": 194,
+        "Botnet": 121,
+        "Infiltration": 8,
+        "Exploitation_U2R": 2
+      },
+      "tenant_07": {
+        "Benign": 88184,
+        "DoS": 4061,
+        "Probe": 190,
+        "DDoS": 864,
+        "BruteForce": 273,
+        "WebAttack": 120,
+        "Botnet": 266,
+        "Infiltration": 1,
+        "Exploitation_U2R": 3
+      },
+      "tenant_08": {
+        "Benign": 163163,
+        "DoS": 24047,
+        "Probe": 195,
+        "DDoS": 22348,
+        "BruteForce": 76,
+        "WebAttack": 12,
+        "Botnet": 8,
+        "Infiltration": 1,
+        "Exploitation_U2R": 0
+      },
+      "tenant_09": {
+        "Benign": 491922,
+        "DoS": 11197,
+        "Probe": 79,
+        "DDoS": 13872,
+        "BruteForce": 1370,
+        "WebAttack": 403,
+        "Botnet": 32,
+        "Infiltration": 1,
+        "Exploitation_U2R": 0
+      },
+      "tenant_10": {
+        "Benign": 75789,
+        "DoS": 2887,
+        "Probe": 116,
+        "DDoS": 7176,
+        "BruteForce": 310,
+        "WebAttack": 22,
+        "Botnet": 189,
+        "Infiltration": 3,
+        "Exploitation_U2R": 1
+      }
+    },
+    "iid_n10": {
+      "tenant_01": {
+        "Benign": 132756,
+        "DoS": 13555,
+        "Probe": 137,
+        "DDoS": 8961,
+        "BruteForce": 641,
+        "WebAttack": 150,
+        "Botnet": 101,
+        "Infiltration": 3,
+        "Exploitation_U2R": 1
+      },
+      "tenant_02": {
+        "Benign": 132756,
+        "DoS": 13555,
+        "Probe": 137,
+        "DDoS": 8961,
+        "BruteForce": 641,
+        "WebAttack": 150,
+        "Botnet": 101,
+        "Infiltration": 3,
+        "Exploitation_U2R": 1
+      },
+      "tenant_03": {
+        "Benign": 132756,
+        "DoS": 13555,
+        "Probe": 137,
+        "DDoS": 8961,
+        "BruteForce": 641,
+        "WebAttack": 150,
+        "Botnet": 100,
+        "Infiltration": 3,
+        "Exploitation_U2R": 1
+      },
+      "tenant_04": {
+        "Benign": 132756,
+        "DoS": 13555,
+        "Probe": 137,
+        "DDoS": 8961,
+        "BruteForce": 641,
+        "WebAttack": 150,
+        "Botnet": 100,
+        "Infiltration": 3,
+        "Exploitation_U2R": 1
+      },
+      "tenant_05": {
+        "Benign": 132756,
+        "DoS": 13555,
+        "Probe": 137,
+        "DDoS": 8961,
+        "BruteForce": 641,
+        "WebAttack": 150,
+        "Botnet": 100,
+        "Infiltration": 3,
+        "Exploitation_U2R": 1
+      },
+      "tenant_06": {
+        "Benign": 132756,
+        "DoS": 13555,
+        "Probe": 137,
+        "DDoS": 8961,
+        "BruteForce": 640,
+        "WebAttack": 150,
+        "Botnet": 100,
+        "Infiltration": 2,
+        "Exploitation_U2R": 1
+      },
+      "tenant_07": {
+        "Benign": 132756,
+        "DoS": 13555,
+        "Probe": 137,
+        "DDoS": 8961,
+        "BruteForce": 640,
+        "WebAttack": 150,
+        "Botnet": 100,
+        "Infiltration": 2,
+        "Exploitation_U2R": 1
+      },
+      "tenant_08": {
+        "Benign": 132756,
+        "DoS": 13555,
+        "Probe": 137,
+        "DDoS": 8961,
+        "BruteForce": 640,
+        "WebAttack": 150,
+        "Botnet": 100,
+        "Infiltration": 2,
+        "Exploitation_U2R": 1
+      },
+      "tenant_09": {
+        "Benign": 132755,
+        "DoS": 13554,
+        "Probe": 137,
+        "DDoS": 8961,
+        "BruteForce": 640,
+        "WebAttack": 150,
+        "Botnet": 100,
+        "Infiltration": 2,
+        "Exploitation_U2R": 0
+      },
+      "tenant_10": {
+        "Benign": 132755,
+        "DoS": 13554,
+        "Probe": 136,
+        "DDoS": 8961,
+        "BruteForce": 640,
+        "WebAttack": 150,
+        "Botnet": 100,
+        "Infiltration": 2,
+        "Exploitation_U2R": 0
+      }
+    }
+  },
+  "scaler_verification": {
+    "local_scalers_fitted_on": "tenant_train_only",
+    "global_ablation_fitted_on": "pooled_train_only",
+    "tenant_train_samples_seen": {
+      "tenant_1_finance": 482740,
+      "tenant_2_healthcare": 601676,
+      "tenant_3_education": 478609
+    }
+  }
+}
