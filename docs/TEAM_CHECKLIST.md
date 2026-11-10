@@ -10,10 +10,10 @@
 ## Latest Handoff Note
 
 - **Last Updated By:** `@Naimur`
-- **Date:** `2026-11-05`
-- **Active Step:** `Step 03 - FL Simulation Core & FedAvg Baseline` (`03.1` confirmed; paused cleanly before `03.2` implementation)
-- **What Was Just Completed:** Step 02 (`02.1`-`02.6`) approved (`GRU` selected as local model per spec), tagged `step-02-done`, and pushed to GitHub. Step 03 defaults (`03.1`: `30` rounds, `3` local epochs, Adam `1e-3`, full client participation) confirmed.
-- **Next Task for Incoming Teammate:** Implement `Client`, `Server`, `Aggregator`, and `FedAvg` in `trustfed/fl/` (`03.2`), build `sim/run_experiment.py` (`03.3`), and run 5-seed non-IID & scalability (`N in {3, 5, 10}`) sweeps (`03.4`-`03.5`).
+- **Date:** `2026-11-10`
+- **Active Step:** `Step 04 - Poisoning Attacks & Robust Aggregation` (`Step 03` approved & tagged `step-03-done`; paused cleanly before `04.1`)
+- **What Was Just Completed:** Step 03 (`03.1`-`03.5`) completed, approved (`approved step 03`), tagged `step-03-done`, and pushed to GitHub along with the updated `TrustFed_SDN_Progress_Report_Step00_to_Step03.pdf` and `docs/EXPERIMENT_RESULTS_LOG.md`.
+- **Next Task for Incoming Teammate:** Begin `Step 04 - Poisoning Attacks & Robust Aggregation` (`docs/steps/STEP_04_attacks_and_robust_aggregation.md`) by confirming `04.1` attack matrix and aggregator baselines.
 
 ---
 
@@ -50,10 +50,10 @@
 
 ### Step 03 — FL Simulation Core & FedAvg Baseline (`docs/steps/STEP_03_fl_core_and_fedavg.md`)
 - [x] `03.1` Confirm FL hyperparameter defaults (`30` rounds, `3` local epochs, batch `128`, Adam `1e-3`) (@Naimur, 2026-11-05)
-- [ ] `03.2` Implement `Client`, `Server`, pluggable flat-tensor `Aggregator` interface, and weighted `FedAvg` in `trustfed/fl/`
-- [ ] `03.3` Build config-driven runner `sim/run_experiment.py` with per-round metrics, serialized byte counts, and wall-clock timing
-- [ ] `03.4` Run FedAvg across natural non-IID, Dirichlet `{0.1, 0.5, 1.0}`, and IID for `N in {3, 5, 10}` (5 seeds) and plot convergence vs centralized/local-only
-- [ ] `03.5` Pass `tests/test_fl.py` (determinism + weighted-mean tests), update `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 03`, and tag `step-03-done`
+- [x] `03.2` Implement `Client`, `Server`, pluggable flat-tensor `Aggregator` interface, and weighted `FedAvg` in `trustfed/fl/` (@Naimur, 2026-11-10)
+- [x] `03.3` Build config-driven runner `sim/run_experiment.py` with per-round metrics, serialized byte counts, and wall-clock timing (@Naimur, 2026-11-10)
+- [x] `03.4` Run FedAvg across natural non-IID, Dirichlet `{0.1, 0.5, 1.0}`, and IID for `N in {3, 5, 10}` (5 seeds) and plot convergence vs centralized/local-only (@Naimur, 2026-11-10)
+- [x] `03.5` Pass `tests/test_fl.py` (determinism + weighted-mean tests), update `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 03`, and tag `step-03-done` (@Naimur, 2026-11-10)
 
 ### Step 04 — Poisoning Attacks & Robust Aggregation (`docs/steps/STEP_04_attacks_and_robust_aggregation.md`)
 - [ ] `04.1` Confirm attack matrix and aggregator baselines

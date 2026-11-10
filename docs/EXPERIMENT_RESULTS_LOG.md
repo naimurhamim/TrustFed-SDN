@@ -279,3 +279,122 @@
 
 - **Selected Model:** **`GRU` (`GRUClassifier`)**
 - **Evidence:** Across all 3 datasets, `GRU` binary Macro-F1 (`99.74%` on `InSDN`, `91.23%` on `ASEADOS-SDN-IoT` 2026, `96.66%` on `CICIDS2017`; mean `95.88%`) is within **`+0.21` F1 points** (`< 0.50` F1 threshold) of `DNN` (`96.09%`), beats `LSTM` on **every dataset and task** while requiring **~24% fewer trainable parameters** (`42.2K–43.6K` vs `55.5K–57.3K`), and achieves the **highest neural Multi-Class Macro-F1 on the 2026 `ASEADOS-SDN-IoT` benchmark (`58.92 ± 0.31%`)**.
+
+---
+
+## Step 03: Federated Learning Core & FedAvg Benchmark
+
+### [2026-11-10] Step 03 — FL Simulation Core & FedAvg Baseline (`03_fedavg`)
+- **Runner:** `sim/run_experiment.py --sweep-step03`
+- **Configs:** `configs/experiments/fedavg_step03_sweep.yaml`, `configs/experiments/fedavg_insdn_natural_n3.yaml`, `configs/experiments/fedavg_aseados_natural_n3.yaml`, `configs/experiments/fedavg_cicids2017_natural_n3.yaml`, `configs/experiments/fedavg_insdn_dirichlet_a0.5_n10.yaml`, `configs/experiments/fedavg_insdn_iid_n10.yaml`
+- **Raw Summary & Artifacts:**
+  - `results/03_fedavg/summary.json`
+  - `results/03_fedavg/per_seed_summary.csv` (`270` 30-round FL runs = `54` regimes × `5` seeds)
+  - `results/03_fedavg/per_round_metrics.csv`
+  - `results/03_fedavg/convergence_curves.png`
+  - `results/03_fedavg/centralized_vs_fedavg_vs_local_only.png`
+  - `results/03_fedavg/non_iid_and_scalability_comparison.png`
+- **FL Hyperparameters:** Local model = `GRUClassifier` (`hidden_dim=64`, `num_layers=2`, `dropout=0.2`, `num_chunks=1`), `T = 30` communication rounds, `E = 3` local epochs per round, `batch_size = 128`, `Adam` (`lr = 1e-3`, `weight_decay = 1e-4`), `100%` client participation, `5` deterministic seeds (`[0, 1, 2, 3, 4]`).
+
+#### 1. Centralized vs. FedAvg vs. Local-Only Comparison (`N=3` Primary Regimes, 5 Seeds, Mean ± Std)
+
+| Dataset | Task | Training Regime | Global Accuracy (%) | Global Macro-F1 (%) | Attack-F1 (%) | ADR (%) | FPR (%) | ROC-AUC (%) | Tenant Macro-F1 Mean (%) | Tenant Macro-F1 Min (%) |
+|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `insdn` | `binary` | **Centralized Pooled (Upper Bound)** | `99.76 ± 0.04` | **`99.74 ± 0.05`** | `99.82 ± 0.03` | `99.84 ± 0.05` | `0.39 ± 0.16` | `99.96 ± 0.01` | `—` | `—` |
+| `insdn` | `binary` | **`FedAvg` — IID (`N=3`)** | `99.24 ± 0.61` | **`99.16 ± 0.68`** | `99.43 ± 0.46` | `99.81 ± 0.09` | `1.81 ± 1.66` | `99.87 ± 0.15` | `99.10 ± 0.67` | `99.04 ± 0.68` |
+| `insdn` | `binary` | **`FedAvg` — Natural Non-IID (`N=3`)** | `99.21 ± 0.53` | **`99.13 ± 0.59`** | `99.40 ± 0.40` | `99.81 ± 0.14` | `1.92 ± 1.60` | `99.74 ± 0.30` | `99.06 ± 0.63` | `98.86 ± 0.88` |
+| `insdn` | `binary` | **`FedAvg` — Dirichlet $\alpha=1.0$ (`N=3`)** | `99.27 ± 0.25` | **`99.20 ± 0.28`** | `99.45 ± 0.19` | `99.64 ± 0.27` | `1.42 ± 0.78` | `99.88 ± 0.08` | `99.13 ± 0.31` | `98.96 ± 0.43` |
+| `insdn` | `binary` | **`FedAvg` — Dirichlet $\alpha=0.5$ (`N=3`)** | `99.18 ± 0.10` | **`99.10 ± 0.11`** | `99.38 ± 0.07` | `99.51 ± 0.32` | `1.42 ± 0.56` | `99.89 ± 0.03` | `98.60 ± 0.27` | `97.69 ± 0.87` |
+| `insdn` | `binary` | **`FedAvg` — Dirichlet $\alpha=0.1$ (`N=3`)** | `95.31 ± 2.48` | **`94.63 ± 2.40`** | `96.46 ± 1.88` | `99.42 ± 0.68` | `12.58 ± 7.21` | `98.89 ± 0.60` | `87.31 ± 5.14` | `72.42 ± 14.37` |
+| `insdn` | `binary` | **Local-Only Mean (Lower Bound, `N=3`)** | `99.04 ± 0.06` | **`98.94 ± 0.08`** | `99.28 ± 0.05` | `99.50 ± 0.19` | `1.82 ± 0.14` | `99.81 ± 0.05` | `98.94 ± 0.32` | `98.63 ± 0.02` |
+| `insdn` | `multiclass` | **Centralized Pooled (Upper Bound)** | `98.09 ± 0.27` | **`54.69 ± 1.53`** | `—` | `99.51 ± 0.09` | `1.18 ± 0.56` | `94.63 ± 2.57` | `—` | `—` |
+| `insdn` | `multiclass` | **`FedAvg` — IID (`N=3`)** | `96.24 ± 0.24` | **`65.90 ± 1.51`** | `—` | `99.53 ± 0.10` | `0.81 ± 0.17` | `99.00 ± 0.44` | `65.72 ± 1.66` | `64.61 ± 2.41` |
+| `insdn` | `multiclass` | **`FedAvg` — Natural Non-IID (`N=3`)** | `96.34 ± 0.36` | **`69.43 ± 1.22`** | `—` | `99.52 ± 0.09` | `0.73 ± 0.18` | `99.57 ± 0.10` | `69.03 ± 1.28` | `56.60 ± 1.98` |
+| `insdn` | `multiclass` | **`FedAvg` — Dirichlet $\alpha=1.0$ (`N=3`)** | `94.37 ± 1.32` | **`61.63 ± 1.72`** | `—` | `99.45 ± 0.14` | `0.90 ± 0.24` | `98.26 ± 0.56` | `63.61 ± 2.56` | `57.97 ± 2.66` |
+| `insdn` | `multiclass` | **`FedAvg` — Dirichlet $\alpha=0.5$ (`N=3`)** | `89.38 ± 4.91` | **`64.34 ± 0.75`** | `—` | `99.31 ± 0.15` | `1.59 ± 0.67` | `98.07 ± 0.56` | `64.42 ± 2.75` | `58.95 ± 4.65` |
+| `insdn` | `multiclass` | **`FedAvg` — Dirichlet $\alpha=0.1$ (`N=3`)** | `56.86 ± 17.57` | **`31.84 ± 2.69`** | `—` | `96.54 ± 4.95` | `18.30 ± 16.41` | `83.99 ± 4.53` | `35.29 ± 7.12` | `20.47 ± 11.79` |
+| `insdn` | `multiclass` | **Local-Only Mean (Lower Bound, `N=3`)** | `89.98 ± 4.24` | **`35.52 ± 3.41`** | `—` | `99.17 ± 0.13` | `1.89 ± 0.16` | `88.75 ± 2.10` | `37.27 ± 5.86` | `31.22 ± 1.25` |
+| `aseados_sdn_iot` | `binary` | **Centralized Pooled (Upper Bound)** | `91.26 ± 0.05` | **`91.23 ± 0.06`** | `90.77 ± 0.08` | `95.07 ± 0.41` | `11.89 ± 0.31` | `97.45 ± 0.03` | `—` | `—` |
+| `aseados_sdn_iot` | `binary` | **`FedAvg` — IID (`N=3`)** | `90.66 ± 0.11` | **`90.63 ± 0.11`** | `90.06 ± 0.13` | `93.67 ± 0.47` | `11.82 ± 0.49` | `97.05 ± 0.03` | `90.63 ± 0.11` | `90.47 ± 0.13` |
+| `aseados_sdn_iot` | `binary` | **`FedAvg` — Natural Non-IID (`N=3`)** | `90.54 ± 0.07` | **`90.51 ± 0.07`** | `89.92 ± 0.09` | `93.37 ± 0.48` | `11.79 ± 0.46` | `96.98 ± 0.04` | `89.16 ± 0.09` | `87.35 ± 0.15` |
+| `aseados_sdn_iot` | `binary` | **`FedAvg` — Dirichlet $\alpha=1.0$ (`N=3`)** | `84.74 ± 2.43` | **`83.94 ± 2.97`** | `80.34 ± 5.20` | `71.60 ± 10.67` | `4.41 ± 3.16` | `96.32 ± 0.25` | `82.13 ± 3.24` | `76.19 ± 5.25` |
+| `aseados_sdn_iot` | `binary` | **`FedAvg` — Dirichlet $\alpha=0.5$ (`N=3`)** | `83.90 ± 1.11` | **`82.83 ± 1.43`** | `78.30 ± 2.67` | `67.15 ± 5.39` | `2.28 ± 1.32` | `96.42 ± 0.17` | `79.64 ± 3.31` | `71.09 ± 6.55` |
+| `aseados_sdn_iot` | `binary` | **`FedAvg` — Dirichlet $\alpha=0.1$ (`N=3`)** | `73.80 ± 0.62` | **`73.50 ± 0.43`** | `76.64 ± 1.07` | `93.62 ± 7.80` | `42.57 ± 7.51` | `85.59 ± 6.27` | `70.11 ± 6.00` | `56.83 ± 10.89` |
+| `aseados_sdn_iot` | `binary` | **Local-Only Mean (Lower Bound, `N=3`)** | `89.82 ± 0.56` | **`89.71 ± 0.61`** | `88.72 ± 0.87` | `89.10 ± 5.24` | `9.58 ± 3.34` | `96.55 ± 0.28` | `89.75 ± 1.54` | `88.15 ± 0.09` |
+| `aseados_sdn_iot` | `multiclass` | **Centralized Pooled (Upper Bound)** | `86.07 ± 0.03` | **`58.92 ± 0.31`** | `—` | `88.95 ± 0.60` | `7.80 ± 0.27` | `95.95 ± 0.03` | `—` | `—` |
+| `aseados_sdn_iot` | `multiclass` | **`FedAvg` — IID (`N=3`)** | `84.64 ± 0.34` | **`58.41 ± 1.23`** | `—` | `93.56 ± 0.67` | `12.63 ± 0.65` | `95.39 ± 0.07` | `58.40 ± 1.21` | `57.93 ± 1.18` |
+| `aseados_sdn_iot` | `multiclass` | **`FedAvg` — Natural Non-IID (`N=3`)** | `84.51 ± 0.56` | **`57.36 ± 1.35`** | `—` | `93.89 ± 0.72` | `13.21 ± 0.68` | `95.30 ± 0.07` | `58.08 ± 1.22` | `53.20 ± 0.78` |
+| `aseados_sdn_iot` | `multiclass` | **`FedAvg` — Dirichlet $\alpha=1.0$ (`N=3`)** | `81.99 ± 0.86` | **`59.10 ± 1.31`** | `—` | `94.28 ± 1.79` | `15.70 ± 2.28` | `94.61 ± 0.14` | `58.04 ± 0.90` | `53.24 ± 1.37` |
+| `aseados_sdn_iot` | `multiclass` | **`FedAvg` — Dirichlet $\alpha=0.5$ (`N=3`)** | `82.34 ± 0.96` | **`60.13 ± 0.72`** | `—` | `90.22 ± 4.00` | `11.98 ± 4.06` | `94.24 ± 0.17` | `59.40 ± 1.48` | `54.78 ± 2.41` |
+| `aseados_sdn_iot` | `multiclass` | **`FedAvg` — Dirichlet $\alpha=0.1$ (`N=3`)** | `62.20 ± 4.44` | **`40.10 ± 1.39`** | `—` | `96.15 ± 5.21` | `45.32 ± 14.37` | `84.72 ± 2.58` | `39.77 ± 2.47` | `28.59 ± 5.71` |
+| `aseados_sdn_iot` | `multiclass` | **Local-Only Mean (Lower Bound, `N=3`)** | `83.37 ± 2.13` | **`52.19 ± 2.90`** | `—` | `85.89 ± 6.69` | `8.22 ± 3.50` | `94.12 ± 0.85` | `54.98 ± 2.13` | `52.84 ± 0.71` |
+| `cicids2017` | `binary` | **Centralized Pooled (Upper Bound)** | `98.33 ± 0.10` | **`96.66 ± 0.18`** | `94.30 ± 0.30` | `91.74 ± 0.82` | `0.50 ± 0.21` | `99.58 ± 0.08` | `—` | `—` |
+| `cicids2017` | `binary` | **`FedAvg` — Natural Non-IID (`N=3`)** | `95.06 ± 0.56` | **`90.50 ± 1.03`** | `83.99 ± 1.71` | `85.62 ± 4.62` | `3.27 ± 1.34` | `98.06 ± 0.17` | `89.96 ± 1.15` | `87.84 ± 1.98` |
+| `cicids2017` | `binary` | **`FedAvg` — Dirichlet $\alpha=0.5$ (`N=10`)** | `91.05 ± 2.26` | **`84.34 ± 2.63`** | `74.47 ± 3.85` | `87.64 ± 6.80` | `8.35 ± 3.74` | `95.44 ± 0.44` | `83.52 ± 2.75` | `74.81 ± 4.19` |
+| `cicids2017` | `binary` | **`FedAvg` — IID (`N=10`)** | `86.55 ± 1.37` | **`78.49 ± 1.56`** | `65.87 ± 2.16` | `84.88 ± 5.21` | `13.16 ± 2.41` | `94.07 ± 0.37` | `78.48 ± 1.56` | `78.18 ± 1.57` |
+| `cicids2017` | `multiclass` | **Centralized Pooled (Upper Bound)** | `98.29 ± 0.08` | **`57.88 ± 1.02`** | `—` | `92.57 ± 0.37` | `0.69 ± 0.05` | `97.60 ± 1.84` | `—` | `—` |
+| `cicids2017` | `multiclass` | **`FedAvg` — Natural Non-IID (`N=3`)** | `94.05 ± 0.90` | **`43.35 ± 1.58`** | `—` | `96.26 ± 0.42` | `6.14 ± 1.06` | `98.92 ± 0.08` | `44.91 ± 1.72` | `38.65 ± 2.68` |
+| `cicids2017` | `multiclass` | **`FedAvg` — Dirichlet $\alpha=0.5$ (`N=10`)** | `91.14 ± 0.72` | **`36.41 ± 0.59`** | `—` | `96.21 ± 0.73` | `9.57 ± 0.89` | `97.57 ± 0.25` | `36.31 ± 0.67` | `31.90 ± 1.48` |
+| `cicids2017` | `multiclass` | **`FedAvg` — IID (`N=10`)** | `86.65 ± 1.24` | **`34.99 ± 0.77`** | `—` | `96.90 ± 0.57` | `14.95 ± 1.50` | `97.79 ± 0.14` | `35.01 ± 0.77` | `34.25 ± 0.83` |
+
+#### 2. Quantified Loss to Federation & Loss to Non-IID Data (`Centralized` $\to$ `FedAvg IID` $\to$ `FedAvg Non-IID`)
+
+| Dataset | Task | Centralized Macro-F1 (%) | `FedAvg` IID Macro-F1 (%) | **Loss to Federation** (`Centralized - FedAvg IID`, pts) | `FedAvg` Natural (`N=3`) Macro-F1 (%) | **Loss to Domain Non-IID** (`FedAvg IID - Natural`, pts) | `FedAvg` Dirichlet $\alpha=0.1$ Macro-F1 (%) | **Loss to Extreme Non-IID** (`FedAvg IID - Dir 0.1`, pts) | **`FedAvg` Natural Gain over Local-Only** (pts) |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `insdn` | `binary` | `99.74%` | `99.16%` | **`0.57` pts** (`0.52` Acc pts) | `99.13%` | **`0.04` pts** ($p=0.625$) | `94.63%` | **`4.54` pts** ($p=0.0625$) | **`+0.19` pts** |
+| `insdn` | `multiclass` | `54.69%` | `65.90%` | **`-11.21` pts** (`+1.85` Acc loss) | `69.43%` | **`-3.53` pts** (`-0.10` Acc loss) | `31.84%` | **`34.05` pts** ($p=0.0625$) | **`+33.91` pts** |
+| `aseados_sdn_iot` | `binary` | `91.23%` | `90.63%` | **`0.60` pts** (`0.60` Acc pts) | `90.51%` | **`0.12` pts** ($p=0.125$) | `73.50%` | **`17.13` pts** ($p=0.0625$) | **`+0.80` pts** |
+| `aseados_sdn_iot` | `multiclass` | `58.92%` | `58.41%` | **`0.50` pts** (`1.43` Acc pts) | `57.36%` | **`1.05` pts** ($p=0.3125$) | `40.10%` | **`18.32` pts** ($p=0.0625$) | **`+5.17` pts** |
+| `cicids2017` | `binary` | `96.66%` | `78.49%` (`N=10`) | **`6.16` pts** (`Centralized - Natural N=3`) | `90.50%` | `—` | `84.34%` ($\alpha=0.5, N=10$) | `—` | `—` |
+| `cicids2017` | `multiclass` | `57.88%` | `34.99%` (`N=10`) | **`14.53` pts** (`Centralized - Natural N=3`) | `43.35%` | `—` | `36.41%` ($\alpha=0.5, N=10$) | `—` | **`+0.91` pts** |
+
+#### 3. Scalability Across Tenant Counts $N \in \{3, 5, 10\}$ and Data Heterogeneity (`Dirichlet` $\alpha \in \{0.1, 0.5, 1.0\}$ & `IID`)
+
+| Dataset | Task | Partition Regime | `N = 3` Macro-F1 (%) | `N = 5` Macro-F1 (%) | `N = 10` Macro-F1 (%) | `N = 3` Round to 95% Final F1 | `N = 10` Round to 95% Final F1 |
+|---|---|---|---:|---:|---:|---:|---:|
+| `insdn` | `binary` | **Natural Domain Non-IID** | **`99.13 ± 0.59`** | `—` | `—` | `Round 1.0` | `—` |
+| `insdn` | `binary` | **Stratified IID** | **`99.16 ± 0.68`** | **`99.02 ± 0.40`** | **`98.92 ± 0.16`** | `Round 1.0` | `Round 1.0` |
+| `insdn` | `binary` | **Dirichlet $\alpha = 1.0$ (Mild)** | **`99.20 ± 0.28`** | **`99.05 ± 0.35`** | **`98.75 ± 0.08`** | `Round 1.0` | `Round 1.0` |
+| `insdn` | `binary` | **Dirichlet $\alpha = 0.5$ (Moderate)** | **`99.10 ± 0.11`** | **`99.07 ± 0.32`** | **`98.77 ± 0.08`** | `Round 1.0` | `Round 1.0` |
+| `insdn` | `binary` | **Dirichlet $\alpha = 0.1$ (Extreme)** | **`94.63 ± 2.40`** | **`99.21 ± 0.32`** | **`98.96 ± 0.08`** | `Round 3.4` | `Round 4.2` |
+| `insdn` | `multiclass` | **Natural Domain Non-IID** | **`69.43 ± 1.22`** | `—` | `—` | `Round 9.0` | `—` |
+| `insdn` | `multiclass` | **Stratified IID** | **`65.90 ± 1.51`** | **`66.00 ± 1.23`** | **`61.44 ± 0.67`** | `Round 6.6` | `Round 9.0` |
+| `insdn` | `multiclass` | **Dirichlet $\alpha = 1.0$ (Mild)** | **`61.63 ± 1.72`** | **`62.61 ± 2.13`** | **`56.24 ± 2.57`** | `Round 10.2` | `Round 11.0` |
+| `insdn` | `multiclass` | **Dirichlet $\alpha = 0.5$ (Moderate)** | **`64.34 ± 0.75`** | **`58.92 ± 2.02`** | **`51.11 ± 1.58`** | `Round 12.6` | `Round 11.0` |
+| `insdn` | `multiclass` | **Dirichlet $\alpha = 0.1$ (Extreme)** | **`31.84 ± 2.69`** | **`52.17 ± 1.02`** | **`52.37 ± 0.90`** | `Round 10.2` | `Round 15.0` |
+| `aseados_sdn_iot` | `binary` | **Natural Domain Non-IID** | **`90.51 ± 0.07`** | `—` | `—` | `Round 1.0` | `—` |
+| `aseados_sdn_iot` | `binary` | **Stratified IID** | **`90.63 ± 0.11`** | **`89.87 ± 0.19`** | **`85.45 ± 0.43`** | `Round 1.0` | `Round 1.0` |
+| `aseados_sdn_iot` | `binary` | **Dirichlet $\alpha = 1.0$ (Mild)** | **`83.94 ± 2.97`** | `—` | **`82.83 ± 0.43`** | `Round 5.8` | `Round 1.0` |
+| `aseados_sdn_iot` | `binary` | **Dirichlet $\alpha = 0.5$ (Moderate)** | **`82.83 ± 1.43`** | **`82.44 ± 0.25`** | **`83.21 ± 0.47`** | `Round 6.6` | `Round 1.0` |
+| `aseados_sdn_iot` | `binary` | **Dirichlet $\alpha = 0.1$ (Extreme)** | **`73.50 ± 0.43`** | `—` | **`71.43 ± 2.86`** | `Round 5.4` | `Round 5.8` |
+| `aseados_sdn_iot` | `multiclass` | **Natural Domain Non-IID** | **`57.36 ± 1.35`** | `—` | `—` | `Round 15.0` | `—` |
+| `aseados_sdn_iot` | `multiclass` | **Stratified IID** | **`58.41 ± 1.23`** | **`55.66 ± 1.07`** | **`48.94 ± 0.50`** | `Round 18.6` | `Round 5.0` |
+| `aseados_sdn_iot` | `multiclass` | **Dirichlet $\alpha = 1.0$ (Mild)** | **`59.10 ± 1.31`** | `—` | **`46.46 ± 0.87`** | `Round 16.2` | `Round 5.8` |
+| `aseados_sdn_iot` | `multiclass` | **Dirichlet $\alpha = 0.5$ (Moderate)** | **`60.13 ± 0.72`** | **`55.57 ± 1.54`** | **`47.00 ± 1.13`** | `Round 15.0` | `Round 7.4` |
+| `aseados_sdn_iot` | `multiclass` | **Dirichlet $\alpha = 0.1$ (Extreme)** | **`40.10 ± 1.39`** | `—` | **`39.46 ± 1.55`** | `Round 12.6` | `Round 9.8` |
+
+#### 4. Communication Overhead (Exact Wire Serialization Bytes) & Wall-Clock Timing Breakdown
+
+- **Wire Serialization Format (`trustfed/fl/aggregator.py`):** `24`-byte binary header (`b"TFSD"` magic + uint32 version + uint32 `round_idx` + uint32 `num_samples` + uint64 `numel`) followed by contiguous IEEE-754 little-endian `float32` parameter bytes (`4 * numel`). Every active tenant downloads `1` global payload and uploads `1` local update payload per round (`2 * N * payload_bytes` per round).
+
+| Dataset | Task | Trainable Params (`numel`) | One-Way Payload (Bytes / KB) | Tenant Count (`N`) | Wire Traffic per Round (Bytes / MB) | Total 30-Round Traffic (MB) | Mean Local Train Time / Round (s) | Mean Server Aggregation Time / Round (ms) | Total 30-Round Wall Clock (s) |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `insdn` | `binary` | `43,554` | `174,240 B` (`170.16 KB`) | `N = 3` | `1,045,440 B` (`1.00 MB`) | **`31.36 MB`** | `0.565 s` | **`0.31 ms`** | `17.51 s` |
+| `insdn` | `binary` | `43,554` | `174,240 B` (`170.16 KB`) | `N = 5` | `1,742,400 B` (`1.66 MB`) | **`52.27 MB`** | `0.592 s` | **`0.41 ms`** | `18.14 s` |
+| `insdn` | `binary` | `43,554` | `174,240 B` (`170.16 KB`) | `N = 10` | `3,484,800 B` (`3.32 MB`) | **`104.54 MB`** | `0.646 s` | **`0.67 ms`** | `19.86 s` |
+| `insdn` | `multiclass` | `43,752` | `175,032 B` (`170.93 KB`) | `N = 3` | `1,050,192 B` (`1.00 MB`) | **`31.51 MB`** | `0.578 s` | **`0.31 ms`** | `17.92 s` |
+| `insdn` | `multiclass` | `43,752` | `175,032 B` (`170.93 KB`) | `N = 5` | `1,750,320 B` (`1.67 MB`) | **`52.51 MB`** | `0.598 s` | **`0.42 ms`** | `18.38 s` |
+| `insdn` | `multiclass` | `43,752` | `175,032 B` (`170.93 KB`) | `N = 10` | `3,500,640 B` (`3.34 MB`) | **`105.02 MB`** | `0.659 s` | **`0.68 ms`** | `20.25 s` |
+| `aseados_sdn_iot` | `binary` | `42,209` | `168,864 B` (`164.91 KB`) | `N = 3` | `1,013,184 B` (`0.97 MB`) | **`30.40 MB`** | `0.556 s` | **`0.29 ms`** | `17.24 s` |
+| `aseados_sdn_iot` | `binary` | `42,209` | `168,864 B` (`164.91 KB`) | `N = 5` | `1,688,640 B` (`1.61 MB`) | **`50.66 MB`** | `0.579 s` | **`0.40 ms`** | `17.75 s` |
+| `aseados_sdn_iot` | `binary` | `42,209` | `168,864 B` (`164.91 KB`) | `N = 10` | `3,377,280 B` (`3.22 MB`) | **`101.32 MB`** | `0.635 s` | **`0.64 ms`** | `19.47 s` |
+| `cicids2017` | `binary` | `41,066` | `164,288 B` (`160.44 KB`) | `N = 3` | `985,728 B` (`0.94 MB`) | **`29.57 MB`** | `0.552 s` | **`0.29 ms`** | `17.12 s` |
+| `cicids2017` | `binary` | `41,066` | `164,288 B` (`160.44 KB`) | `N = 10` | `3,285,760 B` (`3.13 MB`) | **`98.57 MB`** | `0.638 s` | **`0.65 ms`** | `19.58 s` |
+
+#### 5. Scaler Alignment Ablation (`local_per_tenant` vs. `global` / Federated Moments on `InSDN` Binary `natural_n3`)
+
+| Scaler Regime | Own-Tenant Test Macro-F1 Mean (%) | Global Test Macro-F1 (%) | Global Accuracy (%) | Global ADR (%) | Global FPR (%) |
+|---|---:|---:|---:|---:|---:|
+| **Aligned Global / Federated Moments (`global`)** | **`99.06 ± 0.63`** | **`99.13 ± 0.59`** | `99.21 ± 0.53` | `99.81 ± 0.14` | **`1.92 ± 1.60`** |
+| **Unaligned Per-Tenant Local Scaler (`local_per_tenant`)** | **`98.78 ± 0.23`** | **`91.02 ± 7.23`** | `92.60 ± 5.71` | `99.49 ± 0.29` | **`20.81 ± 16.51`** |
+

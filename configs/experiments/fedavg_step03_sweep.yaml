@@ -1,0 +1,11 @@
+experiment_id: fedavg_step03_sweep
+mode: step03_sweep
+aggregator: fedavg
+rounds: 30
+local_epochs: 3
+batch_size: 128
+lr: 0.001
+seeds: [0, 1, 2, 3, 4]
+max_train_samples: 24000
+output_dir: results/03_fedavg
+

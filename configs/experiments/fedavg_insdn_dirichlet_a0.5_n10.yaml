@@ -1,0 +1,26 @@
+experiment_id: fedavg_insdn_dirichlet_a0.5_n10
+dataset: insdn
+task: binary
+partition_type: dirichlet
+num_tenants: 10
+dirichlet_alpha: 0.5
+aggregator: fedavg
+rounds: 30
+local_epochs: 3
+batch_size: 128
+lr: 0.001
+weight_decay: 0.0001
+seeds: [0, 1, 2, 3, 4]
+scaler_mode: global
+max_train_samples: 24000
+eval_every: 5
+eval_per_tenant_every: 10
+model:
+  type: gru
+  hidden_dim: 64
+  num_layers: 2
+  dropout: 0.1
+  seq_mode: single_step
+  num_chunks: 1
+output_dir: results/03_fedavg
+

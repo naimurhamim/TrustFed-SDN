@@ -1,0 +1,25 @@
+experiment_id: fedavg_cicids2017_natural_n3
+dataset: cicids2017
+task: binary
+partition_type: natural
+num_tenants: 3
+aggregator: fedavg
+rounds: 30
+local_epochs: 3
+batch_size: 128
+lr: 0.001
+weight_decay: 0.0001
+seeds: [0, 1, 2, 3, 4]
+scaler_mode: global
+max_train_samples: 24000
+eval_every: 3
+eval_per_tenant_every: 10
+model:
+  type: gru
+  hidden_dim: 64
+  num_layers: 2
+  dropout: 0.2
+  seq_mode: feature_chunks
+  num_chunks: 4
+output_dir: results/03_fedavg
+
