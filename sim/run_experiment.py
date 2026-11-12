@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 import time
 from datetime import UTC, datetime
@@ -51,6 +52,13 @@ from trustfed.models import (  # noqa: E402
     build_model,
     get_default_device,
     set_all_seeds,
+)
+from trustfed.privacy import (  # noqa: E402
+    DPConfig,
+    DPFLClient,
+    allocate_budgets,
+    compute_sensitivity_scores,
+    evaluate_membership_inference,
 )
 
 SEEDS_DEFAULT: tuple[int, ...] = (0, 1, 2, 3, 4)
@@ -603,6 +611,18 @@ def run_experiment_from_config(
             batch_size=int(config.get("batch_size", 128)),
             lr=float(config.get("lr", 1e-3)),
             max_train_samples=int(config.get("max_train_samples", 24000)),
+            device=device,
+        )
+
+    if config.get("mode") == "step05_sweep":
+        out_dir = REPO_ROOT / str(config.get("output_dir", "results/05_dp"))
+        seeds = tuple(int(s) for s in config.get("seeds", SEEDS_DEFAULT))
+        return run_step05_full_sweep(
+            out_dir=out_dir,
+            seeds=seeds,
+            rounds=int(config.get("rounds", 12)),
+            local_epochs=int(config.get("local_epochs", 1)),
+            expected_batch_size=int(config.get("expected_batch_size", 512)),
             device=device,
         )
 
@@ -2483,10 +2503,1271 @@ def run_step04_full_sweep(
     return sweep_summary
 
 
+def run_single_seed_dp_fl(
+    bundle: dict[str, Any],
+    *,
+    dp_policy: str = "adaptive",
+    mean_epsilon: float | None = 2.0,
+    delta: float = 1e-5,
+    max_grad_norm: float = 0.5,
+    expected_batch_size: int = 512,
+    rounds: int = 12,
+    local_epochs: int = 1,
+    lr: float = 0.0025,
+    weight_decay: float = 1e-4,
+    max_train_samples: int = 12000,
+    seed: int = 0,
+    device: torch.device | None = None,
+) -> dict[str, Any]:
+    """Run one 3-tenant Natural Non-IID FL experiment with Uniform/Adaptive DP-SGD or No-DP."""
+    if device is None:
+        device = get_default_device(prefer_gpu=True)
+
+    sp = bundle["splits"]
+    y_train_all = sp["y_bin_train"]
+    y_val_all = sp["y_bin_val"]
+    y_test_all = sp["y_bin_test"]
+    X_train_global = sp["X_train_global_scaled"]
+    X_val_global = sp["X_val_global_scaled"]
+    X_test_global = sp["X_test_global_scaled"]
+    input_dim = int(X_train_global.shape[1])
+
+    train_map_raw, test_map = resolve_tenant_partitions(
+        bundle,
+        partition_type="natural",
+        num_tenants=3,
+        seed=42,
+    )
+    train_map = subsample_tenant_indices_stratified(
+        train_map_raw,
+        sp["y_mul_train"],
+        max_total_samples=max_train_samples,
+        seed=42 + seed,
+    )
+
+    tenant_names = sorted(train_map.keys())
+    num_tenants = len(tenant_names)
+    tenant_labels_raw = {t: sp["y_mul_train"][train_map_raw[t]] for t in tenant_names}
+    sensitivities = compute_sensitivity_scores(
+        tenant_labels_raw,
+        num_classes=len(bundle["class_order"]),
+    )
+    scores_map = {t: sensitivities[t].score for t in tenant_names}
+
+    pol_clean = dp_policy.strip().lower()
+    is_dp = pol_clean != "none" and mean_epsilon is not None and math.isfinite(float(mean_epsilon))
+    if is_dp:
+        eps_total = float(num_tenants) * float(mean_epsilon)
+        allocated_eps = allocate_budgets(scores_map, eps_total, policy=pol_clean)
+    else:
+        eps_total = float("inf")
+        allocated_eps = {t: float("inf") for t in tenant_names}
+
+    set_all_seeds(seed)
+    global_model = build_model(
+        "gru",
+        input_dim=input_dim,
+        num_classes=2,
+        hidden_dim=64,
+        num_layers=2,
+        dropout=0.0,
+        seq_mode="single_step",
+        num_chunks=1,
+    ).to(device)
+    init_flat = global_model.get_flat_params()
+
+    clients: list[FLClient] = []
+    for idx, t_name in enumerate(tenant_names):
+        tr_idx = train_map[t_name]
+        te_idx = test_map[t_name]
+        c_model = build_model(
+            "gru",
+            input_dim=input_dim,
+            num_classes=2,
+            hidden_dim=64,
+            num_layers=2,
+            dropout=0.0,
+            seq_mode="single_step",
+            num_chunks=1,
+        ).to(device)
+        c_model.set_flat_params(init_flat)
+
+        if is_dp:
+            dpcfg = DPConfig(
+                target_epsilon=float(allocated_eps[t_name]),
+                delta=float(delta),
+                max_grad_norm=float(max_grad_norm),
+                expected_batch_size=int(expected_batch_size),
+            )
+            clients.append(
+                DPFLClient(
+                    client_id=t_name,
+                    client_index=idx,
+                    model=c_model,
+                    X_train=X_train_global[tr_idx],
+                    y_train=y_train_all[tr_idx],
+                    dp_config=dpcfg,
+                    rounds=int(rounds),
+                    local_epochs=int(local_epochs),
+                    X_test=X_test_global[te_idx],
+                    y_test=y_test_all[te_idx],
+                    device=device,
+                )
+            )
+        else:
+            clients.append(
+                FLClient(
+                    client_id=t_name,
+                    client_index=idx,
+                    model=c_model,
+                    X_train=X_train_global[tr_idx],
+                    y_train=y_train_all[tr_idx],
+                    X_test=X_test_global[te_idx],
+                    y_test=y_test_all[te_idx],
+                    device=device,
+                )
+            )
+
+    server = FLServer(
+        global_model=global_model,
+        clients=clients,
+        aggregator=build_aggregator("fedavg"),
+        X_test=X_test_global,
+        y_test=y_test_all,
+        X_val=X_val_global,
+        y_val=y_val_all,
+        class_names=["Benign", "Attack"],
+        device=device,
+    )
+    fit_res = server.fit(
+        rounds=int(rounds),
+        local_epochs=int(local_epochs),
+        batch_size=int(expected_batch_size),
+        lr=float(lr),
+        weight_decay=float(weight_decay),
+        seed=int(seed),
+        eval_every=max(1, int(rounds) // 2),
+        eval_per_tenant_every=int(rounds),
+    )
+
+    # Evaluate per-tenant local & global MIA and collect per-tenant DP metadata
+    per_tenant_details: dict[str, dict[str, Any]] = {}
+    local_mia_aucs: list[float] = []
+    global_mia_aucs: list[float] = []
+    local_mia_accs: list[float] = []
+    global_mia_accs: list[float] = []
+
+    for c in clients:
+        t_name = c.client_id
+        tr_idx = train_map[t_name]
+        te_idx = test_map[t_name]
+        X_t_tr = X_train_global[tr_idx]
+        y_t_tr = y_train_all[tr_idx]
+        X_t_te = X_test_global[te_idx]
+        y_t_te = y_test_all[te_idx]
+
+        mia_local = evaluate_membership_inference(
+            c.model,
+            X_t_tr,
+            y_t_tr,
+            X_t_te,
+            y_t_te,
+            max_eval_samples=1500,
+            seed=42 + seed,
+            device=device,
+        )
+        mia_global = evaluate_membership_inference(
+            server.global_model,
+            X_t_tr,
+            y_t_tr,
+            X_t_te,
+            y_t_te,
+            max_eval_samples=1500,
+            seed=42 + seed,
+            device=device,
+        )
+        t_eval = c.evaluate_local_test(server.global_model)
+        ts = sensitivities[t_name]
+
+        if isinstance(c, DPFLClient):
+            eps_spent = float(c.epsilon_spent)
+            sigma_val = float(c.noise_multiplier)
+            q_val = float(c.sample_rate)
+            dp_steps_val = int(c.accountant.steps)
+        else:
+            eps_spent = float("inf")
+            sigma_val = 0.0
+            q_val = float(min(1.0, expected_batch_size / max(1, c.num_samples)))
+            dp_steps_val = 0
+
+        local_mia_aucs.append(float(mia_local["mia_auc"]))
+        global_mia_aucs.append(float(mia_global["mia_auc"]))
+        local_mia_accs.append(float(mia_local["mia_accuracy"]))
+        global_mia_accs.append(float(mia_global["mia_accuracy"]))
+
+        per_tenant_details[t_name] = {
+            "tenant": t_name,
+            "num_samples": int(c.num_samples),
+            "domain_profile": float(ts.domain_profile),
+            "rare_share": float(ts.rare_share),
+            "imbalance": float(ts.imbalance),
+            "data_score": float(ts.data_score),
+            "sensitivity_score": float(ts.score),
+            "allocated_epsilon": float(allocated_eps[t_name]),
+            "epsilon_spent": eps_spent,
+            "delta": float(delta) if is_dp else 0.0,
+            "noise_multiplier": sigma_val,
+            "sample_rate": q_val,
+            "dp_steps_total": dp_steps_val,
+            "f1_macro": float(t_eval.get("f1_macro", 0.0)),
+            "accuracy": float(t_eval.get("accuracy", 0.0)),
+            "mia_local": mia_local,
+            "mia_global": mia_global,
+        }
+
+    fit_res["dataset"] = bundle["dataset"]
+    fit_res["task"] = "binary"
+    fit_res["partition_type"] = "natural"
+    fit_res["num_tenants"] = int(num_tenants)
+    fit_res["dirichlet_alpha"] = None
+    fit_res["scaler_mode"] = "global"
+    fit_res["attack_name"] = "none"
+    fit_res["poison_fraction"] = 0.0
+    fit_res["num_malicious_clients"] = 0
+    fit_res["final_metrics"].setdefault("backdoor_asr", 0.0)
+    fit_res["final_metrics"].setdefault("clean_evasion_rate", 0.0)
+    fit_res["final_metrics"].setdefault("asr_gain", 0.0)
+    fit_res["final_metrics"].setdefault("mean_honest_false_rejection_rate", 0.0)
+    fit_res["final_metrics"].setdefault("mean_malicious_rejection_rate", 0.0)
+    fit_res["dp_policy"] = pol_clean
+    fit_res["mean_epsilon"] = float(mean_epsilon) if is_dp and mean_epsilon is not None else None
+    fit_res["epsilon_total"] = float(eps_total) if is_dp else None
+    fit_res["delta"] = float(delta) if is_dp else 0.0
+    fit_res["max_grad_norm"] = float(max_grad_norm) if is_dp else None
+    fit_res["per_tenant_dp"] = per_tenant_details
+    fit_res["final_metrics"]["mia_local_auc_mean"] = float(np.mean(local_mia_aucs))
+    fit_res["final_metrics"]["mia_global_auc_mean"] = float(np.mean(global_mia_aucs))
+    fit_res["final_metrics"]["mia_local_acc_mean"] = float(np.mean(local_mia_accs))
+    fit_res["final_metrics"]["mia_global_acc_mean"] = float(np.mean(global_mia_accs))
+    fit_res["final_metrics"]["most_sensitive_tenant_f1"] = float(
+        per_tenant_details["tenant_1_finance"]["f1_macro"]
+    )
+    fit_res["final_metrics"]["most_sensitive_tenant_acc"] = float(
+        per_tenant_details["tenant_1_finance"]["accuracy"]
+    )
+    return fit_res
+
+
+def run_rare_cohort_mia_audit(
+    bundle: dict[str, Any],
+    *,
+    dp_policy: str,
+    mean_epsilon: float | None,
+    scores_map: dict[str, float],
+    delta: float = 1e-5,
+    seed: int = 0,
+    device: torch.device | None = None,
+) -> dict[str, Any]:
+    """Run high-risk rare-attack cohort MIA audit on `tenant_1_finance` for a single seed."""
+    if device is None:
+        device = get_default_device(prefer_gpu=True)
+    sp = bundle["splits"]
+    train_map_raw, test_map = resolve_tenant_partitions(
+        bundle,
+        partition_type="natural",
+        num_tenants=3,
+        seed=42,
+    )
+    rng = np.random.default_rng(42 + int(seed) * 97)
+    fin_tr = train_map_raw["tenant_1_finance"]
+    fin_te = test_map["tenant_1_finance"]
+    y_tr_m = sp["y_mul_train"][fin_tr]
+    y_te_m = sp["y_mul_test"][fin_te]
+
+    m_list, nm_list = [], []
+    for c_id in np.unique(y_tr_m):
+        tr_c = fin_tr[y_tr_m == c_id]
+        te_c = fin_te[y_te_m == c_id]
+        k = min(12, len(tr_c), len(te_c))
+        if k >= 2:
+            m_list.append(rng.choice(tr_c, size=k, replace=False))
+            nm_list.append(rng.choice(te_c, size=k, replace=False))
+    m_idx = np.concatenate(m_list)
+    nm_idx = np.concatenate(nm_list)
+    X_mem = sp["X_train_global_scaled"][m_idx]
+    y_mem = sp["y_mul_train"][m_idx]
+    X_non = sp["X_test_global_scaled"][nm_idx]
+    y_non = sp["y_mul_test"][nm_idx]
+    num_cls = len(bundle["class_order"])
+
+    set_all_seeds(seed)
+    m = build_model(
+        "gru",
+        input_dim=int(X_mem.shape[1]),
+        num_classes=num_cls,
+        hidden_dim=64,
+        num_layers=2,
+        dropout=0.0,
+        seq_mode="single_step",
+        num_chunks=1,
+    ).to(device)
+    init_flat = m.get_flat_params()
+
+    pol_clean = dp_policy.strip().lower()
+    is_dp = pol_clean != "none" and mean_epsilon is not None and math.isfinite(float(mean_epsilon))
+    if not is_dp:
+        c = FLClient("tenant_1_finance", 0, m, X_mem, y_mem, device=device)
+        c.local_train(
+            init_flat,
+            round_idx=1,
+            local_epochs=45,
+            batch_size=32,
+            lr=0.008,
+            weight_decay=0.0,
+            seed=seed,
+        )
+        eps_alloc = float("inf")
+        sigma_val = 0.0
+    else:
+        alloc = allocate_budgets(scores_map, 3.0 * float(mean_epsilon), policy=pol_clean)
+        eps_alloc = float(alloc["tenant_1_finance"])
+        dpcfg = DPConfig(
+            target_epsilon=eps_alloc,
+            delta=float(delta),
+            max_grad_norm=0.5,
+            expected_batch_size=32,
+        )
+        c = DPFLClient(
+            "tenant_1_finance",
+            0,
+            m,
+            X_mem,
+            y_mem,
+            dp_config=dpcfg,
+            rounds=1,
+            local_epochs=25,
+            device=device,
+        )
+        c.local_train(
+            init_flat,
+            round_idx=1,
+            local_epochs=25,
+            batch_size=32,
+            lr=0.008,
+            weight_decay=0.0,
+            seed=seed,
+        )
+        sigma_val = float(c.noise_multiplier)
+
+    mia = evaluate_membership_inference(
+        c.model,
+        X_mem,
+        y_mem,
+        X_non,
+        y_non,
+        seed=42 + seed,
+        device=device,
+    )
+    mia["allocated_epsilon_finance"] = eps_alloc
+    mia["noise_multiplier_finance"] = sigma_val
+    return mia
+
+
+def plot_privacy_utility_tradeoff(
+    sweep_05: dict[str, Any],
+    out_path: Path,
+) -> None:
+    """Plot Global & Per-Tenant Macro-F1 (%) vs. Mean Per-Tenant Budget eps in {0.5, 1, 2, 4, 8, inf}."""
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig, axes = plt.subplots(2, 2, figsize=(14.5, 9.2), dpi=160)
+
+    eps_grid = [0.5, 1.0, 2.0, 4.0, 8.0]
+    datasets = [
+        ("insdn", "InSDN (SDN Native, Natural Non-IID, N=3)"),
+        ("aseados_sdn_iot", "ASEADOS-SDN-IoT (2026 Modern SDN-IoT, Natural Non-IID, N=3)"),
+    ]
+
+    for col_idx, (ds_key, ds_title) in enumerate(datasets):
+        ds_grid = sweep_05["datasets"].get(ds_key, {})
+        no_dp = ds_grid.get("none__eps_inf", {})
+        no_dp_f1 = float(no_dp.get("metrics", {}).get("f1_macro", {}).get("mean", 0.0)) * 100.0
+
+        # Top row: Global Test Macro-F1 (%) — Uniform vs. Adaptive vs. No-DP
+        ax_top = axes[0, col_idx]
+        ax_top.axhline(
+            no_dp_f1,
+            color="#111111",
+            linestyle="--",
+            linewidth=1.8,
+            label=f"No-DP Baseline (ε = ∞): {no_dp_f1:.2f}%",
+        )
+        for pol_key, pol_label, color, marker, lstyle in [
+            ("uniform", "Uniform Budget (ε_i = ε_total / N)", "#d62728", "s", "--"),
+            ("adaptive", "Adaptive Budget (ε_i ∝ 1 / s_i)", "#1f77b4", "o", "-"),
+        ]:
+            xs, means, stds = [], [], []
+            for eps_val in eps_grid:
+                entry = ds_grid.get(f"{pol_key}__eps_{eps_val:.1f}")
+                if not entry:
+                    continue
+                xs.append(eps_val)
+                means.append(float(entry["metrics"]["f1_macro"]["mean"]) * 100.0)
+                stds.append(float(entry["metrics"]["f1_macro"]["std"]) * 100.0)
+            if xs:
+                ax_top.errorbar(
+                    xs,
+                    means,
+                    yerr=stds,
+                    label=pol_label,
+                    color=color,
+                    marker=marker,
+                    linestyle=lstyle,
+                    linewidth=2.2,
+                    markersize=6.5,
+                    capsize=4.0,
+                )
+        ax_top.set_xscale("log", base=2)
+        ax_top.set_xticks(eps_grid)
+        ax_top.set_xticklabels([str(e) for e in eps_grid])
+        ax_top.set_xlabel("Mean Per-Tenant Privacy Budget ε̄ (δ = 10⁻⁵, log₂ scale)")
+        ax_top.set_ylabel("Global Test Macro-F1 (%)")
+        ax_top.set_title(
+            f"{ds_title}\nGlobal Detection Macro-F1 vs. Privacy Budget ε̄",
+            fontsize=10.2,
+            fontweight="bold",
+        )
+        ax_top.grid(True, linestyle="--", alpha=0.35)
+        ax_top.legend(loc="lower right", fontsize=8.4, framealpha=0.92)
+
+        # Bottom row: Per-Tenant Test Macro-F1 (%) under Adaptive vs Uniform DP
+        ax_bot = axes[1, col_idx]
+        tenant_specs = [
+            ("tenant_1_finance", "Finance (s₁=1.00, Most Sensitive)", "#c0392b"),
+            ("tenant_2_healthcare", "Healthcare (High Sensitivity)", "#8e44ad"),
+            ("tenant_3_education", "Education (Lower Sensitivity)", "#27ae60"),
+        ]
+        for t_key, t_lbl, color in tenant_specs:
+            for pol_key, lstyle, marker, pol_short in [
+                ("adaptive", "-", "o", "Adaptive"),
+                ("uniform", ":", "s", "Uniform"),
+            ]:
+                xs, means = [], []
+                for eps_val in eps_grid:
+                    entry = ds_grid.get(f"{pol_key}__eps_{eps_val:.1f}")
+                    if not entry:
+                        continue
+                    t_info = entry.get("per_tenant_summary", {}).get(t_key, {})
+                    xs.append(eps_val)
+                    means.append(float(t_info.get("f1_macro_mean", 0.0)) * 100.0)
+                if xs:
+                    ax_bot.plot(
+                        xs,
+                        means,
+                        label=f"{t_lbl} — {pol_short}",
+                        color=color,
+                        linestyle=lstyle,
+                        marker=marker,
+                        linewidth=2.0 if pol_key == "adaptive" else 1.5,
+                        markersize=5.5,
+                        alpha=0.95 if pol_key == "adaptive" else 0.72,
+                    )
+        ax_bot.set_xscale("log", base=2)
+        ax_bot.set_xticks(eps_grid)
+        ax_bot.set_xticklabels([str(e) for e in eps_grid])
+        ax_bot.set_xlabel("Mean Per-Tenant Privacy Budget ε̄ (δ = 10⁻⁵, log₂ scale)")
+        ax_bot.set_ylabel("Per-Tenant Local Test Macro-F1 (%)")
+        ax_bot.set_title(
+            f"{ds_title}\nPer-Tenant Macro-F1 Trajectory (Adaptive Solid vs. Uniform Dotted)",
+            fontsize=10.2,
+            fontweight="bold",
+        )
+        ax_bot.grid(True, linestyle="--", alpha=0.35)
+        ax_bot.legend(loc="lower right", fontsize=7.5, ncol=2, framealpha=0.92)
+
+    fig.suptitle(
+        "Step 05 — Privacy-Utility Trade-Off Across ε̄ ∈ {0.5, 1, 2, 4, 8, ∞}: Adaptive vs. Uniform Per-Tenant DP-SGD (5 Seeds)",
+        fontsize=11.8,
+        fontweight="bold",
+        y=0.99,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.96))
+    fig.savefig(out_path)
+    plt.close(fig)
+
+
+def plot_per_tenant_dp_comparison(
+    sweep_05: dict[str, Any],
+    out_path: Path,
+) -> None:
+    """Plot per-tenant sensitivity score breakdown, allocated eps_i, and calibrated sigma_i at eps_bar=2.0."""
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig, axes = plt.subplots(1, 3, figsize=(15.6, 5.2), dpi=160)
+
+    insdn_grid = sweep_05["datasets"].get("insdn", {})
+    adap_2 = insdn_grid.get("adaptive__eps_2.0", {}).get("per_tenant_summary", {})
+    unif_2 = insdn_grid.get("uniform__eps_2.0", {}).get("per_tenant_summary", {})
+
+    tenants = [
+        ("tenant_1_finance", "Tenant 1:\nFinance"),
+        ("tenant_2_healthcare", "Tenant 2:\nHealthcare"),
+        ("tenant_3_education", "Tenant 3:\nEducation"),
+    ]
+    x = np.arange(len(tenants))
+    w = 0.25
+
+    # Panel A: Sensitivity Score Breakdown (Domain Profile, Data Score, Hybrid Score s_i)
+    ax0 = axes[0]
+    dom_vals = [float(adap_2.get(t, {}).get("domain_profile", 0.0)) for t, _ in tenants]
+    dat_vals = [float(adap_2.get(t, {}).get("data_score", 0.0)) for t, _ in tenants]
+    hyb_vals = [float(adap_2.get(t, {}).get("sensitivity_score", 0.0)) for t, _ in tenants]
+
+    b_dom = ax0.bar(
+        x - w, dom_vals, w, label="Domain Profile (0.5 weight)", color="#34495e", edgecolor="white"
+    )
+    b_dat = ax0.bar(
+        x,
+        dat_vals,
+        w,
+        label="Data Vulnerability Score (0.5 weight)",
+        color="#e67e22",
+        edgecolor="white",
+    )
+    b_hyb = ax0.bar(
+        x + w,
+        hyb_vals,
+        w,
+        label="Hybrid Sensitivity Score s_i",
+        color="#c0392b",
+        edgecolor="white",
+    )
+    for rects in (b_dom, b_dat, b_hyb):
+        for r in rects:
+            h = r.get_height()
+            ax0.annotate(
+                f"{h:.2f}",
+                xy=(r.get_x() + r.get_width() / 2, h),
+                xytext=(0, 3),
+                textcoords="offset points",
+                ha="center",
+                va="bottom",
+                fontsize=7.8,
+                fontweight="bold",
+            )
+    ax0.set_xticks(x)
+    ax0.set_xticklabels([lbl for _, lbl in tenants], fontsize=9.2)
+    ax0.set_ylim(0.0, 1.18)
+    ax0.set_ylabel("Normalized Score in [0.5, 1.0]")
+    ax0.set_title(
+        "Hybrid Per-Tenant Sensitivity Score (s_i)\nBreakdown on InSDN (Natural Non-IID)",
+        fontsize=10.0,
+        fontweight="bold",
+    )
+    ax0.grid(axis="y", linestyle="--", alpha=0.35)
+    ax0.legend(loc="upper right", fontsize=8.0, framealpha=0.92)
+
+    # Panel B: Allocated Privacy Budget eps_i at eps_bar = 2.0 (eps_total = 6.0)
+    ax1 = axes[1]
+    w2 = 0.34
+    u_eps = [float(unif_2.get(t, {}).get("allocated_epsilon", 2.0)) for t, _ in tenants]
+    a_eps = [float(adap_2.get(t, {}).get("allocated_epsilon", 2.0)) for t, _ in tenants]
+
+    r_ue = ax1.bar(
+        x - w2 / 2,
+        u_eps,
+        w2,
+        label="Uniform Policy (ε_i = 2.000)",
+        color="#95a5a6",
+        edgecolor="white",
+    )
+    r_ae = ax1.bar(
+        x + w2 / 2,
+        a_eps,
+        w2,
+        label="Adaptive Policy (ε_i ∝ 1/s_i, Σε_i = 6.0)",
+        color="#2980b9",
+        edgecolor="white",
+    )
+    for rects in (r_ue, r_ae):
+        for r in rects:
+            h = r.get_height()
+            ax1.annotate(
+                f"ε={h:.2f}",
+                xy=(r.get_x() + r.get_width() / 2, h),
+                xytext=(0, 3),
+                textcoords="offset points",
+                ha="center",
+                va="bottom",
+                fontsize=8.0,
+                fontweight="bold",
+            )
+    ax1.set_xticks(x)
+    ax1.set_xticklabels([lbl for _, lbl in tenants], fontsize=9.2)
+    ax1.set_ylim(0.0, max(u_eps + a_eps) * 1.22)
+    ax1.set_ylabel("Allocated Privacy Budget ε_i (Lower = Stronger Privacy)")
+    ax1.set_title(
+        "Per-Tenant Privacy Budget Allocation at ε̄ = 2.0\n(Finance Gets 28.8% Tighter ε₁ = 1.42 vs. 2.00)",
+        fontsize=10.0,
+        fontweight="bold",
+    )
+    ax1.grid(axis="y", linestyle="--", alpha=0.35)
+    ax1.legend(loc="upper left", fontsize=8.0, framealpha=0.92)
+
+    # Panel C: Calibrated Noise Multiplier sigma_i across Mean Budgets eps_bar in {0.5, 1, 2, 4, 8}
+    ax2 = axes[2]
+    eps_grid = [0.5, 1.0, 2.0, 4.0, 8.0]
+    for t_key, t_lbl, color, marker in [
+        ("tenant_1_finance", "Finance (Adaptive σ₁)", "#c0392b", "o"),
+        ("tenant_2_healthcare", "Healthcare (Adaptive σ₂)", "#8e44ad", "^"),
+        ("tenant_3_education", "Education (Adaptive σ₃)", "#27ae60", "D"),
+    ]:
+        sigs = []
+        for eps_val in eps_grid:
+            t_sum = (
+                insdn_grid.get(f"adaptive__eps_{eps_val:.1f}", {})
+                .get("per_tenant_summary", {})
+                .get(t_key, {})
+            )
+            sigs.append(float(t_sum.get("noise_multiplier", 0.0)))
+        ax2.plot(
+            eps_grid, sigs, label=t_lbl, color=color, marker=marker, linewidth=2.1, markersize=6.0
+        )
+
+    unif_fin_sigs = [
+        float(
+            insdn_grid.get(f"uniform__eps_{e:.1f}", {})
+            .get("per_tenant_summary", {})
+            .get("tenant_1_finance", {})
+            .get("noise_multiplier", 0.0)
+        )
+        for e in eps_grid
+    ]
+    ax2.plot(
+        eps_grid,
+        unif_fin_sigs,
+        label="Finance (Uniform σ₁)",
+        color="#c0392b",
+        linestyle="--",
+        marker="s",
+        linewidth=1.7,
+        alpha=0.75,
+    )
+    ax2.set_xscale("log", base=2)
+    ax2.set_xticks(eps_grid)
+    ax2.set_xticklabels([str(e) for e in eps_grid])
+    ax2.set_xlabel("Mean Per-Tenant Budget ε̄ (δ = 10⁻⁵)")
+    ax2.set_ylabel("Calibrated Gaussian Noise Multiplier σ_i")
+    ax2.set_title(
+        "RDP-Calibrated Noise Multiplier σ_i vs. Budget ε̄\n(Higher σ_i Enforces Stronger Record-Level Protection)",
+        fontsize=10.0,
+        fontweight="bold",
+    )
+    ax2.grid(True, linestyle="--", alpha=0.35)
+    ax2.legend(loc="upper right", fontsize=8.0, framealpha=0.92)
+
+    fig.suptitle(
+        "Step 05 — Per-Tenant Sensitivity Scoring (s_i), Budget Allocation (ε_i), and RDP Noise Calibration (σ_i)",
+        fontsize=11.8,
+        fontweight="bold",
+        y=0.99,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
+    fig.savefig(out_path)
+    plt.close(fig)
+
+
+def plot_mia_attack_evaluation(
+    sweep_05: dict[str, Any],
+    out_path: Path,
+) -> None:
+    """Plot Membership Inference Attack (MIA) AUC & Accuracy across standard FL and rare-cohort audit."""
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig, axes = plt.subplots(1, 2, figsize=(14.4, 5.5), dpi=160)
+
+    eps_grid = [0.5, 1.0, 2.0, 4.0, 8.0]
+    insdn_grid = sweep_05["datasets"].get("insdn", {})
+    cohort_insdn = sweep_05["rare_cohort_mia"].get("insdn", {})
+
+    # Panel A: High-Risk Rare-Attack Cohort MIA Audit on Finance (InSDN, 5 Seeds)
+    ax0 = axes[0]
+    no_dp_c = cohort_insdn.get("none__eps_inf", {})
+    no_dp_auc = float(no_dp_c.get("mia_auc_mean", 0.5)) * 100.0
+    no_dp_acc = float(no_dp_c.get("mia_accuracy_mean", 0.5)) * 100.0
+
+    ax0.axhline(
+        50.0,
+        color="#7f8c8d",
+        linestyle=":",
+        linewidth=1.6,
+        label="Ideal Random-Guessing Baseline (50.0%)",
+    )
+    ax0.axhline(
+        no_dp_auc,
+        color="#111111",
+        linestyle="--",
+        linewidth=1.8,
+        label=f"No-DP Baseline MIA AUC ({no_dp_auc:.2f}%)",
+    )
+    ax0.axhline(
+        no_dp_acc,
+        color="#555555",
+        linestyle="-.",
+        linewidth=1.4,
+        label=f"No-DP Baseline MIA Accuracy ({no_dp_acc:.2f}%)",
+    )
+
+    for pol_key, pol_lbl, color, marker in [
+        ("uniform", "Uniform DP — Finance MIA AUC", "#e74c3c", "s"),
+        ("adaptive", "Adaptive DP — Finance MIA AUC (Tighter ε₁)", "#1f77b4", "o"),
+    ]:
+        xs, aucs, stds = [], [], []
+        for e_val in eps_grid:
+            c_entry = cohort_insdn.get(f"{pol_key}__eps_{e_val:.1f}")
+            if not c_entry:
+                continue
+            xs.append(e_val)
+            aucs.append(float(c_entry["mia_auc_mean"]) * 100.0)
+            stds.append(float(c_entry["mia_auc_std"]) * 100.0)
+        if xs:
+            ax0.errorbar(
+                xs,
+                aucs,
+                yerr=stds,
+                label=pol_lbl,
+                color=color,
+                marker=marker,
+                linewidth=2.2,
+                markersize=6.5,
+                capsize=3.5,
+            )
+
+    ax0.set_xscale("log", base=2)
+    ax0.set_xticks(eps_grid)
+    ax0.set_xticklabels([str(e) for e in eps_grid])
+    ax0.set_ylim(48.5, max(64.0, no_dp_acc + 4.0))
+    ax0.set_xlabel("Mean Per-Tenant Privacy Budget ε̄ (δ = 10⁻⁵, log₂ scale)")
+    ax0.set_ylabel("Membership Inference Attack Score (%) — Lower is More Private")
+    ax0.set_title(
+        "High-Risk Rare-Attack Cohort MIA Audit (Tenant 1: Finance)\nAdaptive DP Suppresses Leakage Faster Than Uniform DP",
+        fontsize=10.0,
+        fontweight="bold",
+    )
+    ax0.grid(True, linestyle="--", alpha=0.35)
+    ax0.legend(loc="upper left", fontsize=8.0, framealpha=0.92)
+
+    # Panel B: Standard Federated Regime Local vs. Global Model MIA AUC & Accuracy
+    ax1 = axes[1]
+    regimes_bar = [
+        ("none__eps_inf", "No-DP\n(ε = ∞)"),
+        ("uniform__eps_8.0", "Uniform\n(ε̄ = 8.0)"),
+        ("adaptive__eps_8.0", "Adaptive\n(ε̄ = 8.0)"),
+        ("uniform__eps_2.0", "Uniform\n(ε̄ = 2.0)"),
+        ("adaptive__eps_2.0", "Adaptive\n(ε̄ = 2.0)"),
+        ("adaptive__eps_0.5", "Adaptive\n(ε̄ = 0.5)"),
+    ]
+    xb = np.arange(len(regimes_bar))
+    wb = 0.26
+
+    loc_aucs, glob_aucs, coh_aucs = [], [], []
+    for r_key, _ in regimes_bar:
+        e_fl = insdn_grid.get(r_key, {}).get("metrics", {})
+        e_ch = cohort_insdn.get(r_key, {})
+        loc_aucs.append(float(e_fl.get("mia_local_auc_mean", {}).get("mean", 0.5)) * 100.0)
+        glob_aucs.append(float(e_fl.get("mia_global_auc_mean", {}).get("mean", 0.5)) * 100.0)
+        coh_aucs.append(float(e_ch.get("mia_auc_mean", 0.5)) * 100.0)
+
+    ax1.axhline(50.0, color="#7f8c8d", linestyle=":", linewidth=1.5, label="Random Guess (50.0%)")
+    b1 = ax1.bar(
+        xb - wb,
+        loc_aucs,
+        wb,
+        label="Full-Partition Local Model MIA AUC",
+        color="#2980b9",
+        edgecolor="white",
+    )
+    b2 = ax1.bar(
+        xb,
+        glob_aucs,
+        wb,
+        label="Full-Partition Global Model MIA AUC",
+        color="#27ae60",
+        edgecolor="white",
+    )
+    b3 = ax1.bar(
+        xb + wb,
+        coh_aucs,
+        wb,
+        label="Rare-Attack Cohort Local MIA AUC (Finance)",
+        color="#c0392b",
+        edgecolor="white",
+    )
+
+    for rects in (b1, b2, b3):
+        for r in rects:
+            h = r.get_height()
+            ax1.annotate(
+                f"{h:.1f}",
+                xy=(r.get_x() + r.get_width() / 2, h),
+                xytext=(0, 2),
+                textcoords="offset points",
+                ha="center",
+                va="bottom",
+                fontsize=7.2,
+            )
+
+    ax1.set_xticks(xb)
+    ax1.set_xticklabels([lbl for _, lbl in regimes_bar], fontsize=8.8)
+    ax1.set_ylim(45.0, 64.0)
+    ax1.set_ylabel("Membership Inference Attack AUC (%)")
+    ax1.set_title(
+        "Empirical MIA Audit: Full-Partition (Local & Global Models)\nvs. High-Risk Rare-Attack Cohort (InSDN, 5 Seeds)",
+        fontsize=10.0,
+        fontweight="bold",
+    )
+    ax1.grid(axis="y", linestyle="--", alpha=0.35)
+    ax1.legend(loc="upper right", fontsize=8.0, framealpha=0.92)
+
+    fig.suptitle(
+        "Step 05 — Empirical Privacy Evaluation via White-Box & Black-Box Membership Inference Attacks (5 Seeds)",
+        fontsize=11.6,
+        fontweight="bold",
+        y=0.99,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
+    fig.savefig(out_path)
+    plt.close(fig)
+
+
+def run_step05_full_sweep(
+    *,
+    out_dir: Path | None = None,
+    seeds: tuple[int, ...] = SEEDS_DEFAULT,
+    rounds: int = 12,
+    local_epochs: int = 1,
+    expected_batch_size: int = 512,
+    delta: float = 1e-5,
+    max_train_samples: int = 12000,
+    device: torch.device | None = None,
+) -> dict[str, Any]:
+    """Execute the complete Step 05 5-seed Adaptive & Uniform Per-Tenant DP-SGD & MIA benchmark."""
+    if device is None:
+        device = get_default_device(prefer_gpu=True)
+    target_dir = out_dir or (REPO_ROOT / "results" / "05_dp")
+    target_dir.mkdir(parents=True, exist_ok=True)
+
+    datasets_cfg = {
+        "insdn": {"lr": 0.0025, "max_grad_norm": 0.5},
+        "aseados_sdn_iot": {"lr": 0.006, "max_grad_norm": 0.8},
+    }
+    eps_values = [0.5, 1.0, 2.0, 4.0, 8.0]
+
+    # Build jobs: (ds_name, cfg_key, dp_policy, mean_eps)
+    jobs: list[tuple[str, str, str, float | None]] = []
+    for ds_name in ("insdn", "aseados_sdn_iot"):
+        jobs.append((ds_name, "none__eps_inf", "none", None))
+        for eps_val in eps_values:
+            for pol in ("uniform", "adaptive"):
+                jobs.append((ds_name, f"{pol}__eps_{eps_val:.1f}", pol, eps_val))
+
+    sweep_summary: dict[str, Any] = {
+        "step": "05_dp",
+        "timestamp_utc": datetime.now(UTC).isoformat(),
+        "device": str(device),
+        "gpu_name": torch.cuda.get_device_name(0) if device.type == "cuda" else "CPU",
+        "dp_defaults": {
+            "granularity": "record_level_dp_sgd",
+            "accountant": "rdp_sampled_gaussian_mironov2019_balle2020",
+            "delta": float(delta),
+            "num_tenants": 3,
+            "partition_type": "natural",
+            "aggregator": "fedavg",
+            "rounds": int(rounds),
+            "local_epochs": int(local_epochs),
+            "expected_batch_size": int(expected_batch_size),
+            "max_train_samples_stratified": int(max_train_samples),
+            "seeds": list(seeds),
+            "mean_epsilon_sweep": eps_values,
+            "sensitivity_formula": "s_i = 0.5 * domain_profile_i + 0.5 * data_score_i",
+            "budget_policy_formula": "eps_i = eps_total * (1 / s_i) / sum_j(1 / s_j)",
+        },
+        "datasets": {"insdn": {}, "aseados_sdn_iot": {}},
+        "rare_cohort_mia": {"insdn": {}, "aseados_sdn_iot": {}},
+        "statistical_tests": {},
+    }
+
+    ckpt_path = target_dir / "summary_checkpoint.json"
+    if ckpt_path.exists():
+        try:
+            ckpt = json.loads(ckpt_path.read_text(encoding="utf-8"))
+            for ds_k in ("insdn", "aseados_sdn_iot"):
+                sweep_summary["datasets"][ds_k] = ckpt.get("datasets", {}).get(ds_k, {})
+                sweep_summary["rare_cohort_mia"][ds_k] = ckpt.get("rare_cohort_mia", {}).get(
+                    ds_k, {}
+                )
+        except Exception:
+            pass
+
+    bundles_cache: dict[str, dict[str, Any]] = {}
+    t_sweep_start = time.perf_counter()
+    total_jobs = len(jobs)
+
+    for job_idx, (ds_name, cfg_key, pol, mean_eps) in enumerate(jobs, start=1):
+        if (
+            cfg_key in sweep_summary["datasets"][ds_name]
+            and cfg_key in sweep_summary["rare_cohort_mia"][ds_name]
+        ):
+            print(
+                f"[Step 05] ({job_idx:2d}/{total_jobs}) Resuming from checkpoint: "
+                f"{ds_name} | {cfg_key} already done.",
+                flush=True,
+            )
+            continue
+
+        if ds_name not in bundles_cache:
+            bundles_cache[ds_name] = load_dataset_artifacts(ds_name)
+        bundle = bundles_cache[ds_name]
+        dcfg = datasets_cfg[ds_name]
+
+        t_job = time.perf_counter()
+        seed_runs: list[dict[str, Any]] = []
+        cohort_runs: list[dict[str, Any]] = []
+
+        for s in seeds:
+            sr = run_single_seed_dp_fl(
+                bundle,
+                dp_policy=pol,
+                mean_epsilon=mean_eps,
+                delta=delta,
+                max_grad_norm=float(dcfg["max_grad_norm"]),
+                expected_batch_size=expected_batch_size,
+                rounds=rounds,
+                local_epochs=local_epochs,
+                lr=float(dcfg["lr"]),
+                max_train_samples=max_train_samples,
+                seed=s,
+                device=device,
+            )
+            seed_runs.append(sr)
+            scores_map = {t: d["sensitivity_score"] for t, d in sr["per_tenant_dp"].items()}
+            c_mia = run_rare_cohort_mia_audit(
+                bundle,
+                dp_policy=pol,
+                mean_epsilon=mean_eps,
+                scores_map=scores_map,
+                delta=delta,
+                seed=s,
+                device=device,
+            )
+            cohort_runs.append(c_mia)
+
+        reg_summary = summarize_multi_seed_fl(seed_runs)
+        reg_summary["dp_policy"] = pol
+        reg_summary["mean_epsilon"] = float(mean_eps) if mean_eps is not None else None
+        reg_summary["epsilon_total"] = 3.0 * float(mean_eps) if mean_eps is not None else None
+        reg_summary["delta"] = float(delta) if mean_eps is not None else 0.0
+        reg_summary["seed_f1_macros"] = [float(sr["final_metrics"]["f1_macro"]) for sr in seed_runs]
+        reg_summary["seed_accuracies"] = [
+            float(sr["final_metrics"]["accuracy"]) for sr in seed_runs
+        ]
+        reg_summary["seed_mia_local_aucs"] = [
+            float(sr["final_metrics"]["mia_local_auc_mean"]) for sr in seed_runs
+        ]
+        reg_summary["seed_mia_global_aucs"] = [
+            float(sr["final_metrics"]["mia_global_auc_mean"]) for sr in seed_runs
+        ]
+
+        # Summarize per-tenant metrics across the 5 seeds
+        tenant_names = sorted(seed_runs[0]["per_tenant_dp"].keys())
+        per_tenant_summary: dict[str, Any] = {}
+        for t_name in tenant_names:
+            t_items = [sr["per_tenant_dp"][t_name] for sr in seed_runs]
+            f1s = [float(x["f1_macro"]) for x in t_items]
+            accs = [float(x["accuracy"]) for x in t_items]
+            l_aucs = [float(x["mia_local"]["mia_auc"]) for x in t_items]
+            l_accs = [float(x["mia_local"]["mia_accuracy"]) for x in t_items]
+            g_aucs = [float(x["mia_global"]["mia_auc"]) for x in t_items]
+            g_accs = [float(x["mia_global"]["mia_accuracy"]) for x in t_items]
+            first_t = t_items[0]
+            per_tenant_summary[t_name] = {
+                "tenant": t_name,
+                "num_samples": int(first_t["num_samples"]),
+                "domain_profile": float(first_t["domain_profile"]),
+                "rare_share": float(first_t["rare_share"]),
+                "imbalance": float(first_t["imbalance"]),
+                "data_score": float(first_t["data_score"]),
+                "sensitivity_score": float(first_t["sensitivity_score"]),
+                "allocated_epsilon": (
+                    float(first_t["allocated_epsilon"])
+                    if math.isfinite(float(first_t["allocated_epsilon"]))
+                    else None
+                ),
+                "epsilon_spent": (
+                    float(first_t["epsilon_spent"])
+                    if math.isfinite(float(first_t["epsilon_spent"]))
+                    else None
+                ),
+                "delta": float(first_t["delta"]),
+                "noise_multiplier": float(first_t["noise_multiplier"]),
+                "sample_rate": float(first_t["sample_rate"]),
+                "dp_steps_total": int(first_t["dp_steps_total"]),
+                "f1_macro_mean": float(np.mean(f1s)),
+                "f1_macro_std": float(np.std(f1s, ddof=0)),
+                "accuracy_mean": float(np.mean(accs)),
+                "accuracy_std": float(np.std(accs, ddof=0)),
+                "mia_local_auc_mean": float(np.mean(l_aucs)),
+                "mia_local_auc_std": float(np.std(l_aucs, ddof=0)),
+                "mia_local_acc_mean": float(np.mean(l_accs)),
+                "mia_global_auc_mean": float(np.mean(g_aucs)),
+                "mia_global_auc_std": float(np.std(g_aucs, ddof=0)),
+                "mia_global_acc_mean": float(np.mean(g_accs)),
+                "seed_f1_macros": f1s,
+            }
+        reg_summary["per_tenant_summary"] = per_tenant_summary
+        reg_summary["metrics"]["mia_local_auc_mean"] = {
+            "mean": float(np.mean(reg_summary["seed_mia_local_aucs"])),
+            "std": float(np.std(reg_summary["seed_mia_local_aucs"], ddof=0)),
+        }
+        reg_summary["metrics"]["mia_global_auc_mean"] = {
+            "mean": float(np.mean(reg_summary["seed_mia_global_aucs"])),
+            "std": float(np.std(reg_summary["seed_mia_global_aucs"], ddof=0)),
+        }
+
+        c_aucs = [float(x["mia_auc"]) for x in cohort_runs]
+        c_accs = [float(x["mia_accuracy"]) for x in cohort_runs]
+        c_advs = [float(x["mia_advantage"]) for x in cohort_runs]
+        c_tprs = [float(x["mia_tpr_at_5pct_fpr"]) for x in cohort_runs]
+        c_loss_aucs = [float(x["loss_threshold"]["auc"]) for x in cohort_runs]
+        c_marg_aucs = [float(x["logit_margin"]["auc"]) for x in cohort_runs]
+        c_grad_aucs = [float(x["grad_norm"]["auc"]) for x in cohort_runs]
+
+        cohort_summary = {
+            "dp_policy": pol,
+            "mean_epsilon": float(mean_eps) if mean_eps is not None else None,
+            "allocated_epsilon_finance": (
+                float(cohort_runs[0]["allocated_epsilon_finance"])
+                if math.isfinite(float(cohort_runs[0]["allocated_epsilon_finance"]))
+                else None
+            ),
+            "noise_multiplier_finance": float(cohort_runs[0]["noise_multiplier_finance"]),
+            "mia_auc_mean": float(np.mean(c_aucs)),
+            "mia_auc_std": float(np.std(c_aucs, ddof=0)),
+            "mia_accuracy_mean": float(np.mean(c_accs)),
+            "mia_accuracy_std": float(np.std(c_accs, ddof=0)),
+            "mia_advantage_mean": float(np.mean(c_advs)),
+            "mia_tpr_at_5pct_fpr_mean": float(np.mean(c_tprs)),
+            "loss_threshold_auc_mean": float(np.mean(c_loss_aucs)),
+            "logit_margin_auc_mean": float(np.mean(c_marg_aucs)),
+            "grad_norm_auc_mean": float(np.mean(c_grad_aucs)),
+            "seed_mia_aucs": c_aucs,
+        }
+
+        sweep_summary["datasets"][ds_name][cfg_key] = reg_summary
+        sweep_summary["rare_cohort_mia"][ds_name][cfg_key] = cohort_summary
+        ckpt_path.write_text(json.dumps(sweep_summary, indent=2), encoding="utf-8")
+
+        f1_m = reg_summary["metrics"]["f1_macro"]["mean"] * 100.0
+        f1_s = reg_summary["metrics"]["f1_macro"]["std"] * 100.0
+        fin_f1 = per_tenant_summary["tenant_1_finance"]["f1_macro_mean"] * 100.0
+        fin_eps = per_tenant_summary["tenant_1_finance"]["allocated_epsilon"]
+        c_auc_m = cohort_summary["mia_auc_mean"] * 100.0
+        dt = time.perf_counter() - t_job
+        print(
+            f"[Step 05] ({job_idx:2d}/{total_jobs}) {ds_name:16s} | {cfg_key:18s} "
+            f"-> Global F1={f1_m:6.2f}±{f1_s:4.2f}% | Fin F1={fin_f1:6.2f}% (eps₁={str(round(fin_eps,3)) if fin_eps else 'inf'}) "
+            f"| Cohort MIA AUC={c_auc_m:5.2f}% ({dt:.1f}s)",
+            flush=True,
+        )
+
+    # Reconstruct flat tables: per_seed_summary.csv, per_tenant_dp_table.csv, mia_evaluation.csv
+    per_seed_rows: list[dict[str, Any]] = []
+    per_tenant_rows: list[dict[str, Any]] = []
+    mia_rows: list[dict[str, Any]] = []
+
+    for ds_name in ("insdn", "aseados_sdn_iot"):
+        ds_grid = sweep_summary["datasets"][ds_name]
+        ch_grid = sweep_summary["rare_cohort_mia"][ds_name]
+        for cfg_key, reg_sum in ds_grid.items():
+            pol = reg_sum["dp_policy"]
+            m_eps = reg_sum["mean_epsilon"]
+            e_tot = reg_sum["epsilon_total"]
+            f1_list = reg_sum.get("seed_f1_macros", [])
+            acc_list = reg_sum.get("seed_accuracies", [])
+            l_mia_list = reg_sum.get("seed_mia_local_aucs", [])
+            g_mia_list = reg_sum.get("seed_mia_global_aucs", [])
+            ch_sum = ch_grid.get(cfg_key, {})
+            ch_mia_list = ch_sum.get("seed_mia_aucs", [])
+
+            for idx_s, s_val in enumerate(reg_sum.get("seeds", list(seeds))):
+                per_seed_rows.append(
+                    {
+                        "dataset": ds_name,
+                        "config_key": cfg_key,
+                        "dp_policy": pol,
+                        "mean_epsilon": m_eps if m_eps is not None else np.inf,
+                        "epsilon_total": e_tot if e_tot is not None else np.inf,
+                        "delta": reg_sum["delta"],
+                        "seed": s_val,
+                        "global_f1_macro": f1_list[idx_s] if idx_s < len(f1_list) else np.nan,
+                        "global_accuracy": acc_list[idx_s] if idx_s < len(acc_list) else np.nan,
+                        "mia_local_auc_mean": (
+                            l_mia_list[idx_s] if idx_s < len(l_mia_list) else np.nan
+                        ),
+                        "mia_global_auc_mean": (
+                            g_mia_list[idx_s] if idx_s < len(g_mia_list) else np.nan
+                        ),
+                        "rare_cohort_finance_mia_auc": (
+                            ch_mia_list[idx_s] if idx_s < len(ch_mia_list) else np.nan
+                        ),
+                    }
+                )
+
+            for t_name, t_sum in reg_sum.get("per_tenant_summary", {}).items():
+                per_tenant_rows.append(
+                    {
+                        "dataset": ds_name,
+                        "config_key": cfg_key,
+                        "dp_policy": pol,
+                        "mean_epsilon": m_eps if m_eps is not None else np.inf,
+                        "epsilon_total": e_tot if e_tot is not None else np.inf,
+                        "tenant": t_name,
+                        "num_samples": t_sum["num_samples"],
+                        "domain_profile": t_sum["domain_profile"],
+                        "rare_share": t_sum["rare_share"],
+                        "imbalance": t_sum["imbalance"],
+                        "data_score": t_sum["data_score"],
+                        "sensitivity_score": t_sum["sensitivity_score"],
+                        "allocated_epsilon": (
+                            t_sum["allocated_epsilon"]
+                            if t_sum["allocated_epsilon"] is not None
+                            else np.inf
+                        ),
+                        "epsilon_spent": (
+                            t_sum["epsilon_spent"] if t_sum["epsilon_spent"] is not None else np.inf
+                        ),
+                        "delta": t_sum["delta"],
+                        "noise_multiplier": t_sum["noise_multiplier"],
+                        "sample_rate": t_sum["sample_rate"],
+                        "dp_steps_total": t_sum["dp_steps_total"],
+                        "tenant_f1_macro_mean": t_sum["f1_macro_mean"],
+                        "tenant_f1_macro_std": t_sum["f1_macro_std"],
+                        "tenant_accuracy_mean": t_sum["accuracy_mean"],
+                        "tenant_accuracy_std": t_sum["accuracy_std"],
+                        "mia_local_auc_mean": t_sum["mia_local_auc_mean"],
+                        "mia_local_acc_mean": t_sum["mia_local_acc_mean"],
+                        "mia_global_auc_mean": t_sum["mia_global_auc_mean"],
+                        "mia_global_acc_mean": t_sum["mia_global_acc_mean"],
+                    }
+                )
+
+            mia_rows.append(
+                {
+                    "dataset": ds_name,
+                    "config_key": cfg_key,
+                    "dp_policy": pol,
+                    "mean_epsilon": m_eps if m_eps is not None else np.inf,
+                    "allocated_epsilon_finance": (
+                        ch_sum.get("allocated_epsilon_finance")
+                        if ch_sum.get("allocated_epsilon_finance") is not None
+                        else np.inf
+                    ),
+                    "noise_multiplier_finance": ch_sum.get("noise_multiplier_finance", 0.0),
+                    "full_partition_local_mia_auc_mean": reg_sum["metrics"]["mia_local_auc_mean"][
+                        "mean"
+                    ],
+                    "full_partition_local_mia_auc_std": reg_sum["metrics"]["mia_local_auc_mean"][
+                        "std"
+                    ],
+                    "full_partition_global_mia_auc_mean": reg_sum["metrics"]["mia_global_auc_mean"][
+                        "mean"
+                    ],
+                    "full_partition_global_mia_auc_std": reg_sum["metrics"]["mia_global_auc_mean"][
+                        "std"
+                    ],
+                    "rare_cohort_mia_auc_mean": ch_sum.get("mia_auc_mean"),
+                    "rare_cohort_mia_auc_std": ch_sum.get("mia_auc_std"),
+                    "rare_cohort_mia_accuracy_mean": ch_sum.get("mia_accuracy_mean"),
+                    "rare_cohort_mia_advantage_mean": ch_sum.get("mia_advantage_mean"),
+                    "rare_cohort_tpr_at_5pct_fpr_mean": ch_sum.get("mia_tpr_at_5pct_fpr_mean"),
+                    "rare_cohort_loss_threshold_auc_mean": ch_sum.get("loss_threshold_auc_mean"),
+                    "rare_cohort_logit_margin_auc_mean": ch_sum.get("logit_margin_auc_mean"),
+                    "rare_cohort_grad_norm_auc_mean": ch_sum.get("grad_norm_auc_mean"),
+                }
+            )
+
+    # Paired Wilcoxon tests comparing Adaptive vs Uniform at equal total budget
+    stat_tests: dict[str, Any] = {}
+    for ds_name in ("insdn", "aseados_sdn_iot"):
+        ds_g = sweep_summary["datasets"][ds_name]
+        ch_g = sweep_summary["rare_cohort_mia"][ds_name]
+        for eps_val in eps_values:
+            u_entry = ds_g.get(f"uniform__eps_{eps_val:.1f}")
+            a_entry = ds_g.get(f"adaptive__eps_{eps_val:.1f}")
+            u_ch = ch_g.get(f"uniform__eps_{eps_val:.1f}")
+            a_ch = ch_g.get(f"adaptive__eps_{eps_val:.1f}")
+            if not u_entry or not a_entry:
+                continue
+            p_f1 = compute_paired_wilcoxon(u_entry["seed_f1_macros"], a_entry["seed_f1_macros"])
+            p_mia = (
+                compute_paired_wilcoxon(u_ch["seed_mia_aucs"], a_ch["seed_mia_aucs"])
+                if u_ch and a_ch
+                else 1.0
+            )
+            u_fin = u_entry["per_tenant_summary"]["tenant_1_finance"]
+            a_fin = a_entry["per_tenant_summary"]["tenant_1_finance"]
+            stat_tests[f"{ds_name}_eps{eps_val:.1f}_adaptive_vs_uniform"] = {
+                "mean_epsilon": eps_val,
+                "epsilon_total": 3.0 * eps_val,
+                "uniform_global_f1_mean": u_entry["metrics"]["f1_macro"]["mean"],
+                "adaptive_global_f1_mean": a_entry["metrics"]["f1_macro"]["mean"],
+                "global_f1_diff_pts": (
+                    a_entry["metrics"]["f1_macro"]["mean"] - u_entry["metrics"]["f1_macro"]["mean"]
+                )
+                * 100.0,
+                "wilcoxon_p_global_f1": p_f1,
+                "finance_epsilon_uniform": u_fin["allocated_epsilon"],
+                "finance_epsilon_adaptive": a_fin["allocated_epsilon"],
+                "finance_epsilon_reduction_pct": (
+                    (u_fin["allocated_epsilon"] - a_fin["allocated_epsilon"])
+                    / u_fin["allocated_epsilon"]
+                )
+                * 100.0,
+                "finance_sigma_uniform": u_fin["noise_multiplier"],
+                "finance_sigma_adaptive": a_fin["noise_multiplier"],
+                "finance_cohort_mia_auc_uniform": u_ch["mia_auc_mean"] if u_ch else None,
+                "finance_cohort_mia_auc_adaptive": a_ch["mia_auc_mean"] if a_ch else None,
+                "wilcoxon_p_cohort_mia_auc": p_mia,
+            }
+
+    sweep_summary["statistical_tests"] = stat_tests
+    sweep_summary["total_sweep_wall_time_sec"] = float(time.perf_counter() - t_sweep_start)
+
+    pd.DataFrame(per_seed_rows).to_csv(target_dir / "per_seed_summary.csv", index=False)
+    pd.DataFrame(per_tenant_rows).to_csv(target_dir / "per_tenant_dp_table.csv", index=False)
+    pd.DataFrame(mia_rows).to_csv(target_dir / "mia_evaluation.csv", index=False)
+    (target_dir / "summary.json").write_text(
+        json.dumps(sweep_summary, indent=2),
+        encoding="utf-8",
+    )
+
+    # Generate all 3 Step 05 plots
+    plot_privacy_utility_tradeoff(
+        sweep_summary,
+        target_dir / "privacy_utility_tradeoff.png",
+    )
+    plot_per_tenant_dp_comparison(
+        sweep_summary,
+        target_dir / "per_tenant_dp_comparison.png",
+    )
+    plot_mia_attack_evaluation(
+        sweep_summary,
+        target_dir / "mia_attack_evaluation.png",
+    )
+    return sweep_summary
+
+
 def main(argv: list[str] | None = None) -> int:
     """CLI entrypoint for `sim/run_experiment.py`."""
     parser = argparse.ArgumentParser(
-        description="TrustFed-SDN Federated Learning Simulator (Step 03 FedAvg & Step 04 Robust Aggregation)"
+        description="TrustFed-SDN Federated Learning Simulator (Steps 03, 04, and 05)"
     )
     parser.add_argument(
         "--config",
@@ -2504,6 +3785,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Run the complete Step 04 5-seed Poisoning & Robust Aggregation sweep and generate plots.",
     )
+    parser.add_argument(
+        "--sweep-step05",
+        action="store_true",
+        help="Run the complete Step 05 5-seed Adaptive Per-Tenant DP & MIA sweep and generate plots.",
+    )
     args = parser.parse_args(argv)
 
     if args.sweep_step03:
@@ -2514,8 +3800,14 @@ def main(argv: list[str] | None = None) -> int:
         run_step04_full_sweep()
         return 0
 
+    if args.sweep_step05:
+        run_step05_full_sweep()
+        return 0
+
     if not args.config:
-        parser.error("Provide `--config <path.yaml>`, `--sweep-step03`, or `--sweep-step04`.")
+        parser.error(
+            "Provide `--config <path.yaml>`, `--sweep-step03`, `--sweep-step04`, or `--sweep-step05`."
+        )
 
     cfg_path = Path(args.config)
     if not cfg_path.is_absolute():

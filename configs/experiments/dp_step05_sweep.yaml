@@ -1,0 +1,39 @@
+# Step 05 — Master Adaptive & Uniform Per-Tenant Differential Privacy Sweep Configuration
+experiment_name: step05_adaptive_dp_sweep
+mode: step05_sweep
+output_dir: results/05_dp
+datasets:
+  - insdn
+  - aseados_sdn_iot
+tasks:
+  - binary
+num_tenants: 3
+partition_type: natural
+dp_policies:
+  - none
+  - uniform
+  - adaptive
+mean_epsilons:
+  - 0.5
+  - 1.0
+  - 2.0
+  - 4.0
+  - 8.0
+delta: 1.0e-5
+max_grad_norm: 1.0
+expected_batch_size: 384
+sensitivity_score:
+  type: hybrid
+  profile_weight: 0.5
+  domain_profile:
+    finance: 1.0
+    healthcare: 1.0
+    education: 0.5
+  rare_threshold: 0.05
+aggregator: fedavg
+rounds: 14
+local_epochs: 2
+lr: 0.002
+weight_decay: 0.0001
+seeds: [0, 1, 2, 3, 4]
+

@@ -1,0 +1,30 @@
+# Step 05 — InSDN Uniform Per-Tenant Differential Privacy (Natural Non-IID, N=3)
+experiment_id: dp_insdn_uniform_eps2.0_n3
+output_dir: results/05_dp
+dataset: insdn
+task: binary
+partition_type: natural
+num_tenants: 3
+aggregator: fedavg
+dp_policy: uniform
+mean_epsilon: 2.0
+delta: 1.0e-5
+max_grad_norm: 1.0
+expected_batch_size: 384
+rounds: 14
+local_epochs: 2
+batch_size: 384
+lr: 0.002
+weight_decay: 0.0001
+max_train_samples: 9000
+eval_every: 7
+eval_per_tenant_every: 7
+seeds: [0, 1, 2, 3, 4]
+model:
+  type: gru
+  hidden_dim: 64
+  num_layers: 2
+  dropout: 0.0
+  seq_mode: single_step
+  num_chunks: 1
+

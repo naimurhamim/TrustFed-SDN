@@ -10,10 +10,10 @@
 ## Latest Handoff Note
 
 - **Last Updated By:** `@Naimur`
-- **Date:** `2026-11-10`
-- **Active Step:** `Step 04 - Poisoning Attacks & Robust Aggregation` (`Step 03` approved & tagged `step-03-done`; paused cleanly before `04.1`)
-- **What Was Just Completed:** Step 03 (`03.1`-`03.5`) completed, approved (`approved step 03`), tagged `step-03-done`, and pushed to GitHub along with the updated `TrustFed_SDN_Progress_Report_Step00_to_Step03.pdf` and `docs/EXPERIMENT_RESULTS_LOG.md`.
-- **Next Task for Incoming Teammate:** Begin `Step 04 - Poisoning Attacks & Robust Aggregation` (`docs/steps/STEP_04_attacks_and_robust_aggregation.md`) by confirming `04.1` attack matrix and aggregator baselines.
+- **Date:** `2026-11-12`
+- **Active Step:** `Step 06 - Verifiable Secure Aggregation` (`06.1` Checkpoint — Paused awaiting user instruction)
+- **What Was Just Completed:** Completed and approved `Step 05 - Adaptive Per-Tenant Differential Privacy` (`approved step 05`, tagged `step-05-done`): implemented `trustfed/privacy/*` (`accountant.py`, `budget.py`, `dp_sgd.py`, `mia.py`), `tests/test_privacy.py` (`43/43` pytest), `docs/DP_DESIGN.md`, and executed the full 5-seed `220`-run Adaptive vs. Uniform DP-SGD & MIA benchmark sweep (`results/05_dp/`).
+- **Next Task for Incoming Teammate:** Begin `Step 06 - Verifiable Secure Aggregation` (`docs/steps/STEP_06_verifiable_secure_aggregation.md`) when instructed.
 
 ---
 
@@ -63,11 +63,11 @@
 - [x] `04.5` Pass `tests/test_attacks.py` & `tests/test_aggregation.py` (`38/38` pytest), log tables to `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 04`, and tag `step-04-done` (@Naimur, 2026-11-12)
 
 ### Step 05 — Adaptive Per-Tenant Differential Privacy (`docs/steps/STEP_05_adaptive_dp.md`)
-- [ ] `05.1` Approve DP design checkpoint (record-level vs update-level granularity, sensitivity score `s_i`, budget policy, `delta`)
-- [ ] `05.2` Implement L2 clipping, Gaussian mechanism, RDP/moments privacy accountant, uniform DP, and adaptive per-tenant DP in `trustfed/privacy/`
-- [ ] `05.3` Run epsilon sweep `{0.5, 1, 2, 4, 8, inf}` comparing uniform vs adaptive DP at equal total budget (5 seeds)
-- [ ] `05.4` Implement and evaluate Membership Inference Attack (MIA accuracy & AUC with and without DP) and write `docs/DP_DESIGN.md`
-- [ ] `05.5` Pass `tests/test_privacy.py`, log results to `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 05`, and tag `step-05-done`
+- [x] `05.1` Approve DP design checkpoint (record-level vs update-level granularity, sensitivity score `s_i`, budget policy, `delta`) (@Naimur, 2026-11-12)
+- [x] `05.2` Implement L2 clipping, Gaussian mechanism, RDP/moments privacy accountant, uniform DP, and adaptive per-tenant DP in `trustfed/privacy/` (@Naimur, 2026-11-12)
+- [x] `05.3` Run epsilon sweep `{0.5, 1, 2, 4, 8, inf}` comparing uniform vs adaptive DP at equal total budget (5 seeds) (@Naimur, 2026-11-12)
+- [x] `05.4` Implement and evaluate Membership Inference Attack (MIA accuracy & AUC with and without DP) and write `docs/DP_DESIGN.md` (@Naimur, 2026-11-12)
+- [x] `05.5` Pass `tests/test_privacy.py` (`43/43` pytest), log results to `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 05`, and tag `step-05-done` (@Naimur, 2026-11-12)
 
 ### Step 06 — Verifiable Secure Aggregation (`docs/steps/STEP_06_verifiable_secure_aggregation.md`)
 - [ ] `06.1` Approve verification checkpoint (threat model, homomorphic commitment vs keyed linear checksum, dropout policy, fixed-point quantization precision)

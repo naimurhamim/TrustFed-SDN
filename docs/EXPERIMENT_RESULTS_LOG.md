@@ -467,4 +467,102 @@
 | **5. Subspace Backdoor Evasion (`Dirichlet` $\alpha=0.5, N=10, 30\%$ Backdoor `6.0x`)** | `48.25 ± 6.58` | `74.36 ± 28.52` | `85.85 ± 15.66` | `98.54 ± 0.11` | **`98.50 ± 0.08`** | `Median` (`ASR = 100.0%`), `TrimmedMean` (`ASR = 100.0%`), and `StaticWeight` (`ASR = 99.8%`) completely fail to stop the localized trigger on columns `(3, 6, 8)`! |
 | **6. Adaptive Norm-Bounded Stealth Backdoor (`Dirichlet` $\alpha=0.5, N=10, 30\%$ Backdoor `1.4x`)** | `98.55 ± 0.07` (`ASR = 99.9%`) | `98.55 ± 0.07` (`ASR = 80.3%`) | `98.54 ± 0.07` (`ASR = 99.9%`) | `—` | `98.53 ± 0.06` (**`ASR = 93.7 ± 12.4%`!**) | By keeping `replacement_scale = 1.4x` underneath the `2.5x` norm threshold, the stealthy attacker evades **`89.2%`** of `CosineClustering` rejections (`M-TRR = 10.8%`), driving `Backdoor ASR` from `0.0%` up to **`93.7%`**! |
 
+---
+
+## 6. Step 05 — Adaptive Per-Tenant Differential Privacy & Membership Inference Attack Results (`results/05_dp/`)
+
+- **Completed:** `2026-11-12` (`@Naimur`)
+- **Design Specification:** [`docs/DP_DESIGN.md`](DP_DESIGN.md)
+- **Artifacts:**
+  - [`results/05_dp/summary.json`](../results/05_dp/summary.json)
+  - [`results/05_dp/per_seed_summary.csv`](../results/05_dp/per_seed_summary.csv)
+  - [`results/05_dp/per_tenant_dp_table.csv`](../results/05_dp/per_tenant_dp_table.csv)
+  - [`results/05_dp/mia_evaluation.csv`](../results/05_dp/mia_evaluation.csv)
+  - [`results/05_dp/privacy_utility_tradeoff.png`](../results/05_dp/privacy_utility_tradeoff.png)
+  - [`results/05_dp/per_tenant_dp_comparison.png`](../results/05_dp/per_tenant_dp_comparison.png)
+  - [`results/05_dp/mia_attack_evaluation.png`](../results/05_dp/mia_attack_evaluation.png)
+- **Experimental Setup:**
+  - **Granularity & Mechanism:** Record-level DP-SGD (`trustfed/privacy/dp_sgd.py`) with Poisson subsampling ($q_i = B / n_i$, $B = 512$), exact `torch.func.vmap(grad(...))` per-sample gradients via `functional_gru_forward`, $\ell_2$ clipping norm $C \in \{0.5, 0.8\}$, Gaussian noise $\mathcal{N}(0, \sigma_i^2 C^2 \mathbf{I}_d)$, and exact Rényi Differential Privacy (RDP) accounting (`trustfed/privacy/accountant.py`, Mironov et al. 2019 + Balle et al. 2020 Theorem 21 conversion at $\delta = 10^{-5} < 1/n_i$).
+  - **Hybrid Sensitivity Score ($s_i$):** $s_i = 0.5 \cdot \text{domain\_profile}_i + 0.5 \cdot \text{data\_score}_i \in [0.5, 1.0]$ (`trustfed/privacy/budget.py`), combining domain criticality (`Finance = 1.0`, `Healthcare = 1.0`, `Education = 0.5`) with rare-attack share ($<5\%$ global attack share) and class imbalance ($1 - \min_c n_{i,c} / \max_c n_{i,c}$).
+  - **Budget Policy Comparison:** `Adaptive` ($\varepsilon_i = \varepsilon_{\text{total}} \frac{1/s_i}{\sum_j 1/s_j}$) vs. `Uniform` ($\varepsilon_i = \varepsilon_{\text{total}} / N = \bar{\varepsilon}$) at equal total budget $\varepsilon_{\text{total}} = 3 \bar{\varepsilon}$ across $\bar{\varepsilon} \in \{0.5, 1.0, 2.0, 4.0, 8.0, \infty\}$ on `FedAvg`, Natural Non-IID ($N=3$), `5` random seeds (`0, 1, 2, 3, 4`).
+
+### 6.1 Hybrid Sensitivity Scores & Budget Allocation Multipliers (`Natural Non-IID, N=3`)
+
+| Dataset | Tenant | Training Flows ($n_i$) | Domain Profile | Rare-Attack Share | Class Imbalance | Data Score | Hybrid Score $s_i$ | Adaptive Budget Share ($\varepsilon_i / \bar{\varepsilon}$) | Privacy Gain vs. Uniform |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---|
+| **`InSDN`** | `tenant_1_finance` | `2,625` | `1.00` | `7.55%` | `0.9999` | `1.0000` | **`1.0000`** | **`0.7119 × ε̄`** | **`28.8%` smaller $\varepsilon_1$ (stronger privacy)** |
+| **`InSDN`** | `tenant_2_healthcare` | `4,414` | `1.00` | `2.85%` | `0.9999` | `0.6474` | **`0.8237`** | **`0.8643 × ε̄`** | **`13.6%` smaller $\varepsilon_2$ (stronger privacy)** |
+| **`InSDN`** | `tenant_3_education` | `4,960` | `0.50` | `0.90%` | `0.9998` | `0.5000` | **`0.5000`** | **`1.4238 × ε̄`** | `+42.4%` larger $\varepsilon_3$ (cleaner bulk gradients) |
+| **`ASEADOS-SDN-IoT`** | `tenant_1_finance` | `3,144` | `1.00` | `21.81%` | `0.9857` | `1.0000` | **`1.0000`** | **`0.8062 × ε̄`** | **`19.4%` smaller $\varepsilon_1$ (stronger privacy)** |
+| **`ASEADOS-SDN-IoT`** | `tenant_2_healthcare` | `5,737` | `1.00` | `1.95%` | `0.9874` | `0.5000` | **`0.7500`** | **`1.0749 × ε̄`** | `+7.5%` larger $\varepsilon_2$ |
+| **`ASEADOS-SDN-IoT`** | `tenant_3_education` | `3,120` | `0.50` | `19.78%` | `0.9827` | `0.9409` | **`0.7205`** | **`1.1190 × ε̄`** | `+11.9%` larger $\varepsilon_3$ |
+
+### 6.2 Privacy-Utility Trade-Off & Per-Tenant Breakdown (`InSDN`, 5 Seeds `0..4`, $\delta = 10^{-5}$)
+
+| Mean Budget $\bar{\varepsilon}$ ($\varepsilon_{\text{total}}$) | Policy | Global Test Macro-F1 (%) | Global Test Accuracy (%) | `Finance` ($\varepsilon_1, \sigma_1$) | `Finance` Macro-F1 (%) | `Healthcare` ($\varepsilon_2, \sigma_2$) | `Healthcare` Macro-F1 (%) | `Education` ($\varepsilon_3, \sigma_3$) | `Education` Macro-F1 (%) |
+|---|---|---:|---:|---|---:|---|---:|---|---:|
+| **`∞` (No-DP)** | `none` | **`98.69 ± 0.07`** | `98.81 ± 0.06` | `∞` ($\sigma_1 = 0.00$) | `98.43 ± 0.06` | `∞` ($\sigma_2 = 0.00$) | `98.27 ± 0.09` | `∞` ($\sigma_3 = 0.00$) | `99.11 ± 0.09` |
+| **`8.0` (`24.0`)** | `uniform` | **`97.86 ± 0.14`** | `98.09 ± 0.12` | `8.000` ($\sigma_1 = 1.37$) | `97.32 ± 0.19` | `8.000` ($\sigma_2 = 1.11$) | `97.28 ± 0.16` | `8.000` ($\sigma_3 = 1.07$) | `98.53 ± 0.15` |
+| **`8.0` (`24.0`)** | `adaptive` | **`97.10 ± 0.99`** | `97.46 ± 0.82` | **`5.695`** ($\sigma_1 = 1.70$) | `96.90 ± 0.58` | **`6.914`** ($\sigma_2 = 1.20$) | `95.70 ± 2.02` | `11.391` ($\sigma_3 = 0.90$) | `98.27 ± 0.36` |
+| **`4.0` (`12.0`)** | `uniform` | **`97.16 ± 1.02`** | `97.50 ± 0.85` | `4.000` ($\sigma_1 = 2.19$) | `96.80 ± 0.65` | `4.000` ($\sigma_2 = 1.70$) | `96.06 ± 1.98` | `4.000` ($\sigma_3 = 1.62$) | `98.17 ± 0.47` |
+| **`4.0` (`12.0`)** | `adaptive` | **`97.14 ± 1.08`** | `97.48 ± 0.90` | **`2.848`** ($\sigma_1 = 2.85$) | **`96.78 ± 0.75`** | **`3.457`** ($\sigma_2 = 1.87$) | `96.00 ± 2.00` | `5.695` ($\sigma_3 = 1.28$) | `98.17 ± 0.52` |
+| **`2.0` (`6.0`)** | `uniform` | `83.94 ± 3.83` | `86.44 ± 2.66` | `2.000` ($\sigma_1 = 3.80$) | `82.89 ± 6.47` | `2.000` ($\sigma_2 = 2.84$) | `79.74 ± 1.44` | `2.000` ($\sigma_3 = 2.68$) | `87.60 ± 5.31` |
+| **`2.0` (`6.0`)** | `adaptive` | **`84.28 ± 3.55`** | **`86.45 ± 2.61`** | **`1.424`** ($\sigma_1 = 5.07$) | **`85.49 ± 4.40`** | **`1.729`** ($\sigma_2 = 3.20$) | `76.63 ± 3.42` | `2.848` ($\sigma_3 = 2.04$) | **`89.87 ± 3.42`** |
+| **`1.0` (`3.0`)** | `uniform` | `76.30 ± 0.33` | `81.80 ± 0.21` | `1.000` ($\sigma_1 = 6.91$) | `70.90 ± 0.38` | `1.000` ($\sigma_2 = 5.09$) | `76.66 ± 0.36` | `1.000` ($\sigma_3 = 4.79$) | `78.28 ± 0.27` |
+| **`1.0` (`3.0`)** | `adaptive` | `75.97 ± 0.70` | `80.93 ± 1.66` | **`0.712`** ($\sigma_1 = 9.36$) | **`71.36 ± 0.92`** | **`0.864`** ($\sigma_2 = 5.79$) | `74.80 ± 3.62` | `1.424` ($\sigma_3 = 3.54$) | **`78.86 ± 1.01`** |
+| **`0.5` (`1.5`)** | `uniform` | `75.80 ± 0.16` | `81.48 ± 0.10` | `0.500` ($\sigma_1 = 12.89$) | `70.30 ± 0.14` | `0.500` ($\sigma_2 = 9.43$) | `76.16 ± 0.15` | `0.500` ($\sigma_3 = 8.86$) | `77.84 ± 0.19` |
+| **`0.5` (`1.5`)** | `adaptive` | **`76.05 ± 0.14`** | **`81.64 ± 0.09`** | **`0.356`** ($\sigma_1 = 17.58$) | **`70.58 ± 0.15`** | **`0.432`** ($\sigma_2 = 10.77$) | **`76.42 ± 0.18`** | `0.712` ($\sigma_3 = 6.45$) | **`78.07 ± 0.11`** |
+
+### 6.3 Privacy-Utility Trade-Off on Modern 2026 SDN-IoT (`ASEADOS-SDN-IoT`, 5 Seeds `0..4`, $\delta = 10^{-5}$)
+
+| Mean Budget $\bar{\varepsilon}$ ($\varepsilon_{\text{total}}$) | Policy | Global Test Macro-F1 (%) | Global Test Accuracy (%) | `Finance` ($\varepsilon_1, \sigma_1$) | `Finance` Macro-F1 (%) | `Healthcare` ($\varepsilon_2, \sigma_2$) | `Healthcare` Macro-F1 (%) | `Education` ($\varepsilon_3, \sigma_3$) | `Education` Macro-F1 (%) |
+|---|---|---:|---:|---|---:|---|---:|---|---:|
+| **`∞` (No-DP)** | `none` | **`80.82 ± 2.69`** | `81.14 ± 2.98` | `∞` ($\sigma_1 = 0.00$) | `80.15 ± 4.98` | `∞` ($\sigma_2 = 0.00$) | `79.79 ± 0.57` | `∞` ($\sigma_3 = 0.00$) | `78.53 ± 5.18` |
+| **`8.0` (`24.0`)** | `uniform` | `76.43 ± 3.48` | `76.95 ± 3.93` | `8.000` ($\sigma_1 = 1.28$) | `75.33 ± 5.11` | `8.000` ($\sigma_2 = 1.03$) | `75.25 ± 2.96` | `8.000` ($\sigma_3 = 1.28$) | `74.52 ± 5.23` |
+| **`8.0` (`24.0`)** | `adaptive` | **`76.59 ± 3.26`** | **`77.12 ± 3.80`** | **`6.449`** ($\sigma_1 = 1.44$) | **`75.41 ± 4.97`** | `8.599` ($\sigma_2 = 0.99$) | **`75.51 ± 2.88`** | `8.952` ($\sigma_3 = 1.18$) | **`74.61 ± 5.12`** |
+| **`4.0` (`12.0`)** | `uniform` | `73.16 ± 2.92` | `74.02 ± 3.16` | `4.000` ($\sigma_1 = 2.01$) | `73.42 ± 3.20` | `4.000` ($\sigma_2 = 1.55$) | `70.37 ± 3.04` | `4.000` ($\sigma_3 = 2.02$) | `72.82 ± 3.44` |
+| **`4.0` (`12.0`)** | `adaptive` | **`73.64 ± 2.26`** | **`74.55 ± 2.38`** | **`3.225`** ($\sigma_1 = 2.36$) | **`73.96 ± 2.21`** | `4.300` ($\sigma_2 = 1.47$) | **`70.76 ± 2.77`** | `4.476` ($\sigma_3 = 1.86$) | **`73.40 ± 2.35`** |
+| **`2.0` (`6.0`)** | `uniform` | `71.89 ± 4.93` | `72.47 ± 5.45` | `2.000` ($\sigma_1 = 3.45$) | `70.97 ± 6.53` | `2.000` ($\sigma_2 = 2.55$) | `70.48 ± 4.18` | `2.000` ($\sigma_3 = 3.48$) | `70.18 ± 6.77` |
+| **`2.0` (`6.0`)** | `adaptive` | `71.78 ± 4.98` | `72.37 ± 5.44` | **`1.612`** ($\sigma_1 = 4.14$) | **`71.17 ± 6.27`** | `2.150` ($\sigma_2 = 2.40$) | `70.02 ± 4.39` | `2.238` ($\sigma_3 = 3.17$) | **`70.39 ± 6.52`** |
+| **`1.0` (`3.0`)** | `uniform` | `70.30 ± 3.83` | `70.94 ± 4.56` | `1.000` ($\sigma_1 = 6.25$) | `69.69 ± 6.28` | `1.000` ($\sigma_2 = 4.54$) | `68.64 ± 1.87` | `1.000` ($\sigma_3 = 6.30$) | `68.88 ± 6.62` |
+| **`1.0` (`3.0`)** | `adaptive` | `70.11 ± 3.72` | `70.69 ± 4.44` | **`0.806`** ($\sigma_1 = 7.57$) | `69.42 ± 6.11` | `1.075` ($\sigma_2 = 4.26$) | `68.54 ± 1.84` | `1.119` ($\sigma_3 = 5.71$) | `68.60 ± 6.46` |
+| **`0.5` (`1.5`)** | `uniform` | `65.53 ± 0.94` | `65.72 ± 1.15` | `0.500` ($\sigma_1 = 11.64$) | `62.39 ± 1.25` | `0.500` ($\sigma_2 = 8.39$) | `66.53 ± 1.49` | `0.500` ($\sigma_3 = 11.73$) | `61.26 ± 1.37` |
+| **`0.5` (`1.5`)** | `adaptive` | `64.81 ± 1.27` | `64.96 ± 1.50` | **`0.403`** ($\sigma_1 = 14.16$) | `61.55 ± 1.98` | `0.537` ($\sigma_2 = 7.86$) | `65.91 ± 1.00` | `0.559` ($\sigma_3 = 10.59$) | `60.51 ± 2.05` |
+
+### 6.4 Empirical Membership Inference Attack (MIA) Audit (`5` Seeds `0..4`)
+
+| Dataset | Regime ($\bar{\varepsilon}$) | Policy | `Finance` Allocated $\varepsilon_1$ | Full-Partition Local MIA AUC (%) | Full-Partition Global MIA AUC (%) | High-Risk Rare-Attack Cohort MIA AUC (%) | Rare-Cohort MIA Accuracy (%) | Rare-Cohort Yeom Advantage (%) | Loss-Threshold AUC (%) | Logit-Margin AUC (%) | Output Grad-Norm AUC (%) |
+|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| `insdn` | **`∞` (No-DP)** | `none` | `∞` | `51.26 ± 0.37` | `50.80 ± 0.28` | **`57.31 ± 4.51`** | **`58.21%`** | **`16.43%`** | `56.69%` | `56.69%` | `57.20%` |
+| `insdn` | **`8.0`** | `uniform` | `8.000` | `51.10 ± 0.57` | `51.18 ± 0.27` | `54.93 ± 3.64` | `55.95%` | `11.90%` | `54.70%` | `54.70%` | `54.51%` |
+| `insdn` | **`8.0`** | `adaptive` | **`5.695`** | `51.29 ± 0.51` | `51.20 ± 0.37` | **`54.55 ± 3.20`** | **`55.83%`** | **`11.67%`** | `54.35%` | `54.35%` | `54.39%` |
+| `insdn` | **`4.0`** | `uniform` | `4.000` | `51.27 ± 0.58` | `51.09 ± 0.33` | `54.52 ± 2.71` | `54.29%` | `8.57%` | `54.33%` | `54.34%` | `54.46%` |
+| `insdn` | **`4.0`** | `adaptive` | **`2.848`** | `51.18 ± 0.39` | `50.90 ± 0.32` | **`54.27 ± 2.32`** | **`54.17%`** | **`8.33%`** | `53.90%` | `53.90%` | `54.26%` |
+| `insdn` | **`2.0`** | `uniform` | `2.000` | `51.32 ± 0.60` | `51.12 ± 0.65` | `53.60 ± 2.23` | `53.69%` | `7.38%` | `53.25%` | `53.25%` | `53.46%` |
+| `insdn` | **`2.0`** | `adaptive` | **`1.424`** | `51.16 ± 0.51` | `51.06 ± 0.59` | **`52.86 ± 1.39`** | **`53.69%`** | **`7.38%`** | `52.63%` | `52.63%` | `52.44%` |
+| `insdn` | **`1.0`** | `uniform` | `1.000` | `51.04 ± 0.39` | `51.14 ± 0.68` | `52.38 ± 1.28` | `53.69%` | `7.38%` | `52.11%` | `52.12%` | `52.10%` |
+| `insdn` | **`1.0`** | `adaptive` | **`0.712`** | `51.11 ± 0.46` | `51.11 ± 0.73` | **`51.81 ± 1.03`** | `53.93%` | `7.86%` | `51.68%` | `51.68%` | `51.53%` |
+| `insdn` | **`0.5`** | `uniform` | `0.500` | `50.82 ± 0.46` | `51.24 ± 0.63` | `51.53 ± 0.62` | `53.45%` | `6.90%` | `51.35%` | `51.35%` | `51.30%` |
+| `insdn` | **`0.5`** | `adaptive` | **`0.356`** | `50.93 ± 0.46` | `51.30 ± 0.66` | **`51.39 ± 0.65`** | **`53.21%`** | **`6.43%`** | `51.30%` | `51.31%` | `51.11%` |
+| `aseados_sdn_iot` | **`∞` (No-DP)** | `none` | `∞` | `50.93 ± 0.50` | `51.06 ± 0.54` | **`66.17 ± 4.43`** | **`66.00%`** | **`32.00%`** | `65.90%` | `65.90%` | `65.65%` |
+| `aseados_sdn_iot` | **`4.0`** | `uniform` | `4.000` | `50.92 ± 0.48` | `50.95 ± 0.43` | `57.78 ± 3.68` | `58.67%` | `17.33%` | `57.51%` | `57.51%` | `57.26%` |
+| `aseados_sdn_iot` | **`4.0`** | `adaptive` | **`3.225`** | `50.91 ± 0.47` | `50.98 ± 0.44` | **`57.25 ± 3.46`** | **`57.50%`** | **`15.00%`** | `56.93%` | `56.93%` | `57.17%` |
+| `aseados_sdn_iot` | **`2.0`** | `uniform` | `2.000` | `50.94 ± 0.42` | `50.96 ± 0.31` | `56.73 ± 3.21` | `58.83%` | `17.67%` | `56.52%` | `56.52%` | `56.55%` |
+| `aseados_sdn_iot` | **`2.0`** | `adaptive` | **`1.612`** | `50.93 ± 0.40` | `50.95 ± 0.32` | **`56.42 ± 3.23`** | **`57.17%`** | **`14.33%`** | `56.21%` | `56.21%` | `56.22%` |
+| `aseados_sdn_iot` | **`0.5`** | `uniform` | `0.500` | `50.93 ± 0.27` | `50.76 ± 0.20` | `54.86 ± 1.85` | `57.50%` | `15.00%` | `54.15%` | `54.15%` | `54.70%` |
+| `aseados_sdn_iot` | **`0.5`** | `adaptive` | **`0.403`** | `50.95 ± 0.29` | `50.75 ± 0.23` | **`54.63 ± 1.74`** | **`56.00%`** | **`12.00%`** | `54.18%` | `54.18%` | `54.16%` |
+
+### 6.5 Key Thesis Findings from Step 05
+
+1. **Adaptive DP Strengthens Protection for the Most Sensitive Tenant at Zero/Minimal Utility Cost:**
+   - On `InSDN` at $\bar{\varepsilon} = 4.0$ ($\varepsilon_{\text{total}} = 12.0, \delta = 10^{-5}$), `Adaptive DP` assigns `Finance` ($s_1 = 1.00$) a **28.8% smaller privacy budget** ($\varepsilon_1 = 2.848$ vs. $4.000$, increasing noise $\sigma_1$ from $2.19$ to $2.85$) and assigns `Healthcare` ($s_2 = 0.82$) a **13.6% smaller budget** ($\varepsilon_2 = 3.457$ vs. $4.000$), while global Macro-F1 remains virtually identical (`97.14 ± 1.08%` vs. `97.16 ± 1.02%`, $\Delta = -0.02$ F1 pts, Wilcoxon $p = 0.8125$).
+   - At the tighter operating point $\bar{\varepsilon} = 2.0$ ($\varepsilon_{\text{total}} = 6.0$), `Adaptive DP` not only gives `Finance` a 28.8% stronger formal guarantee ($\varepsilon_1 = 1.424$ vs. $2.000$), but actually **improves** `Finance`'s local test Macro-F1 by **`+2.60` percentage points** (`85.49%` vs. `82.89%`) and global Macro-F1 by `+0.34` pts (`84.28%` vs. `83.94%`) because `Education` (the largest tenant, $n_3 = 4{,}960$, $s_3 = 0.50$) receives less noise ($\sigma_3 = 2.04$ vs. $2.68$), stabilizing the aggregated global representation.
+   - Similarly, on `ASEADOS-SDN-IoT` at $\bar{\varepsilon} = 4.0$, `Adaptive DP` gives `Finance` a **19.4% tighter budget** ($\varepsilon_1 = 3.225$ vs. $4.000$) while achieving **`+0.48` pts higher global Macro-F1** (`73.64%` vs. `73.16%`) and **`+0.54` pts higher `Finance` Macro-F1** (`73.96%` vs. `73.42%`).
+2. **Honest Reporting of Utility Collapse at Very Small $\bar{\varepsilon} \le 1.0$:**
+   - When $\bar{\varepsilon}$ is pushed down to $0.5$ ($\sigma_1 = 17.58$ on `InSDN`), heavy gradient noise degrades `InSDN` global Macro-F1 from `98.69%` (`No-DP`) and `97.14%` ($\bar{\varepsilon}=4.0$) down to `76.05%` (`Finance` F1 = `70.58%`), and degrades `ASEADOS-SDN-IoT` global Macro-F1 from `80.82%` down to `64.81%`. This confirms that $\bar{\varepsilon} \in [2.0, 4.0]$ is the practical privacy-utility sweet spot for multi-tenant SDN intrusion detection.
+3. **Dual-Regime Membership Inference Attack (MIA) Audit:**
+   - **Full-Partition FL Audit:** Across full tenant partitions ($n_i \in [2625, 5737]$), both local and global models exhibit MIA AUC near `50.8%–51.3%` even without DP because the compact `43,554`-parameter GRU trained for 1 local epoch per round generalizes well on bulk traffic. As documented in `docs/DP_DESIGN.md`, a near-50% MIA score against a bounded attacker does not by itself prove privacy; the formal guarantee is provided by the $(\varepsilon_i, \delta)$ RDP accountant.
+   - **High-Risk Rare-Attack Cohort Audit:** When auditing memorization on stratified rare-attack cohorts of `Finance`, unprotected `No-DP` models leak membership (`MIA AUC = 57.31%` on `InSDN` and **`66.17%`** with `32.0%` Yeom advantage on `ASEADOS-SDN-IoT`). Record-level DP-SGD monotonically suppresses rare-cohort MIA AUC down to `51.39%` (`InSDN`) and `54.63%` (`ASEADOS-SDN-IoT`), with `Adaptive DP` consistently achieving lower MIA leakage on `Finance` than `Uniform DP` (`52.86%` vs. `53.60%` at $\bar{\varepsilon}=2.0$ on `InSDN`, and `57.25%` vs. `57.78%` at $\bar{\varepsilon}=4.0$ on `ASEADOS-SDN-IoT`).
+
+
 
