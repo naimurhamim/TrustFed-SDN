@@ -398,3 +398,73 @@
 | **Aligned Global / Federated Moments (`global`)** | **`99.06 ± 0.63`** | **`99.13 ± 0.59`** | `99.21 ± 0.53` | `99.81 ± 0.14` | **`1.92 ± 1.60`** |
 | **Unaligned Per-Tenant Local Scaler (`local_per_tenant`)** | **`98.78 ± 0.23`** | **`91.02 ± 7.23`** | `92.60 ± 5.71` | `99.49 ± 0.29` | **`20.81 ± 16.51`** |
 
+---
+
+## Step 04: Poisoning Attacks & Robust Aggregation (`04_robust`)
+
+### [2026-11-12] Step 04 — Byzantine Poisoning Matrix, Robust Aggregators & Failure-Mode Ablations (`04_robust`)
+- **Runner:** `sim/run_experiment.py --sweep-step04`
+- **Configs:** `configs/experiments/robust_step04_sweep.yaml`, `configs/experiments/robust_insdn_label_flip_n10.yaml`, `configs/experiments/robust_insdn_backdoor_n10.yaml`, `configs/experiments/robust_insdn_scaling_n10.yaml`, `configs/experiments/robust_aseados_poison_n10.yaml`
+- **Raw Summary & Artifacts:**
+  - `results/04_robust/summary.json`
+  - `results/04_robust/per_seed_summary.csv` (`660` FL runs = `132` configurations × `5` seeds)
+  - `results/04_robust/per_round_metrics.csv`
+  - `results/04_robust/accuracy_vs_poison_fraction.png`
+  - `results/04_robust/backdoor_asr_comparison.png`
+  - `results/04_robust/honest_false_rejection_rate.png`
+- **Implemented Attacks (`trustfed/attacks/`):**
+  1. `label_flip` (`LabelFlipAttack`): `flip_fraction=1.0`, `bidirectional=True`, `update_scale=8.5`
+  2. `backdoor` (`BackdoorAttack`): `trigger_features=(3, 6, 8)` (calibrated for `<1%` clean baseline ASR), `trigger_value=4.5`, `target_class=0` (`Benign`), `poison_ratio=0.5`, `replacement_scale=6.0`, `collateral_flip_ratio=0.5`
+  3. `scaling` (`UpdateScalingAttack`): `scale_factor=10.0`, `sign_flip=True` (`-10.0x` parameter delta reversal)
+  4. `backdoor_stealth` (Adaptive Norm-Bounded Backdoor): `trigger_features=(3, 6, 8)`, `trigger_value=4.5`, `poison_ratio=0.5`, `replacement_scale=1.4`, `collateral_flip_ratio=0.0` (stays underneath `2.5x` median-norm filter)
+- **Implemented Aggregators (`trustfed/aggregation/`):**
+  1. `fedavg` (`FedAvgAggregator`): Sample-weighted unprotected baseline
+  2. `static_weight` (`StaticWeightAggregator`): Ali et al. (2023) fixed-weight baseline calibrated once on validation data at Round 1 and frozen
+  3. `trimmed_mean_b0.1` (`TrimmedMeanAggregator(beta=0.1)`): Coordinate-wise trimmed mean removing `k = floor(0.1 * N)` extremes per tail
+  4. `trimmed_mean_b0.2` (`TrimmedMeanAggregator(beta=0.2)`): Coordinate-wise trimmed mean removing `k = floor(0.2 * N)` extremes per tail
+  5. `median` (`MedianAggregator`): Coordinate-wise median (`beta -> 0.5`)
+  6. `clustering` (`CosineClusteringAggregator`): Two-stage median-norm (`2.5x`) + pairwise cosine-similarity clique filtering with soft norm clipping
+
+#### 1. Primary Poisoning Matrix (`InSDN` Binary, `Dirichlet` $\alpha = 0.5, N = 10$, 5 Seeds: Mean ± Std)
+
+| Attack | Poisoned Fraction | `FedAvg` Macro-F1 (%) | `StaticWeight` (Ali et al.) Macro-F1 (%) | `TrimmedMean` ($\beta=0.1$) Macro-F1 (%) | `TrimmedMean` ($\beta=0.2$) Macro-F1 (%) | `Median` Macro-F1 (%) | `CosineClustering` Macro-F1 (%) | `FedAvg` Backdoor ASR (%) | `TrimmedMean` ($\beta=0.2$) Backdoor ASR (%) | `CosineClustering` Backdoor ASR (%) | `CosineClustering` Malicious Rej. (%) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| **`Clean (None)`** | **`0%` (`0/10`)** | **`98.52 ± 0.09`** | `98.53 ± 0.08` | `98.31 ± 0.17` | `98.30 ± 0.18` | `98.26 ± 0.22` | **`98.25 ± 0.12`** | `0.00%` | `0.00%` | **`0.00%`** | `0.0%` (`0.0%` H-FRR) |
+| **`Label Flipping`** | **`10%` (`1/10`)** | `62.79 ± 37.64` | `88.79 ± 11.69` | **`98.42 ± 0.17`** | **`98.44 ± 0.14`** | **`98.40 ± 0.15`** | **`98.52 ± 0.05`** | `40.00%` | `0.00%` | **`0.00%`** | **`100.0%`** |
+| **`Label Flipping`** | **`20%` (`2/10`)** | `53.45 ± 21.02` | `92.00 ± 6.36` | `51.66 ± 29.40` *(fails: $\beta < 0.2$)* | **`98.32 ± 0.13`** | **`98.26 ± 0.15`** | **`98.53 ± 0.07`** | `80.30%` | `0.00%` | **`0.00%`** | **`100.0%`** |
+| **`Label Flipping`** | **`30%` (`3/10`)** | `27.08 ± 11.16` | `79.58 ± 24.78` | `25.35 ± 12.57` | `44.03 ± 21.72` *(fails: $\beta < 0.3$)* | **`98.27 ± 0.23`** | **`98.51 ± 0.08`** | `76.70%` | `63.50%` | **`0.00%`** | **`100.0%`** |
+| **`Backdoor (6.0x)`** | **`10%` (`1/10`)** | `81.62 ± 29.41` | `93.38 ± 8.37` | `98.55 ± 0.09` | `98.54 ± 0.11` | `98.49 ± 0.10` | **`98.52 ± 0.05`** | **`99.90%`** | `0.00%` | **`0.00%`** | **`100.0%`** |
+| **`Backdoor (6.0x)`** | **`20%` (`2/10`)** | `74.00 ± 19.88` | `96.33 ± 1.99` | `94.11 ± 1.00` | `98.57 ± 0.03` | `98.56 ± 0.05` | **`98.53 ± 0.07`** | **`100.00%`** | **`76.70%`** *(evades trim!)* | **`0.00%`** | **`95.6%`** |
+| **`Backdoor (6.0x)`** | **`30%` (`3/10`)** | `48.25 ± 6.58` | `74.36 ± 28.52` | `65.22 ± 12.06` | `85.85 ± 15.66` | `98.54 ± 0.11` | **`98.50 ± 0.08`** | **`100.00%`** | **`100.00%`** *(evades trim!)* | **`0.00%`** | **`96.7%`** |
+| **`Update Scaling`** | **`10%` (`1/10`)** | `51.95 ± 33.71` | `77.02 ± 28.66` | **`98.23 ± 0.29`** | **`98.30 ± 0.22`** | **`98.22 ± 0.20`** | **`98.52 ± 0.05`** | `16.60%` | `0.00%` | **`0.00%`** | **`100.0%`** |
+| **`Update Scaling`** | **`20%` (`2/10`)** | `25.09 ± 9.80` | `87.08 ± 9.05` | `38.49 ± 23.52` *(fails: $\beta < 0.2$)* | **`98.10 ± 0.50`** | **`98.18 ± 0.35`** | **`98.53 ± 0.07`** | `82.90%` | `0.00%` | **`0.00%`** | **`100.0%`** |
+| **`Update Scaling`** | **`30%` (`3/10`)** | `20.29 ± 4.09` | `51.43 ± 32.63` | `21.10 ± 3.84` | `24.73 ± 4.77` *(fails: $\beta < 0.3$)* | **`97.70 ± 0.53`** | **`98.51 ± 0.08`** | `79.50%` | `73.70%` | **`0.00%`** | **`100.0%`** |
+
+#### 2. Natural Domain-Specialty Non-IID (`InSDN` `natural_n10`) & Modern 2026 SDN-IoT (`ASEADOS-SDN-IoT` `dirichlet_a0.5_n10`)
+
+| Dataset (`N=10`) | Attack & Poisoned Fraction | `FedAvg` Macro-F1 (%) | `StaticWeight` Macro-F1 (%) | `TrimmedMean` ($\beta=0.2$) Macro-F1 (%) | `CosineClustering` Macro-F1 (%) | `FedAvg` Backdoor ASR (%) | `TrimmedMean` ($\beta=0.2$) Backdoor ASR (%) | `CosineClustering` Backdoor ASR (%) |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| `insdn` (`natural_n10`) | `Clean` (`0%`) | `98.51 ± 0.06` | `98.55 ± 0.07` | `98.46 ± 0.08` | **`98.45 ± 0.11`** | `0.00%` | `0.00%` | **`0.00%`** |
+| `insdn` (`natural_n10`) | `Label Flip` (`20%`) | `25.43 ± 16.09` | `85.57 ± 8.69` | `98.35 ± 0.17` | **`98.48 ± 0.07`** | `84.10%` | `0.00%` | **`0.00%`** |
+| `insdn` (`natural_n10`) | `Backdoor` (`20%`) | `73.07 ± 21.37` | `84.49 ± 16.00` | `98.52 ± 0.12` | **`98.48 ± 0.07`** | **`100.00%`** | **`59.70%`** | **`0.00%`** |
+| `insdn` (`natural_n10`) | `Update Scaling` (`20%`) | `23.41 ± 9.25` | `87.56 ± 6.53` | `98.21 ± 0.38` | **`98.48 ± 0.07`** | `93.80%` | `0.00%` | **`0.00%`** |
+| `aseados_sdn_iot` (`dir_a0.5_n10`) | `Clean` (`0%`) | `78.22 ± 4.23` | `81.00 ± 1.58` | `72.45 ± 5.23` | **`75.22 ± 5.23`** | `63.20%` | `55.60%` | `63.80%` |
+| `aseados_sdn_iot` (`dir_a0.5_n10`) | `Label Flip` (`20%`) | `28.16 ± 4.65` | `57.37 ± 19.06` | **`75.25 ± 5.52`** | **`74.81 ± 6.46`** | `35.10%` | `79.20%` | `59.90%` |
+| `aseados_sdn_iot` (`dir_a0.5_n10`) | `Label Flip` (`30%`) | `28.27 ± 6.21` | `28.80 ± 5.32` | `33.67 ± 9.90` | **`72.73 ± 5.20`** | `50.30%` | `40.60%` | **`47.50%`** |
+| `aseados_sdn_iot` (`dir_a0.5_n10`) | `Backdoor` (`20%`) | `49.73 ± 11.41` | `56.94 ± 18.50` | `71.91 ± 3.89` | **`74.81 ± 6.46`** | **`100.00%`** | **`100.00%`** | **`59.90%`** |
+| `aseados_sdn_iot` (`dir_a0.5_n10`) | `Backdoor` (`30%`) | `42.69 ± 11.27` | `45.89 ± 11.37` | `59.28 ± 10.08` | **`72.73 ± 5.20`** | **`100.00%`** | **`100.00%`** | **`47.50%`** |
+| `aseados_sdn_iot` (`dir_a0.5_n10`) | `Update Scaling` (`20%`) | `26.00 ± 4.00` | `40.85 ± 20.75` | `66.91 ± 3.33` | **`74.81 ± 6.46`** | `99.00%` | `60.00%` | **`59.90%`** |
+| `aseados_sdn_iot` (`dir_a0.5_n10`) | `Update Scaling` (`30%`) | `28.56 ± 2.40` | `28.91 ± 3.97` | `30.49 ± 3.76` | **`72.73 ± 5.20`** | `53.60%` | `68.90%` | **`47.50%`** |
+
+#### 3. Empirical Failure-Mode Ablations (Where Existing Robust Aggregators Still Fail — Direct Motivation for Step 05 `TrustFed-Core`)
+
+| Failure Mode / Ablation Regime (`InSDN`, 5 Seeds) | `FedAvg` Macro-F1 (%) | `StaticWeight` (Ali et al.) Macro-F1 (%) | `TrimmedMean` ($\beta=0.2$) Macro-F1 (%) | `Median` Macro-F1 (%) | `CosineClustering` Macro-F1 (%) | Key Failure Metric (`ASR` or `Honest False-Rejection Rate`) |
+|---|---:|---:|---:|---:|---:|---|
+| **1. Extreme Non-IID Clean Drift (`Dirichlet` $\alpha=0.1, N=10, 0\%$ Poisoned)** | **`98.64 ± 0.05`** | `—` | `93.77 ± 2.50` *(-4.87 pts)* | `91.56 ± 3.46` *(-7.08 pts)* | **`76.39 ± 3.76`** *(-22.25 pts!)* | `CosineClustering` falsely rejects **`40.0%`** of honest tenants (`H-FRR = 40.0%`) due to severe non-IID gradient divergence! |
+| **2. Extreme Non-IID + 20% Scaling (`Dirichlet` $\alpha=0.1, N=10, 20\%$ Poisoned)** | `68.43 ± 29.95` | `—` | `82.98 ± 11.21` | `83.75 ± 10.10` | **`96.47 ± 3.75`** | `CosineClustering` still suffers **`9.5%`** Honest False-Rejection (`H-FRR = 9.5%`); `TrimmedMean` loses `15.66` F1 pts by trimming rare-class honest coordinates. |
+| **3. Few-Tenant Breakdown (`Natural Non-IID`, $N=3, 33.3\%$ Label-Flip)** | `22.77 ± 10.42` | `—` | **`28.85 ± 8.22`** *(collapses!)* | `98.81 ± 0.16` | `98.84 ± 0.18` | At $N=3$, `TrimmedMean` ($\beta=0.2$) computes $k = \lfloor 0.2 \times 3 \rfloor = 0$, trimming **zero** updates and collapsing alongside `FedAvg`! |
+| **4. Few-Tenant Breakdown (`Natural Non-IID`, $N=3, 33.3\%$ Update Scaling)** | `16.84 ± 1.62` | `—` | **`16.19 ± 0.36`** *(collapses!)* | `98.66 ± 0.26` | `98.84 ± 0.18` | Confirming that coordinate-wise trimmed mean is mathematically inoperable when $\lfloor \beta N \rfloor < m$ ($N=3$). |
+| **5. Subspace Backdoor Evasion (`Dirichlet` $\alpha=0.5, N=10, 30\%$ Backdoor `6.0x`)** | `48.25 ± 6.58` | `74.36 ± 28.52` | `85.85 ± 15.66` | `98.54 ± 0.11` | **`98.50 ± 0.08`** | `Median` (`ASR = 100.0%`), `TrimmedMean` (`ASR = 100.0%`), and `StaticWeight` (`ASR = 99.8%`) completely fail to stop the localized trigger on columns `(3, 6, 8)`! |
+| **6. Adaptive Norm-Bounded Stealth Backdoor (`Dirichlet` $\alpha=0.5, N=10, 30\%$ Backdoor `1.4x`)** | `98.55 ± 0.07` (`ASR = 99.9%`) | `98.55 ± 0.07` (`ASR = 80.3%`) | `98.54 ± 0.07` (`ASR = 99.9%`) | `—` | `98.53 ± 0.06` (**`ASR = 93.7 ± 12.4%`!**) | By keeping `replacement_scale = 1.4x` underneath the `2.5x` norm threshold, the stealthy attacker evades **`89.2%`** of `CosineClustering` rejections (`M-TRR = 10.8%`), driving `Backdoor ASR` from `0.0%` up to **`93.7%`**! |
+
+

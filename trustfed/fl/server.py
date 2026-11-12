@@ -178,12 +178,26 @@ class FLServer:
             for u in updates
         )
 
+        rejected_set = set(agg_result.rejected_clients)
+        honest_ids = [c.client_id for c in self.clients if not getattr(c, "is_malicious", False)]
+        malicious_ids = [c.client_id for c in self.clients if getattr(c, "is_malicious", False)]
+        honest_rej = sum(1 for cid in honest_ids if cid in rejected_set)
+        malicious_rej = sum(1 for cid in malicious_ids if cid in rejected_set)
+        honest_frr = float(honest_rej) / float(max(1, len(honest_ids)))
+        malicious_trr = float(malicious_rej) / float(len(malicious_ids)) if malicious_ids else 0.0
+
         round_log: dict[str, Any] = {
             "round": int(round_idx),
             "aggregator": self.aggregator.name,
             "num_clients": len(self.clients),
+            "num_honest_clients": len(honest_ids),
+            "num_malicious_clients": len(malicious_ids),
             "accepted_clients": len(agg_result.accepted_clients),
             "rejected_clients": len(agg_result.rejected_clients),
+            "honest_rejected_count": int(honest_rej),
+            "malicious_rejected_count": int(malicious_rej),
+            "honest_false_rejection_rate": honest_frr,
+            "malicious_rejection_rate": malicious_trr,
             "train_loss_weighted": float(weighted_train_loss),
             "local_train_time_sec": local_train_time_sum_sec,
             "local_train_time_max_sec": local_train_time_max_sec,
@@ -272,7 +286,7 @@ class FLServer:
 
         for r in range(1, int(rounds) + 1):
             is_last = r == int(rounds)
-            do_eval = is_last or (r == 1) or (eval_every > 0 and r % eval_every == 0)
+            do_eval = is_last or (eval_every > 0 and (r == 1 or r % eval_every == 0))
             do_tenant_eval = is_last or (
                 eval_per_tenant_every > 0 and r % eval_per_tenant_every == 0
             )
@@ -321,6 +335,12 @@ class FLServer:
             ),
             "mean_round_aggregation_time_sec": float(
                 np.mean([float(h["aggregation_time_sec"]) for h in history])
+            ),
+            "mean_honest_false_rejection_rate": float(
+                np.mean([float(h.get("honest_false_rejection_rate", 0.0)) for h in history])
+            ),
+            "mean_malicious_rejection_rate": float(
+                np.mean([float(h.get("malicious_rejection_rate", 0.0)) for h in history])
             ),
             "total_comm_bytes": int(self._cumulative_comm_bytes),
             "bytes_per_round": int(final_round.get("total_comm_bytes", 0)),

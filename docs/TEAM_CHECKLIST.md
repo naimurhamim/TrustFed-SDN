@@ -56,11 +56,11 @@
 - [x] `03.5` Pass `tests/test_fl.py` (determinism + weighted-mean tests), update `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 03`, and tag `step-03-done` (@Naimur, 2026-11-10)
 
 ### Step 04 — Poisoning Attacks & Robust Aggregation (`docs/steps/STEP_04_attacks_and_robust_aggregation.md`)
-- [ ] `04.1` Confirm attack matrix and aggregator baselines
-- [ ] `04.2` Implement label flipping, feature-trigger backdoor, and update scaling/sign-flip attacks in `trustfed/attacks/` + backdoor ASR metric
-- [ ] `04.3` Implement coordinate-wise trimmed mean (`beta` `0.1`, `0.2`), cosine-similarity clustering filter, and static-weight baseline in `trustfed/aggregation/`
-- [ ] `04.4` Run full poisoning sweep (`N=10`, `{0, 10, 20, 30}%` poisoned, 3 attacks, 4 aggregators, 5 seeds) and measure honest-tenant false-rejection rates
-- [ ] `04.5` Pass `tests/test_attacks.py` & `tests/test_aggregation.py`, log tables to `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 04`, and tag `step-04-done`
+- [x] `04.1` Confirm attack matrix and aggregator baselines (@Naimur, 2026-11-12)
+- [x] `04.2` Implement label flipping, feature-trigger backdoor, and update scaling/sign-flip attacks in `trustfed/attacks/` + backdoor ASR metric (@Naimur, 2026-11-12)
+- [x] `04.3` Implement coordinate-wise trimmed mean (`beta` `0.1`, `0.2`), cosine-similarity clustering filter, and static-weight baseline in `trustfed/aggregation/` (@Naimur, 2026-11-12)
+- [x] `04.4` Run full poisoning sweep (`N=10`, `{0, 10, 20, 30}%` poisoned, 3 attacks, 6 aggregators, 5 seeds) and measure honest-tenant false-rejection rates (@Naimur, 2026-11-12)
+- [x] `04.5` Pass `tests/test_attacks.py` & `tests/test_aggregation.py` (`38/38` pytest), log tables to `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 04`, and tag `step-04-done` (@Naimur, 2026-11-12)
 
 ### Step 05 — Adaptive Per-Tenant Differential Privacy (`docs/steps/STEP_05_adaptive_dp.md`)
 - [ ] `05.1` Approve DP design checkpoint (record-level vs update-level granularity, sensitivity score `s_i`, budget policy, `delta`)

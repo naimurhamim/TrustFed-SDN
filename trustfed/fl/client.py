@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import time
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import torch
@@ -12,6 +12,9 @@ import torch.nn as nn
 from trustfed.fl.aggregator import ClientUpdate, serialize_tensor_payload
 from trustfed.models.base import BaseFlowClassifier
 from trustfed.models.trainer import evaluate_pytorch_model, get_default_device, set_all_seeds
+
+if TYPE_CHECKING:
+    from trustfed.attacks.base import PoisoningAttack
 
 
 class FLClient:
@@ -37,6 +40,7 @@ class FLClient:
         y_test: np.ndarray | None = None,
         device: torch.device | None = None,
         use_class_weights: bool = False,
+        attack: PoisoningAttack | None = None,
     ) -> None:
         if len(X_train) == 0:
             raise ValueError(f"FLClient '{client_id}' received empty X_train.")
@@ -50,9 +54,20 @@ class FLClient:
         self.client_index = int(client_index)
         self.device = device if device is not None else get_default_device(prefer_gpu=True)
         self.model = model.to(self.device)
+        self.attack = attack
 
-        self.X_train_tensor = torch.as_tensor(X_train, dtype=torch.float32, device=self.device)
-        self.y_train_tensor = torch.as_tensor(y_train, dtype=torch.long, device=self.device)
+        if self.attack is not None:
+            X_train_eff, y_train_eff = self.attack.poison_dataset(
+                X_train,
+                y_train,
+                num_classes=int(self.model.num_classes),
+                seed=int(client_index) * 997,
+            )
+        else:
+            X_train_eff, y_train_eff = X_train, y_train
+
+        self.X_train_tensor = torch.as_tensor(X_train_eff, dtype=torch.float32, device=self.device)
+        self.y_train_tensor = torch.as_tensor(y_train_eff, dtype=torch.long, device=self.device)
         self._num_samples = int(self.X_train_tensor.shape[0])
 
         self.X_val = X_val
@@ -63,12 +78,17 @@ class FLClient:
         self._class_weights: torch.Tensor | None = None
         if use_class_weights:
             counts = np.bincount(
-                np.asarray(y_train, dtype=np.int64), minlength=self.model.num_classes
+                np.asarray(y_train_eff, dtype=np.int64), minlength=self.model.num_classes
             )
             counts_safe = np.maximum(counts, 1).astype(np.float64)
             inv = np.sqrt(float(self._num_samples) / (self.model.num_classes * counts_safe))
             inv = np.clip(inv, 0.5, 5.0)
             self._class_weights = torch.as_tensor(inv, dtype=torch.float32, device=self.device)
+
+    @property
+    def is_malicious(self) -> bool:
+        """Whether this client is configured with an active poisoning attack."""
+        return self.attack is not None
 
     @property
     def num_samples(self) -> int:
@@ -147,7 +167,7 @@ class FLClient:
         upload_bytes = len(wire_payload)
         avg_loss = total_loss / max(1, total_batches)
 
-        return ClientUpdate(
+        honest_update = ClientUpdate(
             client_id=self.client_id,
             flat_params=new_flat,
             flat_delta=flat_delta,
@@ -156,8 +176,21 @@ class FLClient:
             local_train_time_sec=float(elapsed_sec),
             upload_bytes=int(upload_bytes),
             round_idx=int(round_idx),
-            metadata={"local_epochs": int(local_epochs), "batch_size": eff_batch_size},
+            metadata={
+                "local_epochs": int(local_epochs),
+                "batch_size": eff_batch_size,
+                "is_malicious": self.is_malicious,
+                "attack": self.attack.name if self.attack is not None else "none",
+            },
         )
+        if self.attack is not None:
+            return self.attack.poison_update(
+                global_flat_params,
+                honest_update,
+                round_idx=int(round_idx),
+                seed=round_seed,
+            )
+        return honest_update
 
     def evaluate_local_test(
         self,

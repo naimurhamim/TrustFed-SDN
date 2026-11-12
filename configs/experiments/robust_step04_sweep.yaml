@@ -1,0 +1,47 @@
+# Step 04 — Master Poisoning & Robust Aggregation Sweep Configuration
+experiment_name: step04_robust_sweep
+output_dir: results/04_robust
+datasets:
+  - insdn
+  - aseados_sdn_iot
+tasks:
+  - binary
+num_tenants: 10
+partitions:
+  - dirichlet_a0.5
+  - natural_n10
+  - natural_n3
+poison_fractions:
+  - 0.00
+  - 0.10
+  - 0.20
+  - 0.30
+attacks:
+  label_flip:
+    flip_fraction: 1.0
+    bidirectional: true
+    update_scale: 4.5
+  backdoor:
+    trigger_features: [3, 6, 8]
+    trigger_value: 4.5
+    target_class: 0
+    poison_ratio: 0.5
+    replacement_scale: 5.0
+    collateral_flip_ratio: 0.35
+  scaling:
+    scale_factor: 10.0
+    sign_flip: true
+aggregators:
+  - fedavg
+  - static_weight
+  - trimmed_mean_b0.1
+  - trimmed_mean_b0.2
+  - median
+  - clustering
+rounds: 25
+local_epochs: 3
+batch_size: 128
+lr: 0.001
+weight_decay: 0.0001
+seeds: [0, 1, 2, 3, 4]
+

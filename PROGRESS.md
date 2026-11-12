@@ -8,7 +8,7 @@ The agent updates this file at the end of every step. Status values: `not starte
 | 01 | Data | approved | 2026-11-05 | `ff6931d` (tag `step-01-done`) | Processed `InSDN` (`184,855` cleaned), `ASEADOS-SDN-IoT` 2026 (`426,111` cleaned), and `CICIDS2017` (`2,232,894` cleaned); `0` split hash overlap; `12/12` pytest passing |
 | 02 | Centralized baselines and model choice | approved | 2026-11-05 | `3b7adbd` (tag `step-02-done`) | Completed 5-seed centralized (`DNN`, `GRU`, `LSTM`, `LogReg`, `RandomForest`) & single-tenant local-only baselines across `InSDN`, `ASEADOS-SDN-IoT` 2026, and `CICIDS2017` on RTX 3050 Ti GPU; `GRU` selected per spec (`docs/MODEL_DECISION.md`); `27/27` pytest passing |
 | 03 | FL core and FedAvg | approved | 2026-11-10 | `cd1b8b7` (tag `step-03-done`) | Completed `trustfed/fl/*`, `sim/run_experiment.py`, `tests/test_fl.py` (`31/31` pytest passing), and full 5-seed `270`-run FedAvg sweep (`results/03_fedavg/`) across `InSDN`, `ASEADOS-SDN-IoT` 2026, and `CICIDS2017` |
-| 04 | Attacks and robust aggregation | not started | | | |
+| 04 | Attacks and robust aggregation | approved | 2026-11-12 | $sha (tag step-04-done) | Completed `trustfed/attacks/*` (`label_flip`, `backdoor`, `scaling`, `compute_backdoor_asr`), `trustfed/aggregation/*` (`static_weight`, `trimmed_mean_b0.1`, `trimmed_mean_b0.2`, `median`, `clustering`), `tests/test_attacks.py` & `tests/test_aggregation.py` (`38/38` pytest passing), and full 5-seed `660`-run Step 04 poisoning & failure-mode sweep (`results/04_robust/`) |
 | 05 | Adaptive DP | not started | | | |
 | 06 | Verifiable secure aggregation | not started | | | |
 | 07 | SDN testbed | not started | | | |

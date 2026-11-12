@@ -1,0 +1,24 @@
+experiment_name: robust_insdn_scaling_n10
+output_dir: results/04_robust
+dataset: insdn
+task: binary
+partition_type: dirichlet
+num_tenants: 10
+dirichlet_alpha: 0.5
+aggregator: clustering
+attack: scaling
+poison_fraction: 0.20
+rounds: 25
+local_epochs: 3
+batch_size: 128
+lr: 0.001
+weight_decay: 0.0001
+seeds: [0, 1, 2, 3, 4]
+model:
+  type: gru
+  hidden_dim: 64
+  num_layers: 2
+  dropout: 0.2
+  seq_mode: single_step
+  num_chunks: 1
+
