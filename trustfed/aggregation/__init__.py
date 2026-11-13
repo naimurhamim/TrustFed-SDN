@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from trustfed.aggregation.clustering import CosineClusteringAggregator
+from trustfed.aggregation.secure import SecureAggregator
 from trustfed.aggregation.static_weight import StaticWeightAggregator
 from trustfed.aggregation.trimmed_mean import MedianAggregator, TrimmedMeanAggregator
 from trustfed.fl.aggregator import AggregationResult, Aggregator, ClientUpdate, FedAvgAggregator
@@ -29,9 +30,11 @@ def build_aggregator(name: str, **kwargs: Any) -> Aggregator:
         return MedianAggregator()
     if norm in ("clustering", "cosine_clustering", "trustfed_robust"):
         return CosineClusteringAggregator(**kwargs)
+    if norm in ("secure", "secure_fedavg", "verifiable"):
+        return SecureAggregator(**kwargs)
     raise ValueError(
         f"Unknown aggregator '{name}'. Choose from: 'fedavg', 'static_weight', "
-        "'trimmed_mean_b0.1', 'trimmed_mean_b0.2', 'median', 'clustering'."
+        "'trimmed_mean_b0.1', 'trimmed_mean_b0.2', 'median', 'clustering', 'secure_fedavg'."
     )
 
 
@@ -42,6 +45,7 @@ __all__ = [
     "CosineClusteringAggregator",
     "FedAvgAggregator",
     "MedianAggregator",
+    "SecureAggregator",
     "StaticWeightAggregator",
     "TrimmedMeanAggregator",
     "build_aggregator",

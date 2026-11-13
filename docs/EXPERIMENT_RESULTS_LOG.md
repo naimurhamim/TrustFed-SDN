@@ -564,5 +564,80 @@
    - **Full-Partition FL Audit:** Across full tenant partitions ($n_i \in [2625, 5737]$), both local and global models exhibit MIA AUC near `50.8%–51.3%` even without DP because the compact `43,554`-parameter GRU trained for 1 local epoch per round generalizes well on bulk traffic. As documented in `docs/DP_DESIGN.md`, a near-50% MIA score against a bounded attacker does not by itself prove privacy; the formal guarantee is provided by the $(\varepsilon_i, \delta)$ RDP accountant.
    - **High-Risk Rare-Attack Cohort Audit:** When auditing memorization on stratified rare-attack cohorts of `Finance`, unprotected `No-DP` models leak membership (`MIA AUC = 57.31%` on `InSDN` and **`66.17%`** with `32.0%` Yeom advantage on `ASEADOS-SDN-IoT`). Record-level DP-SGD monotonically suppresses rare-cohort MIA AUC down to `51.39%` (`InSDN`) and `54.63%` (`ASEADOS-SDN-IoT`), with `Adaptive DP` consistently achieving lower MIA leakage on `Finance` than `Uniform DP` (`52.86%` vs. `53.60%` at $\bar{\varepsilon}=2.0$ on `InSDN`, and `57.25%` vs. `57.78%` at $\bar{\varepsilon}=4.0$ on `ASEADOS-SDN-IoT`).
 
+---
+
+## 7. Step 06 — Verifiable Secure Aggregation Results (`results/06_verify/`)
+
+- **Completed:** `2026-11-13` (`@Naimur`, Commit: pending `step-06-done` on approval)
+- **Runner & Configs:** `sim/run_experiment.py --sweep-step06` (`configs/experiments/verify_step06_sweep.yaml`, `verify_insdn_n3.yaml`, `verify_aseados_n3.yaml`)
+- **Design Specification:** [`docs/VERIFY_DESIGN.md`](VERIFY_DESIGN.md)
+- **Raw Artifacts:**
+  - [`results/06_verify/summary.json`](../results/06_verify/summary.json)
+  - [`results/06_verify/quantization_error.csv`](../results/06_verify/quantization_error.csv)
+  - [`results/06_verify/tamper_test_table.csv`](../results/06_verify/tamper_test_table.csv)
+  - [`results/06_verify/overhead_breakdown.csv`](../results/06_verify/overhead_breakdown.csv)
+  - [`results/06_verify/accuracy_equivalence.csv`](../results/06_verify/accuracy_equivalence.csv)
+  - [`results/06_verify/per_seed_summary.csv`](../results/06_verify/per_seed_summary.csv)
+  - [`results/06_verify/tamper_detection_matrix.png`](../results/06_verify/tamper_detection_matrix.png)
+  - [`results/06_verify/overhead_breakdown.png`](../results/06_verify/overhead_breakdown.png)
+  - [`results/06_verify/accuracy_equivalence.png`](../results/06_verify/accuracy_equivalence.png)
+- **Cryptographic Architecture (`trustfed/verify/` + `trustfed/aggregation/secure.py`):**
+  - `X25519` Diffie-Hellman pairwise secrets + NIST FIPS-202 `SHAKE-256` masking over modular ring $\mathbb{Z}_{2^{48}}$ (exact `0` integer cancellation error; `6 bytes/param` packed wire payload).
+  - Dual-prime keyed linear homomorphic checksums ($p_1 = 2^{31}-1$, $p_2 = 2^{31}-19$, combined forgery soundness $\le 2^{-62}$) + RFC 6962 `SHA-256` Merkle tree commitments + `Ed25519` signatures + per-round 16-byte replay nonces.
+
+### 7.1 Fixed-Point Quantization Precision (`GRU`, $d = 43{,}554$ Parameters)
+
+| Fixed-Point Bit Width | Scale Factor $S = 2^b$ | Max Abs Error | Mean Abs Error | RMSE | Signal-to-Noise Ratio (dB) | Selection |
+|---|---:|---:|---:|---:|---:|---|
+| `16-bit` | `65,536` | `7.63e-6` | `3.80e-6` | `4.40e-6` | `85.38 dB` | Comparison |
+| **`20-bit`** | **`1,048,576`** | **`4.77e-7`** | **`2.37e-7`** | **`2.74e-7`** | **`109.49 dB`** | **Approved Default** |
+| `24-bit` | `16,777,216` | `2.98e-8` | `1.48e-8` | `1.82e-8` | `133.04 dB` | Comparison |
+
+### 7.2 Tamper Detection Rate & Honest False-Alarm Audit ($N \in \{3, 5, 10\}$, `1,800` Total Trials)
+
+| Scenario | Metric Type | Trials per $N$ | `N = 3` Result | `N = 5` Result | `N = 10` Result | Primary Rejection Reason |
+|---|---|---:|---:|---:|---:|---|
+| **Honest Rounds (No Tamper)** | False-Alarm Rate | `100` | **`0.0%` (`0/100`)** | **`0.0%` (`0/100`)** | **`0.0%` (`0/100`)** | `verified` (`0` false positives) |
+| **Tamper 1a: Modified Aggregate (Float `+0.05`)** | Detection Rate | `100` | **`100.0%`** | **`100.0%`** | **`100.0%`** | `linear_checksum_mismatch` |
+| **Tamper 1b: Modified Aggregate (`+1` Integer LSB)** | Detection Rate | `100` | **`100.0%`** | **`100.0%`** | **`100.0%`** | `linear_checksum_mismatch` |
+| **Tamper 2: Dropped Tenant Submission** | Detection Rate | `100` | **`100.0%`** | **`100.0%`** | **`100.0%`** | `dropped_or_unexpected_tenant` |
+| **Tamper 3: Replayed Old-Round Update** | Detection Rate | `100` | **`100.0%`** | **`100.0%`** | **`100.0%`** | `replayed_update_round_mismatch` / nonce |
+| **Tamper 4: Substituted / Forged Tenant Update** | Detection Rate | `100` | **`100.0%`** | **`100.0%`** | **`100.0%`** | `linear_checksum_mismatch` / invalid sig |
+
+### 7.3 Per-Round Latency & Communication Byte Overhead Breakdown (`GRU`, $d = 43{,}554$, `20` Timed Rounds)
+
+| Metric | `N = 3` Tenants | `N = 5` Tenants | `N = 10` Tenants |
+|---|---:|---:|---:|
+| Quantize time / tenant (`ms`) | `1.40 ms` | `1.23 ms` | `1.17 ms` |
+| X25519 + SHAKE-256 masking time / tenant (`ms`) | `5.06 ms` | `8.92 ms` | `18.61 ms` |
+| Dual-prime linear checksum time / tenant (`ms`) | `3.84 ms` | `4.28 ms` | `3.73 ms` |
+| Ed25519 signature + hash time / tenant (`ms`) | `1.48 ms` | `1.49 ms` | `1.48 ms` |
+| Server unmask + Merkle proof build (`ms`) | `6.43 ms` | `9.69 ms` | `17.84 ms` |
+| Tenant `verify()` proof check time (`ms`) | `5.43 ms` | `5.92 ms` | `7.06 ms` |
+| **Total End-to-End Secure Protocol Latency (`ms/round`)** | **`23.64 ms`** | **`31.52 ms`** | **`49.90 ms`** |
+| Plain `FedAvg` baseline aggregation time (`ms`) | `2.86 ms` | `1.38 ms` | `2.26 ms` |
+| Plain `FedAvg` wire bytes / tenant (Upload / Round-Trip) | `174.2 KB` / `348.5 KB` | `174.2 KB` / `348.5 KB` | `174.2 KB` / `348.5 KB` |
+| Secure 48-Bit packed upload bytes / tenant (+Merkle proof) | `261.8 KB` (`+1.76 KB`) | `261.8 KB` (`+3.06 KB`) | `261.8 KB` (`+6.42 KB`) |
+| Secure 48-Bit round-trip bytes / tenant | `437.8 KB` | `439.1 KB` | `442.5 KB` |
+| **48-Bit Packed Upload Ratio vs. Plain `FedAvg`** | **`1.50×`** | **`1.50×`** | **`1.50×`** |
+| **48-Bit Packed Round-Trip Ratio vs. Plain `FedAvg` (Target `1.2–1.5×`)** | **`1.26×`** (`1.256×`) | **`1.26×`** (`1.260×`) | **`1.27×`** (`1.270×`) |
+| Unpacked 64-Bit Round-Trip Ratio (without 48-bit packing) | `1.51×` | `1.51×` | `1.52×` |
+
+### 7.4 Detection Accuracy Equivalence vs. Plain `FedAvg` (`5` Seeds `0..4`, `30` Rounds, `natural_n3`)
+
+| Dataset | Aggregator / Precision | Macro-F1 (%) Mean ± Std | Accuracy (%) Mean ± Std | ADR (%) | FPR (%) | ROC-AUC (%) | $\Delta$ F1 vs. Plain `FedAvg` | Paired Wilcoxon $p$ |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| `insdn` | **Plain `FedAvg` (`float32`)** | **`99.67 ± 0.19`** | `99.70 ± 0.17` | `99.90` | `0.68` | `99.93` | `0.00` pts | `—` |
+| `insdn` | `SecureAgg` (`16-bit`) | `99.59 ± 0.21` | `99.62 ± 0.19` | `99.92` | `0.93` | `99.93` | `-0.08` pts | `1.0000` (n.s.) |
+| `insdn` | **`SecureAgg` (`20-bit` Default)** | **`99.53 ± 0.21`** | `99.58 ± 0.19` | **`99.93`** | `1.08` | `99.93` | `-0.14` pts | `0.6250` (n.s.) |
+| `insdn` | `SecureAgg` (`24-bit`) | `99.58 ± 0.21` | `99.62 ± 0.19` | `99.93` | `0.96` | `99.93` | `-0.09` pts | `0.6250` (n.s.) |
+| `aseados_sdn_iot` | **Plain `FedAvg` (`float32`)** | **`91.01 ± 0.23`** | `91.04 ± 0.23` | `94.49` | `11.81` | `97.27` | `0.00` pts | `—` |
+| `aseados_sdn_iot` | `SecureAgg` (`16-bit`) | `90.67 ± 0.96` | `90.70 ± 0.95` | `94.11` | `12.11` | `97.12` | `-0.34` pts | `1.0000` (n.s.) |
+| `aseados_sdn_iot` | **`SecureAgg` (`20-bit` Default)** | **`90.47 ± 1.20`** | `90.50 ± 1.20` | `93.91` | `12.31` | `97.07` | `-0.54` pts | `0.1875` (n.s.) |
+| `aseados_sdn_iot` | `SecureAgg` (`24-bit`) | `90.74 ± 0.73` | `90.77 ± 0.72` | `93.90` | `11.81` | `97.13` | `-0.27` pts | `0.6250` (n.s.) |
+
+- *Note on accuracy equivalence:* Single-round `SecureAggregator` (`20-bit`) matches `FedAvg` within $\le 4.77 \times 10^{-7}$ parameter $L_\infty$ error (`109.49 dB` SNR). Across 30 non-convex rounds, learning curves overlap across Rounds 1–28 and all paired Wilcoxon tests yield $p \in [0.1875, 1.0] \gg 0.05$ (no statistically significant difference).
+
+
 
 

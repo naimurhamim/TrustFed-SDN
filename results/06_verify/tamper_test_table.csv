@@ -1,0 +1,19 @@
+num_tenants,scenario_key,scenario_label,trials,detected_or_flagged,rate_pct,sample_reason
+3,honest_rounds,Honest Rounds (No Tamper — Target 0% Alarm),100,0,0.0,verified
+3,modified_aggregate_float,Tamper 1a: Modified Aggregate (Float +0.05),100,100,100.0,linear_checksum_mismatch
+3,modified_aggregate_lsb,Tamper 1b: Modified Aggregate (+1 Quantized LSB),100,100,100.0,linear_checksum_mismatch
+3,dropped_tenant,Tamper 2: Dropped Tenant Submission,100,100,100.0,"dropped_or_unexpected_tenant: missing=['tenant_0'], extra=[]"
+3,replayed_update,Tamper 3: Replayed Old-Round Update,100,100,100.0,replayed_update_round_mismatch:tenant_0:hdr_round=1!=expected=2
+3,substituted_update,Tamper 4: Substituted / Forged Tenant Update,100,100,100.0,linear_checksum_mismatch
+5,honest_rounds,Honest Rounds (No Tamper — Target 0% Alarm),100,0,0.0,verified
+5,modified_aggregate_float,Tamper 1a: Modified Aggregate (Float +0.05),100,100,100.0,linear_checksum_mismatch
+5,modified_aggregate_lsb,Tamper 1b: Modified Aggregate (+1 Quantized LSB),100,100,100.0,linear_checksum_mismatch
+5,dropped_tenant,Tamper 2: Dropped Tenant Submission,100,100,100.0,"dropped_or_unexpected_tenant: missing=['tenant_0'], extra=[]"
+5,replayed_update,Tamper 3: Replayed Old-Round Update,100,100,100.0,replayed_update_round_mismatch:tenant_0:hdr_round=1!=expected=2
+5,substituted_update,Tamper 4: Substituted / Forged Tenant Update,100,100,100.0,linear_checksum_mismatch
+10,honest_rounds,Honest Rounds (No Tamper — Target 0% Alarm),100,0,0.0,verified
+10,modified_aggregate_float,Tamper 1a: Modified Aggregate (Float +0.05),100,100,100.0,linear_checksum_mismatch
+10,modified_aggregate_lsb,Tamper 1b: Modified Aggregate (+1 Quantized LSB),100,100,100.0,linear_checksum_mismatch
+10,dropped_tenant,Tamper 2: Dropped Tenant Submission,100,100,100.0,"dropped_or_unexpected_tenant: missing=['tenant_0'], extra=[]"
+10,replayed_update,Tamper 3: Replayed Old-Round Update,100,100,100.0,replayed_update_round_mismatch:tenant_0:hdr_round=1!=expected=2
+10,substituted_update,Tamper 4: Substituted / Forged Tenant Update,100,100,100.0,linear_checksum_mismatch

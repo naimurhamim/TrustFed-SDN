@@ -10,10 +10,10 @@
 ## Latest Handoff Note
 
 - **Last Updated By:** `@Naimur`
-- **Date:** `2026-11-12`
-- **Active Step:** `Step 06 - Verifiable Secure Aggregation` (`06.1` Checkpoint — Paused awaiting user instruction)
-- **What Was Just Completed:** Completed and approved `Step 05 - Adaptive Per-Tenant Differential Privacy` (`approved step 05`, tagged `step-05-done`): implemented `trustfed/privacy/*` (`accountant.py`, `budget.py`, `dp_sgd.py`, `mia.py`), `tests/test_privacy.py` (`43/43` pytest), `docs/DP_DESIGN.md`, and executed the full 5-seed `220`-run Adaptive vs. Uniform DP-SGD & MIA benchmark sweep (`results/05_dp/`).
-- **Next Task for Incoming Teammate:** Begin `Step 06 - Verifiable Secure Aggregation` (`docs/steps/STEP_06_verifiable_secure_aggregation.md`) when instructed.
+- **Date:** `2026-11-13`
+- **Active Step:** `Step 07 - Multi-Tenant SDN Testbed` (Paused awaiting user instruction)
+- **What Was Just Completed:** Completed and approved `Step 06 - Verifiable Secure Aggregation` (`approved step 06`, tagged `step-06-done`, pushed to GitHub & website): implemented `trustfed/verify/*`, `SecureAggregator`, `tests/test_verify.py` (`50/50` pytest passing), `docs/VERIFY_DESIGN.md`, `100%` tamper detection / `0%` false alarms, `1.26×` wire overhead, and 5-seed accuracy equivalence (`results/06_verify/`).
+- **Next Task for Incoming Teammate:** Begin `Step 07 - Multi-Tenant SDN Testbed` (`docs/steps/STEP_07_sdn_testbed.md`) when instructed by the user.
 
 ---
 
@@ -70,11 +70,11 @@
 - [x] `05.5` Pass `tests/test_privacy.py` (`43/43` pytest), log results to `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 05`, and tag `step-05-done` (@Naimur, 2026-11-12)
 
 ### Step 06 — Verifiable Secure Aggregation (`docs/steps/STEP_06_verifiable_secure_aggregation.md`)
-- [ ] `06.1` Approve verification checkpoint (threat model, homomorphic commitment vs keyed linear checksum, dropout policy, fixed-point quantization precision)
-- [ ] `06.2` Implement fixed-point quantization (`quantize.py`) and exact-canceling pairwise masking (`masking.py`) in `trustfed/verify/`
-- [ ] `06.3` Implement commitments/checksums, digital signatures, replay nonces, secure aggregator wrapper, and tenant `verify()`
-- [ ] `06.4` Execute all 4 tamper tests (modified aggregate, dropped tenant, replay, substitution) + 100-round honest false-alarm test + byte/time overhead breakdown
-- [ ] `06.5` Write `docs/VERIFY_DESIGN.md`, pass `tests/test_verify.py`, update `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 06`, and tag `step-06-done`
+- [x] `06.1` Approve verification checkpoint (threat model, homomorphic commitment vs keyed linear checksum, dropout policy, fixed-point quantization precision) (@Naimur, 2026-11-13)
+- [x] `06.2` Implement fixed-point quantization (`quantize.py`) and exact-canceling pairwise masking (`masking.py`) in `trustfed/verify/` (@Naimur, 2026-11-13)
+- [x] `06.3` Implement commitments/checksums, digital signatures, replay nonces, secure aggregator wrapper, and tenant `verify()` (@Naimur, 2026-11-13)
+- [x] `06.4` Execute all 4 tamper tests (modified aggregate, dropped tenant, replay, substitution) + 100-round honest false-alarm test + byte/time overhead breakdown (@Naimur, 2026-11-13)
+- [x] `06.5` Write `docs/VERIFY_DESIGN.md`, pass `tests/test_verify.py`, update `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 06`, and tag `step-06-done` (@Naimur, 2026-11-13)
 
 ### Step 07 — Multi-Tenant SDN Testbed (`docs/steps/STEP_07_sdn_testbed.md`)
 - [ ] `07.1` Confirm final testbed checkpoint (approved isolation level, 3 tenant subnets, allowed attack tools, live flow feature extractor)

@@ -1,0 +1,15 @@
+experiment_id: verify_step06_sweep
+mode: step06_sweep
+output_dir: results/06_verify
+seeds: [0, 1, 2, 3, 4]
+rounds: 30
+local_epochs: 3
+batch_size: 128
+lr: 0.001
+weight_decay: 0.0001
+max_train_samples: 24000
+scale_bits_list: [16, 20, 24]
+default_scale_bits: 20
+tamper_trials_per_attack: 100
+honest_rounds_per_n: 100
+tenant_counts: [3, 5, 10]
