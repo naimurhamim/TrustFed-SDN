@@ -1,0 +1,58 @@
+name: Telegram Milestone Notification
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - PROGRESS.md
+      - docs/TEAM_CHECKLIST.md
+    tags:
+      - "step-*-done"
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      step:
+        description: "Optional step number (e.g. 07)"
+        required: false
+        default: ""
+      note:
+        description: "Optional custom note to include in the message"
+        required: false
+        default: ""
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Send Telegram update
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          INPUT_STEP: ${{ github.event.inputs.step }}
+          INPUT_NOTE: ${{ github.event.inputs.note }}
+        run: |
+          if [ -z "${TELEGRAM_BOT_TOKEN:-}" ] || [ -z "${TELEGRAM_CHAT_ID:-}" ]; then
+            echo "TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID secret is not set; skipping notification."
+            exit 0
+          fi
+          ARGS=()
+          if [ -n "${INPUT_STEP:-}" ]; then
+            ARGS+=(--step "${INPUT_STEP}")
+          elif [[ "${GITHUB_REF}" == refs/tags/step-*-done ]]; then
+            TAG_NAME="${GITHUB_REF#refs/tags/step-}"
+            STEP_NUM="${TAG_NAME%-done}"
+            ARGS+=(--step "${STEP_NUM}")
+          fi
+          if [ -n "${INPUT_NOTE:-}" ]; then
+            ARGS+=(--note "${INPUT_NOTE}")
+          fi
+          python scripts/notify_telegram.py "${ARGS[@]}" --attach docs/TEAM_CHECKLIST.md

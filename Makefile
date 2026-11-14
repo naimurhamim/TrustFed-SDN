@@ -6,7 +6,7 @@ else
 	PIP := .venv/bin/pip
 endif
 
-.PHONY: help install status lint format test check probe smoke-testbed testbed-up testbed-down demo reproduce reproduce-quick
+.PHONY: help install status lint format test check probe smoke-testbed testbed-up testbed-down notify demo reproduce reproduce-quick
 
 help:
 	@echo TrustFed-SDN Makefile targets:
@@ -50,6 +50,9 @@ testbed-up:
 
 testbed-down:
 	sudo mn -c
+
+notify:
+	$(PYTHON) scripts/notify_telegram.py --attach ../PRITOM_ANTIGRAVITY_SETUP.md --attach docs/TEAM_CHECKLIST.md
 
 demo:
 	@echo "Implemented in Step 08 (see docs/steps/STEP_08_live_integration.md)"
