@@ -1,0 +1,9 @@
+{
+  "intra_probes_sent": 18,
+  "intra_probes_received": 18,
+  "intra_loss_pct": 0.0,
+  "cross_probes_sent": 6,
+  "cross_probes_blocked": 6,
+  "cross_probes_leaked": 0,
+  "cross_block_pct": 100.0
+}

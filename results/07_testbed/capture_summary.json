@@ -1,0 +1,78 @@
+{
+  "timestamp_utc": "2026-11-14T04:02:00.778749+00:00",
+  "isolation_level": "L1",
+  "isolation_stats": {
+    "intra_probes_sent": 18,
+    "intra_probes_received": 18,
+    "intra_loss_pct": 0.0,
+    "cross_probes_sent": 6,
+    "cross_probes_blocked": 6,
+    "cross_probes_leaked": 0,
+    "cross_block_pct": 100.0
+  },
+  "total_live_flows": 4392,
+  "per_tenant_counts": {
+    "tenant_1_finance": 1992,
+    "tenant_3_education": 1403,
+    "tenant_2_healthcare": 997
+  },
+  "per_class_counts": {
+    "Benign": 1659,
+    "DoS": 1209,
+    "WebAttack": 511,
+    "BruteForce": 450,
+    "DDoS": 289,
+    "Probe": 274
+  },
+  "binary_counts": {
+    "1": 2733,
+    "0": 1659
+  },
+  "feature_alignment_insdn": {
+    "feature_yaml": "/home/ubuntu/Desktop/configs/data/features_insdn.yaml",
+    "expected_count": 19,
+    "actual_count": 19,
+    "exact_names_and_order": true,
+    "nan_count": 0,
+    "inf_count": 0,
+    "num_rows": 4392
+  },
+  "feature_alignment_aseados": {
+    "feature_yaml": "/home/ubuntu/Desktop/configs/data/features_aseados_sdn_iot.yaml",
+    "expected_count": 12,
+    "actual_count": 12,
+    "exact_names_and_order": true,
+    "nan_count": 0,
+    "inf_count": 0,
+    "num_rows": 4392
+  },
+  "openflow_controller_stats": {
+    "tenant_1_finance": {
+      "dpids": [
+        1
+      ],
+      "flow_stat_polls": 79,
+      "port_stat_polls": 37,
+      "max_active_flows": 514,
+      "max_port_rx_bytes": 714765
+    },
+    "tenant_2_healthcare": {
+      "dpids": [
+        2
+      ],
+      "flow_stat_polls": 65,
+      "port_stat_polls": 37,
+      "max_active_flows": 514,
+      "max_port_rx_bytes": 514956
+    },
+    "tenant_3_education": {
+      "dpids": [
+        3
+      ],
+      "flow_stat_polls": 43,
+      "port_stat_polls": 37,
+      "max_active_flows": 513,
+      "max_port_rx_bytes": 528661
+    }
+  }
+}

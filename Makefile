@@ -26,12 +26,12 @@ status:
 	$(PYTHON) scripts/team_status.py
 
 lint:
-	$(PYTHON) -m ruff check trustfed scripts tests
-	$(PYTHON) -m black --check trustfed scripts tests
+	$(PYTHON) -m ruff check trustfed scripts tests testbed
+	$(PYTHON) -m black --check trustfed scripts tests testbed
 
 format:
-	$(PYTHON) -m black trustfed scripts tests
-	$(PYTHON) -m ruff check --fix trustfed scripts tests
+	$(PYTHON) -m black trustfed scripts tests testbed
+	$(PYTHON) -m ruff check --fix trustfed scripts tests testbed
 
 test:
 	$(PYTHON) -m pytest
@@ -46,10 +46,10 @@ smoke-testbed:
 	bash scripts/smoke_test_linux.sh
 
 testbed-up:
-	@echo "Implemented in Step 07 (see docs/steps/STEP_07_sdn_testbed.md)"
+	sudo bash scripts/run_step07_testbed.sh
 
 testbed-down:
-	@echo "Implemented in Step 07 (see docs/steps/STEP_07_sdn_testbed.md)"
+	sudo mn -c
 
 demo:
 	@echo "Implemented in Step 08 (see docs/steps/STEP_08_live_integration.md)"

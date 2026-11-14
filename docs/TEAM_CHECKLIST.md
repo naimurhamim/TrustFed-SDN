@@ -10,10 +10,10 @@
 ## Latest Handoff Note
 
 - **Last Updated By:** `@Naimur`
-- **Date:** `2026-11-13`
-- **Active Step:** `Step 07 - Multi-Tenant SDN Testbed` (Paused awaiting user instruction)
-- **What Was Just Completed:** Completed and approved `Step 06 - Verifiable Secure Aggregation` (`approved step 06`, tagged `step-06-done`, pushed to GitHub & website): implemented `trustfed/verify/*`, `SecureAggregator`, `tests/test_verify.py` (`50/50` pytest passing), `docs/VERIFY_DESIGN.md`, `100%` tamper detection / `0%` false alarms, `1.26×` wire overhead, and 5-seed accuracy equivalence (`results/06_verify/`).
-- **Next Task for Incoming Teammate:** Begin `Step 07 - Multi-Tenant SDN Testbed` (`docs/steps/STEP_07_sdn_testbed.md`) when instructed by the user.
+- **Date:** `2026-11-14`
+- **Active Step:** `Step 07 - Multi-Tenant SDN Testbed` (`waiting for approval`)
+- **What Was Just Completed:** Completed Step 07 live Ubuntu 22.04 VMware testbed (`L1`: Mininet `2.3.0` + OVS `2.17.12` + 3 OS-Ken `3.0.1` OpenFlow 1.3 controllers + core isolation switch `s0`) with **`0.0%` intra-tenant loss (`18/18`)** and **`100.0%` cross-tenant block (`6/6`)**, captured **`4,392` labeled bidirectional flows** into `data/live/` + `data/live/MANIFEST.md`, verified `13` new unit tests (`63/63` pytest passing via `make check`), ran 3-seed sim-to-live evaluation (`results/07_testbed/`), and logged Section 8 in `docs/EXPERIMENT_RESULTS_LOG.md`.
+- **Next Task for Incoming Teammate:** Review `docs/TESTBED.md`, `results/07_testbed/`, and `docs/EXPERIMENT_RESULTS_LOG.md` Section 8; after explicit `approved step 07`, tag `step-07-done` and start `Step 08 - Live Integration`.
 
 ---
 
@@ -77,11 +77,11 @@
 - [x] `06.5` Write `docs/VERIFY_DESIGN.md`, pass `tests/test_verify.py`, update `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 06`, and tag `step-06-done` (@Naimur, 2026-11-13)
 
 ### Step 07 — Multi-Tenant SDN Testbed (`docs/steps/STEP_07_sdn_testbed.md`)
-- [ ] `07.1` Confirm final testbed checkpoint (approved isolation level, 3 tenant subnets, allowed attack tools, live flow feature extractor)
-- [ ] `07.2` Build multi-tenant Mininet + OVS topology (`testbed/topology/`) and per-tenant OS-Ken apps (`testbed/ryu_apps/`: switching, isolation, flow stats, block API)
-- [ ] `07.3` Build SD-Traffic-Regulator & flow feature extractor (`testbed/capture/`) verified against Step 01 training feature order/units
-- [ ] `07.4` Build benign & guarded attack traffic generators (`testbed/traffic/`) enforcing `10.10.0.0/16` target-range guard
-- [ ] `07.5` Collect labeled live testbed dataset (`data/live/` + `data/live/MANIFEST.md`), measure sim-to-live gap, write `docs/TESTBED.md`, get `approved step 07`, and tag `step-07-done`
+- [x] `07.1` Confirm final testbed checkpoint (approved isolation level, 3 tenant subnets, allowed attack tools, live flow feature extractor) (@Naimur, 2026-11-14)
+- [x] `07.2` Build multi-tenant Mininet + OVS topology (`testbed/topology/`) and per-tenant OS-Ken apps (`testbed/ryu_apps/`: switching, isolation, flow stats, block API) (@Naimur, 2026-11-14)
+- [x] `07.3` Build SD-Traffic-Regulator & flow feature extractor (`testbed/capture/`) verified against Step 01 training feature order/units (@Naimur, 2026-11-14)
+- [x] `07.4` Build benign & guarded attack traffic generators (`testbed/traffic/`) enforcing `10.10.0.0/16` target-range guard (@Naimur, 2026-11-14)
+- [x] `07.5` Collect labeled live testbed dataset (`data/live/` + `data/live/MANIFEST.md`), measure sim-to-live gap, write `docs/TESTBED.md` (`63/63` pytest; awaiting `approved step 07` to tag `step-07-done`) (@Naimur, 2026-11-14)
 
 ### Step 08 — Live Integration on the SDN Testbed (`docs/steps/STEP_08_live_integration.md`)
 - [ ] `08.1` Confirm live communication stack (Flower / gRPC), aggregator placement, mitigation expiry policy, and demo scenarios

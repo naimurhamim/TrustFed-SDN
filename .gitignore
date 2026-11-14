@@ -22,6 +22,7 @@ data/**
 
 # Large experiment outputs (small CSV/JSON summaries in results/ stay tracked)
 results/**/*.log
+results/**/*.jsonl
 results/**/*.pt
 results/**/*.pth
 results/**/*.npy

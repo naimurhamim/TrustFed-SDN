@@ -638,6 +638,47 @@
 
 - *Note on accuracy equivalence:* Single-round `SecureAggregator` (`20-bit`) matches `FedAvg` within $\le 4.77 \times 10^{-7}$ parameter $L_\infty$ error (`109.49 dB` SNR). Across 30 non-convex rounds, learning curves overlap across Rounds 1–28 and all paired Wilcoxon tests yield $p \in [0.1875, 1.0] \gg 0.05$ (no statistically significant difference).
 
+---
+
+## 8. Step 07 — Multi-Tenant SDN Testbed, Labeled Live Capture & Sim-to-Live Gap (`2026-11-14`)
+
+> Executed live inside the headless **Ubuntu 22.04.5 LTS** VMware Workstation guest (`Mininet 2.3.0 + Open vSwitch 2.17.12 + os-ken==3.0.1 OpenFlow 1.3 + tcpdump 4.99.1 + scapy 2.8.0`, Python `3.10.12` in `.venv-ryu`), with sim-to-live evaluation computed via `scripts/analyze_step07_testbed.py` (`results/07_testbed/`, `data/live/MANIFEST.md`, architecture in `docs/TESTBED.md`).
+
+### 8.1 Testbed Isolation & OpenFlow 1.3 Controller Telemetry (`Isolation Level L1`)
+
+| Verification Check / Tenant Switch | Endpoint / Port | Probes Sent | Measured Result |
+|---|---|---:|---|
+| **Intra-Tenant Reachability (`s1`, `s2`, `s3`)** | All intra-subnet host pairs (`10.10.{1,2,3}.0/24`) | `18` | **`18/18` received (`0.0%` loss / `100.0%` pass)** |
+| **Cross-Tenant Isolation (`s0` + `TenantController13`)** | All cross-tenant pairs across `10.10.1–3.0/24` | `6` | **`6/6` blocked (`0` leaked / `100.0%` blocked)** |
+| `tenant_1_finance` (`s1`, `dpid=1`) | `127.0.0.1:6653` | `79` FlowStats / `37` PortStats | Peak `514` active flows, `714,765` RX bytes |
+| `tenant_2_healthcare` (`s2`, `dpid=2`) | `127.0.0.1:6654` | `65` FlowStats / `37` PortStats | Peak `514` active flows, `514,956` RX bytes |
+| `tenant_3_education` (`s3`, `dpid=3`) | `127.0.0.1:6655` | `43` FlowStats / `37` PortStats | Peak `513` active flows, `528,661` RX bytes |
+
+### 8.2 Live Multi-Tenant SDN Dataset Summary (`data/live/`, `4,392` Bidirectional Flows)
+
+| Tenant Subnet | Captured Flows | Class Breakdown (`canonical_label`) | Schema Verification |
+|---|---:|---|---|
+| **`tenant_1_finance`** (`10.10.1.0/24`) | **`1,992`** | `Benign`, `BruteForce` (`450`), `WebAttack` (`511`), `DoS` | `InSDN` `19/19` & `ASEADOS` `12/12` (`0` NaN/Inf) |
+| **`tenant_2_healthcare`** (`10.10.2.0/24`) | **`997`** | `Benign`, `DoS` (`SYN Flood`), `DDoS` (`UDP/ICMP Flood`) | Exact Step 01 column order & units |
+| **`tenant_3_education`** (`10.10.3.0/24`) | **`1,403`** | `Benign`, `Probe` (`Port Scan` `274`), `DoS`, `DDoS` | Saved in `live_flows_{full,insdn,aseados}.csv` |
+| **Combined Live Dataset** | **`4,392`** | **`Benign`: `1,659` \| `DoS`: `1,209` \| `WebAttack`: `511` \| `BruteForce`: `450` \| `DDoS`: `289` \| `Probe`: `274`** | Binary: `2,733` Attack (`62.2%`) / `1,659` Benign (`37.8%`) |
+
+### 8.3 Sim-to-Live Transfer Gap (`3` Seeds `0..2`, FedAvg `GRU` Offline -> Live SDN Testbed)
+
+| Offline Training Dataset | Evaluation Regime | Macro-F1 (Mean ± Std) | Accuracy (Mean ± Std) | ADR (Mean) | FPR (Mean) | ROC-AUC (Mean) |
+|---|---|---:|---:|---:|---:|---:|
+| `insdn` (`19` features) | `offline_sim_fedavg` (Held-out Test) | `0.9953 ± 0.0022` | `0.9957 ± 0.0019` | `0.9991` | `0.0107` | `0.9994` |
+| `insdn` (`19` features) | `live_zero_shot` (Offline Scaler) | `0.4425 ± 0.0042` | `0.4641 ± 0.0015` | `0.5309` | `0.6460` | `0.5148` |
+| `insdn` (`19` features) | `live_feature_zcal` (Live Z-Calibrated) | `0.4131 ± 0.0710` | `0.4539 ± 0.0504` | `0.1636` | `0.0679` | `0.7089` |
+| `insdn` (`19` features) | **`live_finetuned_adapted`** (`50/50` Stratified FL Adapt) | **`0.7546 ± 0.0014`** | `0.7804 ± 0.0011` | `0.8873` | `0.3957` | `0.8728` |
+| `aseados_sdn_iot` (`12` features) | `offline_sim_fedavg` (Held-out Test) | `0.9133 ± 0.0021` | `0.9136 ± 0.0021` | `0.9467` | `0.1137` | `0.9758` |
+| `aseados_sdn_iot` (`12` features) | `live_zero_shot` (Offline Scaler) | `0.3346 ± 0.0218` | `0.3408 ± 0.0248` | `0.2034` | `0.4328` | `0.3788` |
+| `aseados_sdn_iot` (`12` features) | `live_feature_zcal` (Live Z-Calibrated) | `0.4953 ± 0.0189` | `0.5021 ± 0.0193` | `0.4962` | `0.4880` | `0.5535` |
+| `aseados_sdn_iot` (`12` features) | **`live_finetuned_adapted`** (`50/50` Stratified FL Adapt) | **`0.7462 ± 0.0427`** | `0.7729 ± 0.0266` | `0.8573` | `0.3661` | `0.8549` |
+
+- *Honest Sim-to-Live Findings:* Direct zero-shot transfer from offline benchmarks (`InSDN` `0.9953`, `ASEADOS` `0.9133` Macro-F1) drops to `0.4425` (`T1=0.4835`, `T2=0.2180`, `T3=0.4785`) and `0.3346` (`T1=0.2975`, `T2=0.4103`, `T3=0.3194`) on live Mininet captures due to genuine flow-timing, veth microsecond-RTT, and socket payload distribution shifts. Feature Z-calibration recovers ROC-AUC on `InSDN` (`0.5148 -> 0.7089`, cutting FPR from `64.6%` to `6.8%`) and Macro-F1 on `ASEADOS` (`0.3346 -> 0.4953`), while lightweight live adaptation restores detection performance to **`0.7546`** Macro-F1 / **`0.8728`** ROC-AUC (`InSDN`) and **`0.7462`** Macro-F1 / **`0.8549`** ROC-AUC (`ASEADOS`). Plots saved at `results/07_testbed/tenant_traffic_distribution.png` and `results/07_testbed/sim_to_live_gap.png`.
+
+
 
 
 
