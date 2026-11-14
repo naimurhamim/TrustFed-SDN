@@ -335,8 +335,32 @@ def telegram_send_file(
         return dict(json.loads(resp.read().decode("utf-8")))
 
 
+def load_chat_ids(subscribers_file: Path | None = None) -> list[str]:
+    """Collect unique Telegram chat IDs from env vars and optional subscribers.json."""
+    ids: list[str] = []
+    for var_name in ("TELEGRAM_CHAT_ID", "TELEGRAM_CHAT_IDS"):
+        raw = os.environ.get(var_name, "").strip()
+        if raw:
+            for item in raw.split(","):
+                cid = item.strip()
+                if cid and cid not in ids:
+                    ids.append(cid)
+    sub_path = subscribers_file or (THESIS_ROOT / "08_Telegram_Bot" / "subscribers.json")
+    if sub_path.exists():
+        try:
+            data = json.loads(sub_path.read_text(encoding="utf-8"))
+            if isinstance(data, list):
+                for item in data:
+                    cid = str(item.get("chat_id", "") if isinstance(item, dict) else item).strip()
+                    if cid and cid not in ids:
+                        ids.append(cid)
+        except Exception:
+            pass
+    return ids
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Send TrustFed-SDN update to Telegram group")
+    parser = argparse.ArgumentParser(description="Send TrustFed-SDN update to Telegram subscribers")
     parser.add_argument("--step", default=None, help="Specific step number (e.g. 07)")
     parser.add_argument("--note", default=None, help="Optional extra summary line")
     parser.add_argument(
@@ -364,27 +388,31 @@ def main() -> int:
         return 0
 
     bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
-    chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
-    if not bot_token or not chat_id:
+    chat_ids = load_chat_ids()
+    if not bot_token or not chat_ids:
         print(
             "ERROR: TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID is not set. "
-            "Set them in 08_Telegram_Bot/.env or environment variables.",
+            "Send /start to @trustfed_bot and run get_chat_id.py --save (or bot_server.py).",
             file=sys.stderr,
         )
         return 1
 
     try:
-        res = telegram_send_message(bot_token, chat_id, msg, reply_markup=keyboard)
-        print(f"Telegram message sent: ok={res.get('ok')} message_id={res['result']['message_id']}")
-        for raw_attach in args.attach:
-            fp = Path(raw_attach)
-            if not fp.is_absolute():
-                fp = (Path.cwd() / fp).resolve()
-            if not fp.exists():
-                print(f"WARNING: Attachment not found, skipping: {fp}", file=sys.stderr)
-                continue
-            fres = telegram_send_file(bot_token, chat_id, fp, caption=f"Attachment: {fp.name}")
-            print(f"Sent attachment {fp.name}: ok={fres.get('ok')}")
+        for chat_id in chat_ids:
+            res = telegram_send_message(bot_token, chat_id, msg, reply_markup=keyboard)
+            print(
+                f"Telegram message sent to {chat_id}: ok={res.get('ok')} "
+                f"message_id={res['result']['message_id']}"
+            )
+            for raw_attach in args.attach:
+                fp = Path(raw_attach)
+                if not fp.is_absolute():
+                    fp = (Path.cwd() / fp).resolve()
+                if not fp.exists():
+                    print(f"WARNING: Attachment not found, skipping: {fp}", file=sys.stderr)
+                    continue
+                fres = telegram_send_file(bot_token, chat_id, fp, caption=f"Attachment: {fp.name}")
+                print(f"Sent attachment {fp.name} to {chat_id}: ok={fres.get('ok')}")
     except urllib.error.HTTPError as exc:
         err_body = exc.read().decode("utf-8", errors="replace")
         print(f"Telegram API HTTP {exc.code}: {err_body}", file=sys.stderr)
