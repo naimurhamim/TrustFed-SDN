@@ -1,0 +1,190 @@
+{
+  "total_flows": 880,
+  "total_attack_flows": 547,
+  "total_benign_flows": 333,
+  "true_positive_blocks": 225,
+  "attack_block_rate": 0.4113345521023766,
+  "false_positive_blocks": 9,
+  "false_block_rate": 0.02702702702702703,
+  "mean_inference_ms": 0.6251087499921678,
+  "p95_inference_ms": 0.8116999997582752,
+  "mean_mitigation_ms": 337.03142863242437,
+  "active_rules_count": 6,
+  "calibrated_attack_threshold": 0.98,
+  "val_calibration": {
+    "val_f1_macro": 0.6362,
+    "val_fpr": 0.0299,
+    "val_adr": 0.438
+  },
+  "calibrated_accuracy": 0.6239,
+  "calibrated_f1_macro": 0.619,
+  "controller_deploy_ms": 0.813,
+  "total_stream_elapsed_ms": 620.8,
+  "sample_events": [
+    {
+      "flow_id": "tenant_1_finance_flow_0",
+      "tenant_id": "tenant_1_finance",
+      "ipv4_src": "10.10.1.10",
+      "ground_truth": 0,
+      "predicted": 0,
+      "prob_attack": 0.9203,
+      "inference_ms": 10.849,
+      "mitigation_ms": 0.0,
+      "action": "allow"
+    },
+    {
+      "flow_id": "tenant_1_finance_flow_1",
+      "tenant_id": "tenant_1_finance",
+      "ipv4_src": "10.10.1.100",
+      "ground_truth": 1,
+      "predicted": 1,
+      "prob_attack": 0.9926,
+      "inference_ms": 0.96,
+      "mitigation_ms": 32.727,
+      "action": "drop_installed"
+    },
+    {
+      "flow_id": "tenant_1_finance_flow_2",
+      "tenant_id": "tenant_1_finance",
+      "ipv4_src": "10.10.1.100",
+      "ground_truth": 1,
+      "predicted": 0,
+      "prob_attack": 0.858,
+      "inference_ms": 1.127,
+      "mitigation_ms": 0.0,
+      "action": "allow"
+    },
+    {
+      "flow_id": "tenant_1_finance_flow_3",
+      "tenant_id": "tenant_1_finance",
+      "ipv4_src": "10.10.1.10",
+      "ground_truth": 0,
+      "predicted": 0,
+      "prob_attack": 0.9399,
+      "inference_ms": 0.969,
+      "mitigation_ms": 0.0,
+      "action": "allow"
+    },
+    {
+      "flow_id": "tenant_1_finance_flow_4",
+      "tenant_id": "tenant_1_finance",
+      "ipv4_src": "10.10.1.100",
+      "ground_truth": 1,
+      "predicted": 0,
+      "prob_attack": 0.0373,
+      "inference_ms": 0.758,
+      "mitigation_ms": 0.0,
+      "action": "allow"
+    },
+    {
+      "flow_id": "tenant_1_finance_flow_5",
+      "tenant_id": "tenant_1_finance",
+      "ipv4_src": "10.10.1.100",
+      "ground_truth": 1,
+      "predicted": 1,
+      "prob_attack": 0.9909,
+      "inference_ms": 0.692,
+      "mitigation_ms": 36.442,
+      "action": "drop_cached"
+    },
+    {
+      "flow_id": "tenant_1_finance_flow_6",
+      "tenant_id": "tenant_1_finance",
+      "ipv4_src": "10.10.1.10",
+      "ground_truth": 0,
+      "predicted": 0,
+      "prob_attack": 0.9431,
+      "inference_ms": 0.684,
+      "mitigation_ms": 0.0,
+      "action": "allow"
+    },
+    {
+      "flow_id": "tenant_1_finance_flow_7",
+      "tenant_id": "tenant_1_finance",
+      "ipv4_src": "10.10.1.10",
+      "ground_truth": 0,
+      "predicted": 0,
+      "prob_attack": 0.9194,
+      "inference_ms": 0.612,
+      "mitigation_ms": 0.0,
+      "action": "allow"
+    },
+    {
+      "flow_id": "tenant_1_finance_flow_8",
+      "tenant_id": "tenant_1_finance",
+      "ipv4_src": "10.10.1.100",
+      "ground_truth": 1,
+      "predicted": 0,
+      "prob_attack": 0.9426,
+      "inference_ms": 0.595,
+      "mitigation_ms": 0.0,
+      "action": "allow"
+    },
+    {
+      "flow_id": "tenant_1_finance_flow_9",
+      "tenant_id": "tenant_1_finance",
+      "ipv4_src": "10.10.1.100",
+      "ground_truth": 1,
+      "predicted": 1,
+      "prob_attack": 0.9952,
+      "inference_ms": 0.529,
+      "mitigation_ms": 38.972,
+      "action": "drop_cached"
+    },
+    {
+      "flow_id": "tenant_1_finance_flow_10",
+      "tenant_id": "tenant_1_finance",
+      "ipv4_src": "10.10.1.10",
+      "ground_truth": 0,
+      "predicted": 0,
+      "prob_attack": 0.9399,
+      "inference_ms": 0.536,
+      "mitigation_ms": 0.0,
+      "action": "allow"
+    },
+    {
+      "flow_id": "tenant_1_finance_flow_11",
+      "tenant_id": "tenant_1_finance",
+      "ipv4_src": "10.10.1.10",
+      "ground_truth": 0,
+      "predicted": 0,
+      "prob_attack": 0.4082,
+      "inference_ms": 0.515,
+      "mitigation_ms": 0.0,
+      "action": "allow"
+    },
+    {
+      "flow_id": "tenant_1_finance_flow_12",
+      "tenant_id": "tenant_1_finance",
+      "ipv4_src": "10.10.1.100",
+      "ground_truth": 1,
+      "predicted": 0,
+      "prob_attack": 0.9473,
+      "inference_ms": 0.523,
+      "mitigation_ms": 0.0,
+      "action": "allow"
+    },
+    {
+      "flow_id": "tenant_1_finance_flow_13",
+      "tenant_id": "tenant_1_finance",
+      "ipv4_src": "10.10.1.100",
+      "ground_truth": 1,
+      "predicted": 1,
+      "prob_attack": 0.9967,
+      "inference_ms": 0.521,
+      "mitigation_ms": 41.181,
+      "action": "drop_cached"
+    },
+    {
+      "flow_id": "tenant_1_finance_flow_14",
+      "tenant_id": "tenant_1_finance",
+      "ipv4_src": "10.10.1.100",
+      "ground_truth": 1,
+      "predicted": 0,
+      "prob_attack": 0.9458,
+      "inference_ms": 0.68,
+      "mitigation_ms": 0.0,
+      "action": "allow"
+    }
+  ]
+}

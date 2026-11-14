@@ -33,6 +33,7 @@ if /I "%TARGET%"=="help" (
     echo   test      Run pytest test suite
     echo   check     Run lint + pytest + package import smoke check
     echo   probe     Run hardware and environment probe script
+    echo   demo      Run quick Step 08 live pipeline end-to-end demo
     exit /b 0
 )
 
@@ -50,13 +51,13 @@ if /I "%TARGET%"=="status" (
     exit /b %ERRORLEVEL%
 )
 if /I "%TARGET%"=="lint" (
-    "%PY%" -m ruff check trustfed scripts tests || exit /b 1
-    "%PY%" -m black --check trustfed scripts tests || exit /b 1
+    "%PY%" -m ruff check trustfed scripts tests testbed || exit /b 1
+    "%PY%" -m black --check trustfed scripts tests testbed || exit /b 1
     exit /b 0
 )
 if /I "%TARGET%"=="format" (
-    "%PY%" -m black trustfed scripts tests || exit /b 1
-    "%PY%" -m ruff check --fix trustfed scripts tests || exit /b 1
+    "%PY%" -m black trustfed scripts tests testbed || exit /b 1
+    "%PY%" -m ruff check --fix trustfed scripts tests testbed || exit /b 1
     exit /b 0
 )
 if /I "%TARGET%"=="test" (
@@ -72,6 +73,10 @@ if /I "%TARGET%"=="check" (
 )
 if /I "%TARGET%"=="probe" (
     "%PY%" scripts/probe_hardware.py
+    exit /b %ERRORLEVEL%
+)
+if /I "%TARGET%"=="demo" (
+    "%PY%" scripts/run_step08_live.py --demo
     exit /b %ERRORLEVEL%
 )
 

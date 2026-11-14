@@ -9,11 +9,11 @@
 
 ## Latest Handoff Note
 
-- **Last Updated By:** `@Pritom`
-- **Date:** `2026-11-14`
-- **Active Step:** `Step 07 - Multi-Tenant SDN Testbed` (`approved`, tagged `step-07-done`; ready to begin `Step 08 - Live Integration`)
-- **What Was Just Completed:** Completed `@Pritom`'s local environment onboarding and hardware probe (`results/00_environment/summary_pritom.json`), downloaded and verified raw datasets (`InSDN` & `CICIDS2017` from Google Drive matching `data/MANIFEST.md` SHA-256 digests), processed splits into `data/processed/`, and verified `63/63` pytest passing via `make check`.
-- **Next Task for Team:** Review `docs/TESTBED.md`, `results/07_testbed/`, and `docs/EXPERIMENT_RESULTS_LOG.md` Section 8, then commence `Step 08 - Live Integration` (`08.1`–`08.5`) on the SDN testbed.
+- **Last Updated By:** `@Naimur`
+- **Date:** `2026-11-15`
+- **Active Step:** `Step 08 - Live Integration on the SDN Testbed` (`approved`, tagged `step-08-done`; ready for `Step 09 - Full Evaluation` when directed)
+- **What Was Just Completed:** Completed live HTTP/JSON + 48-bit packed wire RPC FL pipeline (`testbed/fl/{tenant_client,aggregation_server,protocol_http}.py`), off-event-loop deployment & OVS `priority=300` temporary drop-rule controller (`testbed/ryu_apps/model_deploy.py`), `make demo` (`Makefile` & `make.cmd`), full 5-seed × 12-round live evaluation + plots (`results/08_live/`), real Ubuntu 22.04 VM Mininet/OVS/OS-Ken verification (`vm_live_mitigation.json`: `0.0%` intra loss, `100.0%` cross-tenant block, `+0.009 ms` control-plane ping delta, `27.38 ms` OVS drop install, `100.0%` attacker block, `0.0%` benign collateral block, TTL auto-expiry verified), `docs/LIVE_PIPELINE.md`, Section 9 of `docs/EXPERIMENT_RESULTS_LOG.md`, `71/71` pytest (`make check`), and `approved step 08`.
+- **Next Task for Team:** Review `docs/LIVE_PIPELINE.md`, `results/08_live/`, and `docs/EXPERIMENT_RESULTS_LOG.md` Section 9, run `git pull --tags`, and start `Step 09 - Full Evaluation` (`09.1`–`09.5`) when directed.
 
 ---
 
@@ -84,11 +84,11 @@
 - [x] `07.5` Collect labeled live testbed dataset (`data/live/` + `data/live/MANIFEST.md`), measure sim-to-live gap, write `docs/TESTBED.md` (`63/63` pytest; got `approved step 07` and tagged `step-07-done`) (@Naimur, 2026-11-14)
 
 ### Step 08 — Live Integration on the SDN Testbed (`docs/steps/STEP_08_live_integration.md`)
-- [ ] `08.1` Confirm live communication stack (Flower / gRPC), aggregator placement, mitigation expiry policy, and demo scenarios
-- [ ] `08.2` Implement live tenant FL clients & secure/robust/verifiable aggregation server (`testbed/fl/`) reusing `trustfed/`
-- [ ] `08.3` Implement real-time controller model deployment & automated drop-rule mitigation (`testbed/ryu_apps/model_deploy.py`) outside the OpenFlow event loop
-- [ ] `08.4` Run >=10 live rounds + live malicious-tenant filtering demo + live tampered-aggregate rejection demo + latency/CPU/control-plane measurements
-- [ ] `08.5` Package `make demo` & `docs/LIVE_PIPELINE.md`, log metrics to `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 08`, and tag `step-08-done`
+- [x] `08.1` Confirm live communication stack (`HTTP/JSON + 48-bit wire RPC`, `DEV-003`), aggregator placement, mitigation expiry policy (`60s/120s`), and demo scenarios (@Naimur, 2026-11-14)
+- [x] `08.2` Implement live tenant FL clients & secure/robust/verifiable aggregation server (`testbed/fl/`) reusing `trustfed/` (@Naimur, 2026-11-14)
+- [x] `08.3` Implement real-time controller model deployment & automated drop-rule mitigation (`testbed/ryu_apps/model_deploy.py`) outside the OpenFlow event loop (@Naimur, 2026-11-14)
+- [x] `08.4` Run >=10 live rounds (`12` × `5` seeds) + live malicious-tenant filtering demo + live 4-mode tampered-aggregate rejection demo + latency/CPU/control-plane VM measurements (@Naimur, 2026-11-14)
+- [x] `08.5` Package `make demo` & `docs/LIVE_PIPELINE.md`, log metrics to `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 08`, and tag `step-08-done` (@Naimur, 2026-11-15)
 
 ### Step 09 — Full Evaluation, Ablation, Figures, and Tables (`docs/steps/STEP_09_full_evaluation.md`)
 - [ ] `09.1` Confirm final experiment matrix (`E1`–`E8` primary, `E9`–`E10` optional), seed count, and figure styling

@@ -1,0 +1,64 @@
+{
+  "seed": 0,
+  "honest_false_alarms": 0,
+  "tamper_modes_tested": 4,
+  "tamper_modes_rejected": 4,
+  "detection_rate_pct": 100.0,
+  "trials": [
+    {
+      "round": 1,
+      "tamper_mode": "none_honest",
+      "all_tenants_accepted": true,
+      "false_alarm": false,
+      "reason": "verified"
+    },
+    {
+      "round": 2,
+      "tamper_mode": "modified_aggregate",
+      "all_tenants_rejected": true,
+      "weights_preserved_on_rollback": true,
+      "verify_ms_mean": 4.932,
+      "reasons": [
+        "linear_checksum_mismatch",
+        "linear_checksum_mismatch",
+        "linear_checksum_mismatch"
+      ]
+    },
+    {
+      "round": 3,
+      "tamper_mode": "dropped_tenant",
+      "all_tenants_rejected": true,
+      "weights_preserved_on_rollback": true,
+      "verify_ms_mean": 3.219,
+      "reasons": [
+        "dropped_or_unexpected_tenant: missing=['tenant_3_education'], extra=[]",
+        "dropped_or_unexpected_tenant: missing=['tenant_3_education'], extra=[]",
+        "dropped_or_unexpected_tenant: missing=['tenant_3_education'], extra=[]"
+      ]
+    },
+    {
+      "round": 4,
+      "tamper_mode": "replayed_update",
+      "all_tenants_rejected": true,
+      "weights_preserved_on_rollback": true,
+      "verify_ms_mean": 0.01,
+      "reasons": [
+        "replayed_update_round_mismatch:tenant_1_finance:hdr_round=1!=expected=4",
+        "replayed_update_round_mismatch:tenant_1_finance:hdr_round=1!=expected=4",
+        "replayed_update_round_mismatch:tenant_1_finance:hdr_round=1!=expected=4"
+      ]
+    },
+    {
+      "round": 5,
+      "tamper_mode": "substituted_update",
+      "all_tenants_rejected": true,
+      "weights_preserved_on_rollback": true,
+      "verify_ms_mean": 4.492,
+      "reasons": [
+        "linear_checksum_mismatch",
+        "linear_checksum_mismatch",
+        "linear_checksum_mismatch"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "timestamp_utc": "2026-11-14T17:59:09.220982+00:00",
+  "vm_environment": "Ubuntu 22.04 LTS + Mininet 2.3.0 + OVS 2.17.12 + OS-Ken 3.0.1",
+  "isolation_stats": {
+    "intra_probes_sent": 18,
+    "intra_probes_received": 18,
+    "intra_loss_pct": 0.0,
+    "cross_probes_sent": 6,
+    "cross_probes_blocked": 6,
+    "cross_probes_leaked": 0,
+    "cross_block_pct": 100.0
+  },
+  "control_plane": {
+    "idle_ping": {
+      "probes_passed": 3,
+      "probes_total": 3,
+      "mean_rtt_ms": 0.071,
+      "max_rtt_ms": 0.072
+    },
+    "under_fl_load_ping": {
+      "probes_passed": 3,
+      "probes_total": 3,
+      "mean_rtt_ms": 0.08,
+      "max_rtt_ms": 0.092
+    },
+    "rtt_delta_ms": 0.009,
+    "controller_rss_idle_mb": [
+      {
+        "controller": "c1",
+        "pid": 1870,
+        "rss_mb": 67.3
+      },
+      {
+        "controller": "c2",
+        "pid": 1882,
+        "rss_mb": 67.27
+      },
+      {
+        "controller": "c3",
+        "pid": 1894,
+        "rss_mb": 67.25
+      }
+    ],
+    "controller_rss_busy_mb": [
+      {
+        "controller": "c1",
+        "pid": 1870,
+        "rss_mb": 67.3
+      },
+      {
+        "controller": "c2",
+        "pid": 1882,
+        "rss_mb": 67.27
+      },
+      {
+        "controller": "c3",
+        "pid": 1894,
+        "rss_mb": 67.25
+      }
+    ]
+  },
+  "live_mitigation": {
+    "tenants_tested": 3,
+    "pre_mitigation_attacker_reachable": 3,
+    "pre_mitigation_benign_reachable": 3,
+    "ovs_drop_install_latency_ms": {
+      "tenant_1_finance": 30.005,
+      "tenant_2_healthcare": 25.143,
+      "tenant_3_education": 26.993
+    },
+    "mean_ovs_drop_install_ms": 27.38,
+    "post_mitigation_attackers_blocked": 3,
+    "attack_block_rate_pct": 100.0,
+    "post_mitigation_benign_allowed": 3,
+    "false_block_rate_pct": 0.0,
+    "ttl_expiry_blocked_before": true,
+    "ttl_expiry_restored_after": true
+  }
+}

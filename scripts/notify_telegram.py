@@ -99,7 +99,7 @@ def parse_team_checklist(checklist_path: Path) -> dict[str, Any]:
             info["active_step"] = line.split(":", 1)[1].strip()
         elif line.startswith("- **What Was Just Completed:**"):
             info["what_completed"] = line.split(":", 1)[1].strip()
-        elif line.startswith("- **Next Task for Incoming Teammate:**"):
+        elif line.startswith("- **Next Task for"):
             info["next_task"] = line.split(":", 1)[1].strip()
         else:
             m_hdr = re.match(r"^###\s+Step\s+(\d{2})\b", line)

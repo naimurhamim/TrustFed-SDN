@@ -21,3 +21,13 @@ Every difference between `PROJECT_PLAN.md` / `docs/EXPERIMENT_SPEC.md` / `docs/s
 - **What:** In addition to `InSDN` (2020) and `CICIDS2017` (2017), we include **`ASEADOS-SDN-IoT` (2026)** (`data/raw/aseados_sdn_iot/ASEADOS_SDN_IoT.csv`, `242,144,496` bytes, `457,044` flow records, `83` CICFlowMeter-compatible features) published by the same University College Dublin (UCD) ASEADOS Lab (`https://aseados.ucd.ie/datasets/SDN-IoT/`, DOI: `10.1016/j.iot.2026.101891`, *Elsevier Internet of Things*, 2026).
 - **Why:** The user requested including a current 2026 SDN intrusion dataset to strengthen the 2026 thesis defense while keeping classic `InSDN` (for direct literature comparison) and `CICIDS2017` (supplementary benchmark).
 - **Impact:** Strictly additive — all original `InSDN` and `CICIDS2017` requirements remain intact, and the data pipeline (`trustfed/data/`) additionally supports `aseados_sdn_iot` with full profiling, cleaning, feature selection, partitioning, and scaling.
+
+---
+
+## DEV-003 — HTTP/JSON + Binary Wire RPC Transport in Step 08 (Instead of Flower Wrapper)
+
+- **Date:** 2026-11-14
+- **Step:** Step 08 (`docs/steps/STEP_08_live_integration.md`, Ask the User Q1)
+- **What:** For live multi-tenant FL orchestration in `testbed/fl/protocol_http.py`, we implemented a direct `ThreadingHTTPServer` + `LiveTenantHTTPClient` HTTP/JSON RPC transport carrying base64-encoded 48-bit packed masked tensors, SHA-256 Merkle proofs, and Ed25519 headers rather than wrapping `trustfed/` inside `flwr` (Flower).
+- **Why:** `docs/steps/STEP_08_live_integration.md` explicitly allows *"Flower with custom strategies reusing the trustfed/ aggregation code, or a simple gRPC/HTTP service"*. Direct HTTP RPC avoids introducing heavy external Flower/gRPC runtime dependencies across both the Windows `.venv` (Python `3.12.7`) and Ubuntu VM `.venv-ryu` (Python `3.10.12`), preserves exact byte-for-byte wire accounting of `VerificationProof` (`proof_wire_bytes`) and `48-bit` packed payloads, and supports clean mid-round abort/retry (`/abort` and HTTP `409` on incomplete cohorts) as required by Step 08.
+- **Impact:** All core FL, Adaptive DP-SGD, CosineClustering poisoning filtering, X25519/SHAKE-256 masking, Merkle commitments, and Ed25519 verification algorithms are reused verbatim from `trustfed/` over real localhost socket RPC with exact per-stage latency and byte telemetry.

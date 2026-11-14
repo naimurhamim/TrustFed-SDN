@@ -678,6 +678,64 @@
 
 - *Honest Sim-to-Live Findings:* Direct zero-shot transfer from offline benchmarks (`InSDN` `0.9953`, `ASEADOS` `0.9133` Macro-F1) drops to `0.4425` (`T1=0.4835`, `T2=0.2180`, `T3=0.4785`) and `0.3346` (`T1=0.2975`, `T2=0.4103`, `T3=0.3194`) on live Mininet captures due to genuine flow-timing, veth microsecond-RTT, and socket payload distribution shifts. Feature Z-calibration recovers ROC-AUC on `InSDN` (`0.5148 -> 0.7089`, cutting FPR from `64.6%` to `6.8%`) and Macro-F1 on `ASEADOS` (`0.3346 -> 0.4953`), while lightweight live adaptation restores detection performance to **`0.7546`** Macro-F1 / **`0.8728`** ROC-AUC (`InSDN`) and **`0.7462`** Macro-F1 / **`0.8549`** ROC-AUC (`ASEADOS`). Plots saved at `results/07_testbed/tenant_traffic_distribution.png` and `results/07_testbed/sim_to_live_gap.png`.
 
+---
+
+## 9. Step 08 — Live End-to-End Integration, Control-Plane Impact & Real-Time Mitigation (`2026-11-14`, `results/08_live/`)
+
+### 9.1 Live Multi-Tenant FL Evaluation (`5` Seeds `0..4` × `12` Rounds, HTTP RPC + Adaptive DP + SecAgg + Poisoning Defense)
+
+- **Configuration:** Live `GRU` (`seq_mode="single_step"`, `num_chunks=1`, `dropout=0.0`), `dp_batch_size=64`, `dp_max_grad_norm=0.5`, `1` local epoch/round on `data/live/live_flows_insdn.csv` (`4,392` live testbed flows split `70/10/20` per tenant), served over `testbed/fl/protocol_http.py`. Final achieved per-tenant `eps` budgets (`delta=1e-5`, `12` rounds): **`tenant_1_finance = 4.2613`**, **`tenant_2_healthcare = 3.4774`**, **`tenant_3_education = 4.2613`**.
+
+| Live Scenario (`5` Seeds × `12` Rounds) | Accuracy (Mean ± Std) | Macro-F1 (Mean ± Std) | F1-Attack (Mean ± Std) | ADR (Mean ± Std) | ROC-AUC (Mean ± Std) | Malicious Rejection |
+|---|---:|---:|---:|---:|---:|---:|
+| **`TrustFed-SDN (Honest Full)`** | **`0.7125 ± 0.0079`** | **`0.6426 ± 0.0113`** | **`0.8006 ± 0.0051`** | `0.9287 ± 0.0055` | **`0.8356 ± 0.0155`** | `—` (`0` honest dropped) |
+| **`TrustFed-SDN (33% Scaling+SignFlip @R4)`** | **`0.6777 ± 0.0052`** | **`0.5372 ± 0.0112`** | **`0.7922 ± 0.0029`** | **`0.9883 ± 0.0046`** | **`0.7397 ± 0.0651`** | **`100.0%`** (`9/9` per seed) |
+| **`Unguarded FedAvg (33% Scaling+SignFlip @R4)`** | `0.4025 ± 0.1248` | `0.3143 ± 0.0394` | `0.3821 ± 0.2632` | `0.4168 ± 0.3790` | `0.3977 ± 0.0523` | `0.0%` (`0/9`) |
+
+- **Live Off-Loop Streaming Mitigation Calibration (`live_worker_mitigation`, `880` test flows = `547` attack + `333` benign, Seed `0`):**
+  - Validation-calibrated IPS decision threshold (`calibrate_attack_threshold` on held-out `val` split): **`0.98`** (`val_f1_macro = 0.6362`, `val_fpr = 0.0299`, `val_adr = 0.4380`).
+  - Test stream results (`total_stream_elapsed_ms = 620.8 ms`, `controller_deploy_ms = 0.813 ms`): calibrated Accuracy **`0.6239`**, calibrated Macro-F1 **`0.6190`**, true-positive attack blocks **`225 / 547`** (`41.13%`), **false benign block rate `9 / 333` (`2.70%` vs `64.26%` raw `@0.5`)**, mean flow inference **`0.625 ms`** (`p95 = 0.812 ms`), `active_rules_count = 6`.
+
+### 9.2 Live 7-Stage Per-Round Latency & Wire Overhead (`Honest Full`, `60` Rounds Across `5` Seeds)
+
+| Pipeline Stage | Mean Latency ± Std (ms) | Mean Wire Bytes / Round | Notes |
+|---|---:|---:|---|
+| Local Training + Record DP-SGD (`dp_ms`) | `384.452 ± 148.873` | `—` | Includes per-sample DP clipping & noise |
+| Quantize + Mask + Commit + Sign (`mask_commit_sign_ms`) | `11.162 ± 0.295` | `—` | `20-bit` Q, `X25519/SHAKE-256`, Merkle, `Ed25519` |
+| HTTP Upload (`upload_ms`) | `16.447 ± 2.451` | **`1,746,195 B`** | `48-bit` packed masked wires + commitments |
+| Server Screen + Unmask + Merkle (`server_agg_proof_ms`) | `13.487 ± 2.681` | `—` | `CosineClustering` + verifiable unmasking |
+| HTTP Download (`download_ms`) | `54.840 ± 12.255` | **`3,495,381 B`** | Global weights + `1,781 B` proof overhead |
+| Tenant Cryptographic Verification (`verify_ms`) | `5.554 ± 0.683` | `1,781 B` proof | Checksum + Merkle + signature verification |
+| Off-Loop Controller Weight Deploy (`controller_deploy_ms`) | `0.771 ± 0.063` | `—` | Atomic `AsyncFlowInferenceWorker` weight swap |
+| **Total End-to-End Live Round (`total_round_ms`)** | **`486.714 ± 158.833`** | `—` | Sub-`0.5s` full privacy + verifiable live round |
+
+### 9.3 Live 4-Mode Server Tamper Rejection (`tamper_rejection_demo.json`, Seed `0`)
+
+| Round | Injected Server Tamper Mode | Rejected (`3/3` Tenants)? | Primary Rejection Reason | Mean Verify (ms) | Safe Rollback Preserved? |
+|---|---|---:|---|---:|---:|
+| `1` | `none_honest` | `0` false alarms | `verified` (all `3` accepted) | `—` | `N/A` (accepted) |
+| `2` | `modified_aggregate` | **`Yes (3/3)`** | `linear_checksum_mismatch` | `4.932` | **`Yes`** |
+| `3` | `dropped_tenant` | **`Yes (3/3)`** | `dropped_or_unexpected_tenant: missing=['tenant_3_education']` | `3.219` | **`Yes`** |
+| `4` | `replayed_update` | **`Yes (3/3)`** | `replayed_update_round_mismatch` | `0.010` | **`Yes`** |
+| `5` | `substituted_update` | **`Yes (3/3)`** | `linear_checksum_mismatch` | `4.492` | **`Yes`** |
+| **Total** | **`4 / 4` Tampered Rounds** | **`100.0%` Detection** | **`0` Honest False Alarms** | `—` | **`100%` Rollback Integrity** |
+
+### 9.4 Real Ubuntu 22.04 VM SDN Control-Plane Impact & OVS Drop Mitigation (`vm_live_mitigation.json`)
+
+- **VM Environment:** `Ubuntu 22.04 LTS + Mininet 2.3.0 + OVS 2.17.12 + OS-Ken 3.0.1` running `ModelDeployController13` across `s1` (`6653`), `s2` (`6654`), `s3` (`6655`), and core `s0`.
+- **Slice Isolation Preserved:** `18 / 18` intra-tenant probes passed (`0.0%` loss); `6 / 6` cross-tenant probes blocked (`100.0%` block rate, `0` leaked).
+- **Control-Plane Responsiveness & Memory Footprint Under FL Load:**
+  - Idle OpenFlow control ping: `3/3` passed, mean RTT **`0.071 ms`** (`max = 0.072 ms`).
+  - Under active FL deployment load: `3/3` passed, mean RTT **`0.080 ms`** (`max = 0.092 ms`), delta **`+0.009 ms`**.
+  - Per-controller RSS memory remained completely unchanged from idle to busy: `c1 = 67.30 MB`, `c2 = 67.27 MB`, `c3 = 67.25 MB`.
+- **Live OpenFlow 1.3 Temporary `priority=300` Drop Mitigation (`idle_timeout=60s`, `hard_timeout=120s`, `ovs_drop_flows.txt`):**
+  - Pre-mitigation reachability: `3/3` attackers reachable, `3/3` benign hosts reachable.
+  - Per-tenant OVS drop-rule install latency: `tenant_1_finance = 30.005 ms`, `tenant_2_healthcare = 25.143 ms`, `tenant_3_education = 26.993 ms` -> **mean `27.380 ms`**.
+  - Post-mitigation enforcement: **`3/3` (`100.0%`) attacker hosts blocked**, **`3/3` (`0.0%` false block) benign hosts remained allowed**.
+  - **Automatic TTL Expiry Verified:** `ttl_expiry_blocked_before = true` and `ttl_expiry_restored_after = true`.
+- **Saved Figures:** `results/08_live/round_latency_breakdown.{png,pdf}`, `results/08_live/live_scenarios_f1.{png,pdf}`, and `results/08_live/mitigation_timeline.{png,pdf}`.
+
+
 
 
 

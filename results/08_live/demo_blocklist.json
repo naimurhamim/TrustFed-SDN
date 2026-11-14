@@ -1,0 +1,74 @@
+[
+  {
+    "tenant_id": "tenant_1_finance",
+    "bridge": "s1",
+    "ipv4_src": "10.10.1.100",
+    "priority": 300,
+    "idle_timeout": 60,
+    "hard_timeout": 120,
+    "installed_at": 1794680011.6591465,
+    "expires_at": 1794680131.6591465,
+    "prob_attack": 0.9924271702766418,
+    "active": true
+  },
+  {
+    "tenant_id": "tenant_1_finance",
+    "bridge": "s1",
+    "ipv4_src": "10.10.1.10",
+    "priority": 300,
+    "idle_timeout": 60,
+    "hard_timeout": 120,
+    "installed_at": 1794680011.682983,
+    "expires_at": 1794680131.682983,
+    "prob_attack": 0.9777753949165344,
+    "active": true
+  },
+  {
+    "tenant_id": "tenant_2_healthcare",
+    "bridge": "s2",
+    "ipv4_src": "10.10.2.100",
+    "priority": 300,
+    "idle_timeout": 60,
+    "hard_timeout": 120,
+    "installed_at": 1794680011.93326,
+    "expires_at": 1794680131.93326,
+    "prob_attack": 0.9933192729949951,
+    "active": true
+  },
+  {
+    "tenant_id": "tenant_2_healthcare",
+    "bridge": "s2",
+    "ipv4_src": "10.10.2.10",
+    "priority": 300,
+    "idle_timeout": 60,
+    "hard_timeout": 120,
+    "installed_at": 1794680011.9418588,
+    "expires_at": 1794680131.9418588,
+    "prob_attack": 0.976021945476532,
+    "active": true
+  },
+  {
+    "tenant_id": "tenant_3_education",
+    "bridge": "s3",
+    "ipv4_src": "10.10.3.100",
+    "priority": 300,
+    "idle_timeout": 60,
+    "hard_timeout": 120,
+    "installed_at": 1794680012.0786579,
+    "expires_at": 1794680132.0786579,
+    "prob_attack": 0.9712562561035156,
+    "active": true
+  },
+  {
+    "tenant_id": "tenant_3_education",
+    "bridge": "s3",
+    "ipv4_src": "10.10.3.10",
+    "priority": 300,
+    "idle_timeout": 60,
+    "hard_timeout": 120,
+    "installed_at": 1794680012.1086392,
+    "expires_at": 1794680132.1086392,
+    "prob_attack": 0.9777405261993408,
+    "active": true
+  }
+]

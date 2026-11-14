@@ -55,7 +55,7 @@ notify:
 	$(PYTHON) scripts/notify_telegram.py --attach ../PRITOM_ANTIGRAVITY_SETUP.md --attach docs/TEAM_CHECKLIST.md
 
 demo:
-	@echo "Implemented in Step 08 (see docs/steps/STEP_08_live_integration.md)"
+	$(PYTHON) scripts/run_step08_live.py --demo
 
 reproduce:
 	@echo "Implemented in Step 09 (see docs/steps/STEP_09_full_evaluation.md)"
