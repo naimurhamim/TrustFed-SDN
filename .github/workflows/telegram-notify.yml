@@ -55,4 +55,4 @@ jobs:
           if [ -n "${INPUT_NOTE:-}" ]; then
             ARGS+=(--note "${INPUT_NOTE}")
           fi
-          python scripts/notify_telegram.py "${ARGS[@]}" --attach docs/TEAM_CHECKLIST.md
+          python scripts/notify_telegram.py "${ARGS[@]}" --attach docs/PRITOM_ANTIGRAVITY_SETUP.md --attach docs/TEAM_CHECKLIST.md
