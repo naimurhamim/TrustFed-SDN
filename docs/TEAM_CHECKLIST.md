@@ -9,11 +9,11 @@
 
 ## Latest Handoff Note
 
-- **Last Updated By:** `@Naimur`
+- **Last Updated By:** `@Pritom`
 - **Date:** `2026-11-14`
-- **Active Step:** `Step 07 - Multi-Tenant SDN Testbed` (`approved`, tagged `step-07-done`; awaiting user instruction to start `Step 08`)
-- **What Was Just Completed:** Completed Step 07 live Ubuntu 22.04 VMware testbed (`L1`: Mininet `2.3.0` + OVS `2.17.12` + 3 OS-Ken `3.0.1` OpenFlow 1.3 controllers + core isolation switch `s0`) with **`0.0%` intra-tenant loss (`18/18`)** and **`100.0%` cross-tenant block (`6/6`)**, captured **`4,392` labeled bidirectional flows** into `data/live/` + `data/live/MANIFEST.md`, verified `13` new unit tests (`63/63` pytest passing via `make check`), ran 3-seed sim-to-live evaluation (`results/07_testbed/`), and logged Section 8 in `docs/EXPERIMENT_RESULTS_LOG.md`.
-- **Next Task for Incoming Teammate:** Review `docs/TESTBED.md`, `results/07_testbed/`, and `docs/EXPERIMENT_RESULTS_LOG.md` Section 8; after explicit `approved step 07`, tag `step-07-done` and start `Step 08 - Live Integration`.
+- **Active Step:** `Step 07 - Multi-Tenant SDN Testbed` (`approved`, tagged `step-07-done`; ready to begin `Step 08 - Live Integration`)
+- **What Was Just Completed:** Completed `@Pritom`'s local environment onboarding and hardware probe (`results/00_environment/summary_pritom.json`), downloaded and verified raw datasets (`InSDN` & `CICIDS2017` from Google Drive matching `data/MANIFEST.md` SHA-256 digests), processed splits into `data/processed/`, and verified `63/63` pytest passing via `make check`.
+- **Next Task for Team:** Review `docs/TESTBED.md`, `results/07_testbed/`, and `docs/EXPERIMENT_RESULTS_LOG.md` Section 8, then commence `Step 08 - Live Integration` (`08.1`–`08.5`) on the SDN testbed.
 
 ---
 

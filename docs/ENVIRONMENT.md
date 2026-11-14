@@ -22,6 +22,17 @@
   - Additional VMware Guest: `kali-linux-2025.2-vmware-amd64` (4 GB RAM, powered off)
   - Simultaneous Host + Ubuntu Desktop VM RAM measurement: `93.0%` host RAM used (`1.1 GB` available of `15.67 GB` while Windows 11 + Ubuntu 22.04 Desktop VM run together)
 
+### Secondary Host Hardware (`@Pritom` — `results/00_environment/summary_pritom.json`)
+
+- **Probed at (UTC):** `2026-11-06T15:54:46Z`
+- **Operating System:** Windows 11 (version `10.0.26200`, `AMD64`)
+- **Python Runtime (ML / FL Core):** `3.12.10` (`TrustFed-SDN/.venv/Scripts/python.exe`)
+- **CPU:** 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz — 4 physical cores / 8 logical threads
+- **RAM:** 15.78 GB total (6.19 GB available at probe time, 60.8% used)
+- **Disks:** `F:\` workspace drive has `181.5 GB` free of `232.8 GB`
+- **GPU:** CPU runtime (no discrete GPU)
+- **Virtualization:** VMware Workstation present (`vmrun.exe`), WSL available
+
 ### Installed Python Package Versions (`TrustFed-SDN/.venv`)
 
 | Package | Version | Role |

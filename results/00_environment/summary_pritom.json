@@ -1,0 +1,77 @@
+{
+  "timestamp_utc": "2026-11-06T15:54:46Z",
+  "os": {
+    "system": "Windows",
+    "release": "11",
+    "version": "10.0.26200",
+    "machine": "AMD64"
+  },
+  "python": {
+    "version": "3.12.10",
+    "executable": "F:\\Semester 7\\Thesis\\TrustFed-SDN Main\\TrustFed-SDN\\.venv\\Scripts\\python.exe"
+  },
+  "cpu": {
+    "model": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+    "physical_cores": 4,
+    "logical_threads": 8
+  },
+  "ram": {
+    "total_gb": 15.78,
+    "available_gb": 6.19,
+    "percent_used": 60.8
+  },
+  "disks": [
+    {
+      "mount": "C:\\",
+      "fstype": "NTFS",
+      "total_gb": 231.4,
+      "free_gb": 30.6
+    },
+    {
+      "mount": "D:\\",
+      "fstype": "NTFS",
+      "total_gb": 232.8,
+      "free_gb": 105.1
+    },
+    {
+      "mount": "E:\\",
+      "fstype": "NTFS",
+      "total_gb": 232.8,
+      "free_gb": 166.4
+    },
+    {
+      "mount": "F:\\",
+      "fstype": "NTFS",
+      "total_gb": 232.8,
+      "free_gb": 181.5
+    },
+    {
+      "mount": "G:\\",
+      "fstype": "NTFS",
+      "total_gb": 232.8,
+      "free_gb": 81.7
+    }
+  ],
+  "gpus": [],
+  "virtualization": {
+    "host_system": "Windows",
+    "windows_hypervisor_present": true,
+    "vmware_vmrun": "C:\\Program Files (x86)\\VMware\\VMware Workstation\\vmrun.exe",
+    "wsl_available": true
+  },
+  "packages": {
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "pyarrow": "26.0.0",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1",
+    "torch": "2.15.0",
+    "PyYAML": "6.0.3",
+    "matplotlib": "3.11.2",
+    "psutil": "7.2.2",
+    "cryptography": "50.0.2",
+    "pytest": "9.2.0",
+    "ruff": "0.17.3",
+    "black": "26.10.1"
+  }
+}
