@@ -378,6 +378,314 @@ document.addEventListener("DOMContentLoaded", () => {
       // Static pre-rendered fallback numbers already match key_numbers.json verbatim
     });
 
+  /* ---------- 8. Interactive Autonomous Mini-Robot Companion ---------- */
+  (function initMiniRobot() {
+    const robot = document.getElementById("miniRobotWidget");
+    const face = document.getElementById("robotFace");
+    const mouth = document.getElementById("robotMouth");
+    const bubble = document.getElementById("robotBubble");
+    const sparks = document.getElementById("robotSparks");
+    if (!robot || !face || !mouth || !bubble || !sparks) return;
+
+    const MOUTH_NORMAL = "M 53 56 Q 60 61.5 67 56";
+    const MOUTH_LAUGH = "M 51 55 Q 60 66.5 69 55 Z";
+    const MOUTH_DRAG = "M 56 54 A 4 5 0 1 0 64 54 A 4 5 0 1 0 56 54 Z";
+    const STORAGE_KEY = "trustfed_robot_anchor";
+
+    const CHEER_LINES = [
+      "Haha, that tickles!",
+      "All 5 nodes verified!",
+      "Trust Score: 0.89!",
+      "FedAvg +61.3pp!",
+      "Drag me anywhere!",
+      "Zero leaks detected!"
+    ];
+
+    let lineIdx = 0;
+    let isPointerDown = false;
+    let hasDragged = false;
+    let activePointerId = null;
+    let startClientX = 0;
+    let startClientY = 0;
+    let startAnchorX = 0;
+    let startAnchorY = 0;
+
+    let pointerClientX = window.innerWidth * 0.5;
+    let pointerClientY = window.innerHeight * 0.5;
+    let wanderX = 0;
+    let wanderY = 0;
+    let wanderTargetX = 0;
+    let wanderTargetY = 0;
+
+    let bubbleTimer = null;
+    let reactionTimer = null;
+    let blinkTimer = null;
+    let wanderTimer = null;
+
+    function getSize() {
+      const rect = robot.getBoundingClientRect();
+      return {
+        w: rect.width || (window.innerWidth <= 768 ? 60 : 72),
+        h: rect.height || (window.innerWidth <= 768 ? 70 : 84)
+      };
+    }
+
+    function getTopbarOffset() {
+      const topbar = document.querySelector(".topbar");
+      return (topbar ? topbar.getBoundingClientRect().height : 62) + 8;
+    }
+
+    function clampAnchor(x, y) {
+      const { w, h } = getSize();
+      const pad = window.innerWidth <= 768 ? 10 : 16;
+      const minX = pad;
+      const maxX = Math.max(minX, window.innerWidth - w - pad);
+      const minY = getTopbarOffset();
+      const maxY = Math.max(minY, window.innerHeight - h - pad);
+      return {
+        x: Math.min(Math.max(x, minX), maxX),
+        y: Math.min(Math.max(y, minY), maxY)
+      };
+    }
+
+    function loadInitialAnchor() {
+      const { w, h } = getSize();
+      const pad = window.innerWidth <= 768 ? 14 : 26;
+      let defX = window.innerWidth - w - pad;
+      let defY = window.innerHeight - h - pad;
+      try {
+        const saved = sessionStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (typeof parsed.x === "number" && typeof parsed.y === "number") {
+            defX = parsed.x;
+            defY = parsed.y;
+          }
+        }
+      } catch (_err) {
+        // Ignore storage restriction errors
+      }
+      return clampAnchor(defX, defY);
+    }
+
+    let anchor = loadInitialAnchor();
+    let renderX = anchor.x;
+    let renderY = anchor.y;
+
+    function updateBubbleOrientation(curX, curY) {
+      robot.classList.toggle("bubble-flip-x", curX < 185);
+      robot.classList.toggle("bubble-flip-y", curY < getTopbarOffset() + 54);
+    }
+
+    function showBubble(text, ms) {
+      updateBubbleOrientation(renderX, renderY);
+      bubble.textContent = text;
+      bubble.classList.add("show");
+      if (bubbleTimer) clearTimeout(bubbleTimer);
+      bubbleTimer = setTimeout(() => {
+        bubble.classList.remove("show");
+      }, ms || 2200);
+    }
+
+    function spawnSparks() {
+      sparks.textContent = "";
+      const vectors = [
+        { tx: "-28px", ty: "-34px", ring: false },
+        { tx: "26px", ty: "-32px", ring: true },
+        { tx: "-36px", ty: "-6px", ring: true },
+        { tx: "35px", ty: "-8px", ring: false },
+        { tx: "0px", ty: "-44px", ring: false }
+      ];
+      vectors.forEach((vec) => {
+        const dot = document.createElement("span");
+        dot.className = vec.ring ? "robot-spark-dot is-ring" : "robot-spark-dot";
+        dot.style.setProperty("--tx", vec.tx);
+        dot.style.setProperty("--ty", vec.ty);
+        sparks.appendChild(dot);
+        setTimeout(() => dot.remove(), 750);
+      });
+    }
+
+    function triggerCheerReaction() {
+      if (reactionTimer) clearTimeout(reactionTimer);
+      robot.classList.remove("is-laughing", "is-winking");
+      // Force reflow so rapid taps replay bounce & arm animations cleanly
+      void robot.offsetWidth;
+
+      const useLaugh = lineIdx % 4 !== 3;
+      if (useLaugh) {
+        robot.classList.add("is-laughing");
+        mouth.setAttribute("d", MOUTH_LAUGH);
+      } else {
+        robot.classList.add("is-winking");
+        mouth.setAttribute("d", MOUTH_LAUGH);
+      }
+
+      spawnSparks();
+      showBubble(CHEER_LINES[lineIdx % CHEER_LINES.length], 2300);
+      lineIdx += 1;
+
+      reactionTimer = setTimeout(() => {
+        robot.classList.remove("is-laughing", "is-winking");
+        if (!isPointerDown || !hasDragged) {
+          mouth.setAttribute("d", MOUTH_NORMAL);
+        }
+      }, 1500);
+    }
+
+    function scheduleWander() {
+      const delay = 2400 + Math.random() * 1900;
+      wanderTimer = setTimeout(() => {
+        if (!isPointerDown) {
+          wanderTargetX = (Math.random() * 2 - 1) * 20;
+          wanderTargetY = (Math.random() * 2 - 1) * 14;
+        }
+        scheduleWander();
+      }, delay);
+    }
+
+    function scheduleBlink() {
+      const delay = 2800 + Math.random() * 2800;
+      blinkTimer = setTimeout(() => {
+        if (!robot.classList.contains("is-laughing") && !robot.classList.contains("is-winking")) {
+          robot.classList.add("is-blinking");
+          setTimeout(() => robot.classList.remove("is-blinking"), 140);
+        }
+        scheduleBlink();
+      }, delay);
+    }
+
+    function updateGaze(curX, curY) {
+      const { w, h } = getSize();
+      const cx = curX + w * 0.5;
+      const cy = curY + h * 0.42;
+      const dx = pointerClientX - cx;
+      const dy = pointerClientY - cy;
+      const dist = Math.hypot(dx, dy) || 1;
+      const scale = Math.min(dist / 220, 1);
+      const gx = (dx / dist) * 3.2 * scale;
+      const gy = (dy / dist) * 2.4 * scale;
+      face.style.transform = `translate(${gx.toFixed(2)}px, ${gy.toFixed(2)}px)`;
+    }
+
+    const startTime = performance.now();
+    function tick(now) {
+      const t = (now - startTime) * 0.001;
+      if (isPointerDown && hasDragged) {
+        wanderX += (0 - wanderX) * 0.25;
+        wanderY += (0 - wanderY) * 0.25;
+        renderX += (anchor.x - renderX) * 0.65;
+        renderY += (anchor.y - renderY) * 0.65;
+      } else {
+        wanderX += (wanderTargetX - wanderX) * 0.045;
+        wanderY += (wanderTargetY - wanderY) * 0.045;
+        const bobY = Math.sin(t * 3.1) * 4.5;
+        const clamped = clampAnchor(anchor.x + wanderX, anchor.y + wanderY + bobY);
+        renderX += (clamped.x - renderX) * 0.16;
+        renderY += (clamped.y - renderY) * 0.16;
+      }
+
+      const vx = anchor.x + wanderX - renderX;
+      const tilt = isPointerDown && hasDragged ? Math.max(-9, Math.min(9, vx * 0.3)) : Math.sin(t * 1.6) * 2.4;
+      robot.style.transform = `translate3d(${renderX.toFixed(2)}px, ${renderY.toFixed(2)}px, 0) rotate(${tilt.toFixed(2)}deg)`;
+      updateGaze(renderX, renderY);
+      requestAnimationFrame(tick);
+    }
+
+    document.addEventListener(
+      "pointermove",
+      (e) => {
+        pointerClientX = e.clientX;
+        pointerClientY = e.clientY;
+      },
+      { passive: true }
+    );
+
+    robot.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      isPointerDown = true;
+      hasDragged = false;
+      activePointerId = e.pointerId;
+      startClientX = e.clientX;
+      startClientY = e.clientY;
+      startAnchorX = anchor.x;
+      startAnchorY = anchor.y;
+      pointerClientX = e.clientX;
+      pointerClientY = e.clientY;
+      try {
+        robot.setPointerCapture(e.pointerId);
+      } catch (_err) {
+        // Ignore if capture is unsupported
+      }
+    });
+
+    robot.addEventListener("pointermove", (e) => {
+      if (!isPointerDown || e.pointerId !== activePointerId) return;
+      const dx = e.clientX - startClientX;
+      const dy = e.clientY - startClientY;
+      if (!hasDragged && Math.hypot(dx, dy) > 6) {
+        hasDragged = true;
+        robot.classList.add("is-dragging");
+        robot.classList.remove("is-laughing", "is-winking");
+        mouth.setAttribute("d", MOUTH_DRAG);
+      }
+      if (hasDragged) {
+        anchor = clampAnchor(startAnchorX + dx, startAnchorY + dy);
+      }
+    });
+
+    function finishPointer(e, isCancelled) {
+      if (!isPointerDown || e.pointerId !== activePointerId) return;
+      isPointerDown = false;
+      activePointerId = null;
+      try {
+        if (robot.hasPointerCapture && robot.hasPointerCapture(e.pointerId)) {
+          robot.releasePointerCapture(e.pointerId);
+        }
+      } catch (_err) {
+        // Ignore
+      }
+
+      if (hasDragged) {
+        robot.classList.remove("is-dragging");
+        mouth.setAttribute("d", MOUTH_NORMAL);
+        wanderTargetX = 0;
+        wanderTargetY = 0;
+        try {
+          sessionStorage.setItem(STORAGE_KEY, JSON.stringify(anchor));
+        } catch (_err) {
+          // Ignore storage errors
+        }
+        if (!isCancelled) {
+          showBubble(lineIdx % 2 === 0 ? "New spot locked!" : "Patrolling here!", 1800);
+        }
+      } else if (!isCancelled) {
+        triggerCheerReaction();
+      }
+      hasDragged = false;
+    }
+
+    robot.addEventListener("pointerup", (e) => finishPointer(e, false));
+    robot.addEventListener("pointercancel", (e) => finishPointer(e, true));
+
+    robot.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        triggerCheerReaction();
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      anchor = clampAnchor(anchor.x, anchor.y);
+      updateBubbleOrientation(anchor.x, anchor.y);
+    });
+
+    scheduleWander();
+    scheduleBlink();
+    requestAnimationFrame(tick);
+    setTimeout(() => showBubble("Tap me or drag me!", 2600), 1100);
+  })();
+
   /* ---------- Initialize Book Landing State ---------- */
   currentPage = resolveHash();
   applyReadingMode(isScrollMode);
