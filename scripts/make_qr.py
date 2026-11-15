@@ -25,7 +25,7 @@ from PIL import Image  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_URL = "https://trustfed.naimurrashid.dev/"
-DEFAULT_OUT_DIR = REPO_ROOT / "site" / "assets" / "qr"
+DEFAULT_OUT_DIR = REPO_ROOT / "figures" / "qr"
 SITE_MIRROR_QR_DIR = REPO_ROOT.parent / "07_Website" / "trustfed-sdn-site" / "images" / "qr"
 
 # ECC indicator 2-bit codes in ISO/IEC 18004 Format Information

@@ -37,7 +37,7 @@ if /I "%TARGET%"=="help" (
     echo   reproduce        Run full Step 09 evaluation and generate figures/tables
     echo   reproduce-quick  Run fast Step 09 verification and regenerate figures/tables
     echo   qr               Regenerate and verify SVG/PNG/PDF QR codes
-    echo   site-preview     Serve site\ locally at http://127.0.0.1:8080
+    echo   site-preview     Serve ..\07_Website\trustfed-sdn-site locally at http://127.0.0.1:8080
     exit /b 0
 )
 
@@ -96,7 +96,7 @@ if /I "%TARGET%"=="qr" (
     exit /b %ERRORLEVEL%
 )
 if /I "%TARGET%"=="site-preview" (
-    "%PY%" -m http.server 8080 --directory site
+    "%PY%" -m http.server 8080 --directory ..\07_Website\trustfed-sdn-site
     exit /b %ERRORLEVEL%
 )
 

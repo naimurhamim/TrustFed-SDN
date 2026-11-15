@@ -72,8 +72,7 @@ TrustFed-SDN/
 ├── configs/           # Reproducible YAML experiment configurations
 ├── docs/              # Architecture, reproduction guide, final audit, deviations & checklists
 ├── results/           # Summarized JSON/CSV outputs (incl. results/final/key_numbers.json)
-├── figures/ & tables/ # 8 publication-grade PNG/PDF plots & LaTeX tables
-├── site/              # Self-contained 10-chapter Interactive Research Monograph + QR assets
+├── figures/ & tables/ # 8 publication-grade PNG/PDF plots, QR bundle (figures/qr/) & LaTeX tables
 ├── LICENSE            # MIT License
 └── CITATION.cff       # Machine-readable academic citation metadata (v1.0.0)
 ```
@@ -86,7 +85,7 @@ TrustFed-SDN/
 - **Step-by-Step Reproducibility Guide:** [`docs/REPRODUCE.md`](docs/REPRODUCE.md)
 - **Final Release & Consistency Audit:** [`docs/FINAL_AUDIT.md`](docs/FINAL_AUDIT.md)
 - **Documented Deviations Log (`DEV-001`–`DEV-004`):** [`docs/DEVIATIONS.md`](docs/DEVIATIONS.md)
-- **Live Interactive Monograph:** [`https://trustfed.naimurrashid.dev/`](https://trustfed.naimurrashid.dev/) (`site/README.md`)
+- **Live Interactive Monograph:** [`https://trustfed.naimurrashid.dev/`](https://trustfed.naimurrashid.dev/) (companion repo `07_Website/trustfed-sdn-site/`)
 
 ---
 

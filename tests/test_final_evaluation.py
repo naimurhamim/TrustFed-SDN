@@ -150,7 +150,7 @@ def test_step10_qr_docs_site_and_release() -> None:
     """Verify Step 10 QR decoder, release docs, LICENSE, CITATION, and website key_numbers sync."""
     from scripts.make_qr import DEFAULT_URL, decode_and_verify_qr
 
-    qr_dir = REPO_ROOT / "site" / "assets" / "qr"
+    qr_dir = REPO_ROOT / "figures" / "qr"
     for fname in ("trustfed_qr.png", "trustfed_qr.svg", "trustfed_qr.pdf", "qr_verification.json"):
         p = qr_dir / fname
         assert p.exists() and p.stat().st_size > 0, f"Missing QR asset: {p}"
@@ -167,23 +167,22 @@ def test_step10_qr_docs_site_and_release() -> None:
         "docs/REPRODUCE.md",
         "docs/FINAL_AUDIT.md",
         "docs/DEVIATIONS.md",
-        "site/index.html",
-        "site/css/style.css",
-        "site/js/script.js",
-        "site/README.md",
+        "results/final/key_numbers.json",
     ):
         p = REPO_ROOT / rel_path
         assert p.exists() and p.stat().st_size > 100, f"Missing or empty release artifact: {p}"
 
+    assert not (REPO_ROOT / "site").exists()
     assert "DEV-004" in (REPO_ROOT / "docs" / "DEVIATIONS.md").read_text(encoding="utf-8")
-    assert (REPO_ROOT / "site" / "data" / "key_numbers.json").read_text(encoding="utf-8") == (
-        REPO_ROOT / "results" / "final" / "key_numbers.json"
-    ).read_text(encoding="utf-8")
 
-    site_kn = json.loads(
-        (REPO_ROOT / "site" / "data" / "key_numbers.json").read_text(encoding="utf-8")
-    )
-    final_kn = json.loads(
-        (REPO_ROOT / "results" / "final" / "key_numbers.json").read_text(encoding="utf-8")
-    )
-    assert site_kn == final_kn
+    final_kn_path = REPO_ROOT / "results" / "final" / "key_numbers.json"
+    final_kn_text = final_kn_path.read_text(encoding="utf-8")
+    final_kn = json.loads(final_kn_text)
+
+    site_repo = REPO_ROOT.parent / "07_Website" / "trustfed-sdn-site"
+    if site_repo.exists():
+        assert (site_repo / "index.html").exists()
+        site_kn_path = site_repo / "data" / "key_numbers.json"
+        site_kn_text = site_kn_path.read_text(encoding="utf-8")
+        assert site_kn_text == final_kn_text
+        assert json.loads(site_kn_text) == final_kn

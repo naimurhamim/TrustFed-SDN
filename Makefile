@@ -19,7 +19,7 @@ help:
 	@echo   probe            Run hardware and environment probe script
 	@echo   smoke-testbed    Run Linux Mininet + OVS + RYU smoke test (Linux root required)
 	@echo   qr               Regenerate and verify SVG/PNG/PDF QR codes via scripts/make_qr.py
-	@echo   site-preview     Serve site/ locally at http://127.0.0.1:8080
+	@echo   site-preview     Serve ../07_Website/trustfed-sdn-site locally at http://127.0.0.1:8080
 
 install:
 	$(PIP) install -e ".[dev]"
@@ -69,5 +69,5 @@ qr:
 	$(PYTHON) scripts/make_qr.py
 
 site-preview:
-	$(PYTHON) -m http.server 8080 --directory site
+	$(PYTHON) -m http.server 8080 --directory ../07_Website/trustfed-sdn-site
 
