@@ -1,0 +1,26 @@
+{
+  "target_url": "https://trustfed.naimurrashid.dev/",
+  "version": 4,
+  "modules": 33,
+  "ecc_level": "H",
+  "mask_id": 0,
+  "verification": {
+    "decoded_url": "https://trustfed.naimurrashid.dev/",
+    "version": 4,
+    "modules": 33,
+    "ecc_level": "H",
+    "mask_id": 0,
+    "rs_blocks_verified": 4,
+    "rs_syndromes_zero": true
+  },
+  "files": {
+    "png": "trustfed_qr.png",
+    "svg": "trustfed_qr.svg",
+    "pdf": "trustfed_qr.pdf"
+  },
+  "sha256": {
+    "png": "d627f8d0871f7227cc91e211c685d12a7560e84f4feda268ccddaafcf80a143a",
+    "svg": "c1e0e400a956624bb81a4e164c1af133f15ef1cfd586b496b996637154c401d6",
+    "pdf": "28723f75e6a022b92b302f7fe465c0daa89c3564ee9ccdf9161a274326385eee"
+  }
+}

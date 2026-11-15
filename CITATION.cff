@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+title: "TrustFed-SDN: Privacy-Preserving and Verifiable Federated Learning for Multi-Tenant SDN Security"
+message: "If you use this software, evaluation framework, or live SDN testbed in your research, please cite it using the metadata below."
+type: software
+authors:
+  - family-names: Bhowmik
+    given-names: Pritom Kumar
+    affiliation: "Department of IoT & Robotics Engineering, University of Frontier Technology, Bangladesh"
+  - family-names: Rashid
+    given-names: MD Naimur
+    affiliation: "Department of IoT & Robotics Engineering, University of Frontier Technology, Bangladesh"
+    website: "https://naimurrashid.dev/"
+  - family-names: Das
+    given-names: Saurav Chandra
+    affiliation: "Department of IoT & Robotics Engineering, University of Frontier Technology, Bangladesh"
+repository-code: "https://github.com/naimurhamim/TrustFed-SDN"
+url: "https://trustfed.naimurrashid.dev/"
+license: MIT
+version: "1.0.0"
+date-released: "2026-11-15"
+keywords:
+  - federated-learning
+  - software-defined-networking
+  - intrusion-detection
+  - differential-privacy
+  - secure-aggregation
+  - byzantine-robustness
+  - open-vswitch
+  - os-ken

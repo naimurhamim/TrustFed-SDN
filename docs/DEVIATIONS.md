@@ -31,3 +31,14 @@ Every difference between `PROJECT_PLAN.md` / `docs/EXPERIMENT_SPEC.md` / `docs/s
 - **What:** For live multi-tenant FL orchestration in `testbed/fl/protocol_http.py`, we implemented a direct `ThreadingHTTPServer` + `LiveTenantHTTPClient` HTTP/JSON RPC transport carrying base64-encoded 48-bit packed masked tensors, SHA-256 Merkle proofs, and Ed25519 headers rather than wrapping `trustfed/` inside `flwr` (Flower).
 - **Why:** `docs/steps/STEP_08_live_integration.md` explicitly allows *"Flower with custom strategies reusing the trustfed/ aggregation code, or a simple gRPC/HTTP service"*. Direct HTTP RPC avoids introducing heavy external Flower/gRPC runtime dependencies across both the Windows `.venv` (Python `3.12.7`) and Ubuntu VM `.venv-ryu` (Python `3.10.12`), preserves exact byte-for-byte wire accounting of `VerificationProof` (`proof_wire_bytes`) and `48-bit` packed payloads, and supports clean mid-round abort/retry (`/abort` and HTTP `409` on incomplete cohorts) as required by Step 08.
 - **Impact:** All core FL, Adaptive DP-SGD, CosineClustering poisoning filtering, X25519/SHAKE-256 masking, Merkle commitments, and Ed25519 verification algorithms are reused verbatim from `trustfed/` over real localhost socket RPC with exact per-stage latency and byte telemetry.
+
+---
+
+## DEV-004 — L1 Namespace + Per-Tenant OVS Testbed Scope, Calibrated Live Threshold & Interactive Monograph Website
+
+- **Date:** 2026-11-15
+- **Step:** Step 08 / Step 10 (`docs/steps/STEP_08_live_integration.md`, `docs/steps/STEP_10_website_docs_release.md`)
+- **What:** (1) The Ubuntu 22.04 live SDN testbed validates **L1 Linux network namespace (`t1..t3`) + per-tenant Open vSwitch (`br_t1..br_t3`) isolation** inside a VMware guest rather than multi-VM L3 hypervisor isolation, and applies a validation-calibrated classification threshold (`theta = 0.98`) in live OVS mitigation (reducing False Block Rate from `64.26%` raw zero-shot to `2.70%`); (2) the companion web portal (`site/` mirrored to `07_Website/trustfed-sdn-site/`) is delivered as a zero-build static **10-Chapter Interactive Research Monograph** HTML/CSS/JS application hydrating live KPIs from `data/key_numbers.json`.
+- **Why:** Earlier proposal notes mentioned multi-VM L3 isolation and default `0.5` thresholding; `L1` namespace + per-tenant OVS switches provide full OpenFlow 1.3 data-plane packet telemetry and deterministic reproducibility inside a single Ubuntu VM, calibration resolves sim-to-live domain shift transparently, and static HTML/CSS/JS ensures effortless Cloudflare Worker / GitHub Pages deployment with zero build toolchain drift.
+- **Impact:** Every published figure, live testbed metric (`results/08_live/summary.json`), website KPI card, and audit note honestly reports L1 namespace isolation and domain-shift calibration without overclaiming hypervisor-level L3 isolation.
+

@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrustFed-SDN — Interactive Research Monograph &amp; Thesis Release v1.0</title>
+  <meta name="description"
+    content="TrustFed-SDN: Privacy-preserving, Byzantine-robust, cryptographically verifiable federated learning for multi-tenant SDN intrusion detection — interactive 10-chapter digital monograph.">
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    (function () {
+      var saved = localStorage.getItem("theme") || "dark";
+      document.documentElement.setAttribute("data-theme", saved);
+    })();
+  </script>
+</head>
+
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- ============ TOP MONOGRAPH HEADER ============ -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-left">
+        <button id="tocMobileBtn" class="icon-btn toc-mobile-btn" type="button" aria-label="Open book chapter index">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+
+        <a href="#ch01" data-goto="1" class="brand-link">
+          <img src="images/logo.png" alt="TrustFed-SDN Mark" class="brand-logo" data-brand-logo>
+          <span>TrustFed-SDN</span>
+        </a>
+        <span class="edition-pill">Monograph v1.0</span>
+      </div>
+
+      <div class="topbar-center">
+        <span id="chapterReadout" class="chapter-readout">Chapter 01 / 10 · Front Cover &amp; Executive Overview</span>
+      </div>
+
+      <div class="topbar-right">
+        <button id="modeToggleBtn" class="pill-btn" type="button"
+          title="Switch between interactive chapter book pages and continuous scrolling">
+          <span id="modeToggleLabel">Scroll All</span>
+        </button>
+        <a href="Thesis-Poster-TrustFed-Presentationv2-4-by-3.pdf" target="_blank" rel="noopener"
+          class="pill-btn pill-btn-poster">Poster PDF</a>
+        <a href="https://github.com/naimurhamim/TrustFed-SDN" target="_blank" rel="noopener"
+          class="pill-btn">GitHub</a>
+        <button id="themeToggleBtn" class="icon-btn" type="button" aria-label="Toggle light and dark theme"
+          title="Toggle light/dark paper theme">
+          <svg class="icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <svg class="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="read-progress-track">
+      <div id="readProgressFill" class="read-progress-fill"></div>
+    </div>
+  </header>
+
+  <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+  <!-- ============ BOOK WORKBENCH SHELL ============ -->
+  <div class="book-shell">
+
+    <!-- Left Book Spine / Table of Contents -->
+    <aside id="bookSidebar" class="book-sidebar" aria-label="Book Chapters">
+      <div class="sidebar-head">
+        <span class="sidebar-kicker">Book Spine · 10 Chapters</span>
+        <button id="sidebarCloseBtn" class="sidebar-close-btn" type="button"
+          aria-label="Close chapter navigation">&times;</button>
+      </div>
+
+      <nav class="toc-list">
+        <button class="toc-item active" type="button" data-goto="1">
+          <span class="toc-num">01</span>
+          <span class="toc-meta">
+            <span class="toc-title">Front Cover &amp; Executive Overview</span>
+            <span class="toc-sub">KPI strip, abstract &amp; thesis scope</span>
+          </span>
+        </button>
+        <button class="toc-item" type="button" data-goto="2">
+          <span class="toc-num">02</span>
+          <span class="toc-meta">
+            <span class="toc-title">Abstract, Threat Model &amp; Gap</span>
+            <span class="toc-sub">Adversarial roles &amp; prior art matrix</span>
+          </span>
+        </button>
+        <button class="toc-item" type="button" data-goto="3">
+          <span class="toc-num">03</span>
+          <span class="toc-meta">
+            <span class="toc-title">Architecture &amp; Crypto Pipeline</span>
+            <span class="toc-sub">7-stage FL + DP + SecAgg + SDN loop</span>
+          </span>
+        </button>
+        <button class="toc-item" type="button" data-goto="4">
+          <span class="toc-num">04</span>
+          <span class="toc-meta">
+            <span class="toc-title">Datasets &amp; GRU Baselines</span>
+            <span class="toc-sub">2.84M flows, E1 &amp; E2 non-IID</span>
+          </span>
+        </button>
+        <button class="toc-item" type="button" data-goto="5">
+          <span class="toc-num">05</span>
+          <span class="toc-meta">
+            <span class="toc-title">Security, Adaptive DP &amp; SecAgg</span>
+            <span class="toc-sub">E3 poisoning, E4 MIA &amp; E5 tamper proofs</span>
+          </span>
+        </button>
+        <button class="toc-item" type="button" data-goto="6">
+          <span class="toc-num">06</span>
+          <span class="toc-meta">
+            <span class="toc-title">Ablation, Scale &amp; Scorecard</span>
+            <span class="toc-sub">E6 ladder, E8/E10 &amp; Wilcoxon tests</span>
+          </span>
+        </button>
+        <button class="toc-item" type="button" data-goto="7">
+          <span class="toc-num">07</span>
+          <span class="toc-meta">
+            <span class="toc-title">Live SDN Testbed &amp; OVS Mitigation</span>
+            <span class="toc-sub">E7/E9 transfer, 27.38 ms OVS blocks</span>
+          </span>
+        </button>
+        <button class="toc-item" type="button" data-goto="8">
+          <span class="toc-num">08</span>
+          <span class="toc-meta">
+            <span class="toc-title">Build Logbook &amp; Deviations</span>
+            <span class="toc-sub">Steps 00–10, honest limits &amp; DEV-001..004</span>
+          </span>
+        </button>
+        <button class="toc-item" type="button" data-goto="9">
+          <span class="toc-num">09</span>
+          <span class="toc-meta">
+            <span class="toc-title">Reproducibility &amp; References</span>
+            <span class="toc-sub">Make commands, BibTeX &amp; 8 DOI works</span>
+          </span>
+        </button>
+        <button class="toc-item" type="button" data-goto="10">
+          <span class="toc-num">10</span>
+          <span class="toc-meta">
+            <span class="toc-title">Team, Poster &amp; QR Colophon</span>
+            <span class="toc-sub">Authors, supervisor, poster &amp; v4-H QR</span>
+          </span>
+        </button>
+      </nav>
+
+      <div class="sidebar-colophon">
+        <span class="colophon-badge">Release Tag v1.0 · MIT</span>
+        <div>Dept. of IoT &amp; Robotics Engineering</div>
+        <div>University of Frontier Technology, Bangladesh</div>
+        <div style="margin-top:6px;">All numbers hydrated live from <code>data/key_numbers.json</code>.</div>
+      </div>
+    </aside>
+
+    <!-- Open Book Folio Stage -->
+    <main class="book-stage">
+      <div class="book-folio">
+
+        <!-- Running Book Header -->
+        <div class="folio-bar">
+          <span id="folioRunningLeft" class="folio-running-left">TRUSTFED-SDN MONOGRAPH // CH. 01 · FRONT COVER &amp; EXECUTIVE OVERVIEW</span>
+          <div class="folio-running-right">
+            <span class="folio-verified-pill">Verified 5-Seed Empirical Edition</span>
+            <button id="prevMiniBtn" class="mini-nav-btn" type="button">&larr; Prev</button>
+            <button id="nextMiniBtn" class="mini-nav-btn" type="button">Next &rarr;</button>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             CHAPTER 01: FRONT COVER & EXECUTIVE OVERVIEW
+             ================================================================ -->
+        <article class="chapter-page active" id="ch01" data-chapter="1"
+          data-title="Front Cover &amp; Executive Overview">
+
+          <section class="cover-hero">
+            <canvas id="netCanvas" class="cover-canvas"></canvas>
+            <div class="cover-content">
+              <div class="cover-brand-row">
+                <div class="cover-logo-lockup">
+                  <img src="images/logo.png" alt="TrustFed-SDN Crest" class="cover-logo" data-brand-logo>
+                  <div>
+                    <h1 class="cover-system-name">TrustFed<span class="grad-text">-SDN</span></h1>
+                    <div class="mono" style="font-size:0.78rem;color:var(--text-dim);">
+                      B.Sc. Thesis Monograph · Steps 00–10 Complete (Tag <code>v1.0</code>)
+                    </div>
+                  </div>
+                </div>
+                <div class="badge-row">
+                  <span class="badge badge-ok">1,500/1,500 Tamper Detected</span>
+                  <span class="badge badge-ok">27.38 ms OVS Block</span>
+                  <span class="badge">5-Seed Evaluated</span>
+                </div>
+              </div>
+
+              <h2 class="cover-headline">
+                Privacy-Preserving, Byzantine-Robust, and Verifiable Federated Intrusion Detection for Multi-Tenant
+                Software-Defined Cloud Networks
+              </h2>
+
+              <p class="cover-abstract">
+                TrustFed-SDN enables independent cloud tenants to collaboratively detect cyberattacks across SDN control
+                planes without sharing raw packet traces, sacrificing rare-cohort privacy, or trusting unverified model
+                updates — validated end-to-end across 2.84M+ dataset flows and a live Linux-namespace + Open vSwitch +
+                OS-Ken 1.3 SDN testbed.
+              </p>
+
+              <div class="cta-row">
+                <button class="btn btn-primary" type="button" data-goto="2">Open Chapter 02: Abstract &amp; Threat Model &rarr;</button>
+                <button class="btn btn-outline" type="button" data-goto="7">Jump to Ch. 07: Live SDN Testbed</button>
+                <a class="btn btn-outline" href="Thesis-Poster-TrustFed-Presentationv2-4-by-3.pdf" target="_blank"
+                  rel="noopener">Thesis Poster (4:3 PDF)</a>
+              </div>
+
+              <div class="cover-meta-grid">
+                <div>
+                  <span class="meta-cell-label">Researchers</span>
+                  <span class="meta-cell-val">Pritom Kumar Bhowmik &amp; MD Naimur Rashid</span>
+                  <span class="meta-cell-sub">Student IDs 2101005 &amp; 2101042</span>
+                </div>
+                <div>
+                  <span class="meta-cell-label">Supervisor &amp; Department</span>
+                  <span class="meta-cell-val">Saurav Chandra Das</span>
+                  <span class="meta-cell-sub">Lecturer, Dept. of IRE · UFTB</span>
+                </div>
+                <div>
+                  <span class="meta-cell-label">Open-Source &amp; Live DOI-Style Portal</span>
+                  <span class="meta-cell-val">trustfed.naimurrashid.dev</span>
+                  <span class="meta-cell-sub">MIT License · Python 3.12 + PyTorch + OS-Ken</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <h3 class="section-subhead">Verified Headline KPI Strip (Hydrated from <code>data/key_numbers.json</code>)</h3>
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <span class="kpi-label">Clean Non-IID FedAvg F1</span>
+              <span class="kpi-value grad-text" id="kpiFedAvg">99.13 ± 0.06%</span>
+              <span class="kpi-note" id="kpiCentralizedNote">Centralized GRU: 99.74% · InSDN Natural N=3</span>
+            </div>
+
+            <div class="kpi-card">
+              <span class="kpi-label">Poisoning Defense (20% Scaling)</span>
+              <span class="kpi-value" id="kpiRobustGain">75.97% vs 21.73%</span>
+              <span class="kpi-note">Full TrustFed-SDN vs Plain FedAvg · 100% mal. rejected</span>
+            </div>
+
+            <div class="kpi-card">
+              <span class="kpi-label">SecAgg Cryptographic Integrity</span>
+              <span class="kpi-value" id="kpiTamper">100.0% (1500/1500)</span>
+              <span class="kpi-note">SHA-256 + Ed25519 · 0/300 honest false alarms</span>
+            </div>
+
+            <div class="kpi-card">
+              <span class="kpi-label">48-Bit Packed SecAgg Wire Cost</span>
+              <span class="kpi-value" id="kpiWire">1.26× – 1.29×</span>
+              <span class="kpi-note">Plain FedAvg wire ratio across N = 3 to N = 20 tenants</span>
+            </div>
+
+            <div class="kpi-card">
+              <span class="kpi-label">Adaptive DP MIA Privacy (eps=4.0)</span>
+              <span class="kpi-value" id="kpiMia">51.18% / 54.27%</span>
+              <span class="kpi-note">Full partition / rare Finance cohort (random-guess floor)</span>
+            </div>
+
+            <div class="kpi-card">
+              <span class="kpi-label">Live OVS Flow Drop Enforcement</span>
+              <span class="kpi-value" id="kpiOvs">27.38 ms</span>
+              <span class="kpi-note" id="kpiOvsNote">100% Attack Block · 0% Benign Block · 2.70% Live FBR</span>
+            </div>
+          </div>
+
+          <div class="callout callout-ok">
+            <strong>How to navigate this Research Book:</strong> Use the left spine or bottom <em>Previous / Next</em>
+            page-turner to read sequentially like a thesis monograph, click any figure to open a crisp high-resolution zoom
+            viewer, or click <strong>Scroll All</strong> in the header for print/continuous reading.
+          </div>
+        </article>
+
+        <!-- ================================================================
+             CHAPTER 02: ABSTRACT, THREAT MODEL & LITERATURE GAP
+             ================================================================ -->
+        <article class="chapter-page" id="ch02" data-chapter="2"
+          data-title="Abstract, Threat Model &amp; Literature Gap">
+          <div class="chapter-header">
+            <span class="chapter-kicker">Chapter 02 · Foundations</span>
+            <h2 class="chapter-title">Abstract, Threat Model &amp; Prior-Art Gap</h2>
+            <p class="chapter-lede">
+              Why multi-tenant SDN intrusion detection requires simultaneous defense against gradient leakage, Byzantine
+              tenants, and unverified server aggregation.
+            </p>
+          </div>
+
+          <div class="info-card" style="margin-bottom:20px;">
+            <h4>Thesis Abstract</h4>
+            <p>
+              Software-Defined Networking (SDN) centralizes traffic control for multi-tenant cloud infrastructures,
+              expanding both threat visibility and the blast radius of coordinated cyberattacks. Centralized deep intrusion
+              detection exposes regulated tenant flow records, while standard Federated Learning (FL) remains vulnerable to
+              gradient inversion / membership inference, Byzantine poisoning (label-flipping, backdoor triggers, update
+              scaling), and silent aggregation manipulation.
+            </p>
+            <p style="margin-top:10px;">
+              <strong>TrustFed-SDN</strong> unifies four coordinated mechanisms over a shared 3-layer Bi-Directional /
+              1-layer sequence GRU detector (43,554 parameters on InSDN): (1) density-aware Adaptive R&eacute;nyi Differential
+              Privacy (DP-SGD) calibrating per-tenant privacy budgets via sample-volume weighting, (2) two-stage
+              cosine-clustering plus coordinate-wise trimmed mean / median Byzantine filtering, (3) 48-bit quantized
+              pairwise Diffie-Hellman Secret Aggregation in Z<sub>q</sub> (<em>q = 2<sup>61</sup>&minus;1</em>) backed by
+              SHA-256 hash commitments and Ed25519 digital signatures, and (4) closed-loop OpenFlow 1.3 Open vSwitch flow
+              mitigation orchestrated via OS-Ken 3.0.1 controllers.
+            </p>
+          </div>
+
+          <h3 class="section-subhead">Multi-Tenant Adversarial Threat Model</h3>
+          <div class="grid-3">
+            <div class="info-card">
+              <h4>1. Byzantine Tenants (20%–33%)</h4>
+              <p>
+                Compromised tenant gateways attempt to degrade or subvert global detection using three attack classes:
+                targeted <em>Label-Flipping</em> (hiding attacks as benign), stealth <em>Backdoor Triggers</em> (injecting
+                adversarial feature patterns to bypass IDS at ~100% ASR unguarded), and magnitude <em>Update Scaling</em>.
+              </p>
+            </div>
+            <div class="info-card">
+              <h4>2. Honest-but-Curious Server</h4>
+              <p>
+                The central FL aggregator follows synchronization rules but attempts Membership Inference Attacks (MIA) on
+                uploaded gradients—especially targeting low-volume minority cohorts (e.g., <em>Finance</em>) where sparse
+                training samples leak more information under uniform noise.
+              </p>
+            </div>
+            <div class="info-card">
+              <h4>3. Untrusted Wire &amp; Tampering</h4>
+              <p>
+                Active middleboxes or corrupted relays alter ciphertext shares, substitute commitments, or forge
+                aggregation transcripts. Clients reject any global model whose SHA-256 transcript commitment or Ed25519
+                server signature fails local verification.
+              </p>
+            </div>
+          </div>
+
+          <h3 class="section-subhead">Prior-Art Feature Matrix vs. TrustFed-SDN</h3>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Approach / Paradigm</th>
+                  <th>Non-IID SDN</th>
+                  <th>Byzantine Defense</th>
+                  <th>Cohort-Adaptive DP</th>
+                  <th>Zero-Trust Proof</th>
+                  <th>Wire Overhead</th>
+                  <th>Live OVS Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Plain FedAvg (McMahan et al.)</td>
+                  <td><span class="tag-partial">Drops on Dir</span></td>
+                  <td><span class="tag-no">No (21.7% F1)</span></td>
+                  <td><span class="tag-no">No</span></td>
+                  <td><span class="tag-no">No</span></td>
+                  <td>1.00&times;</td>
+                  <td><span class="tag-no">Offline only</span></td>
+                </tr>
+                <tr>
+                  <td>Uniform DP-FL</td>
+                  <td><span class="tag-partial">Minority loss</span></td>
+                  <td><span class="tag-no">No (30.3% F1)</span></td>
+                  <td><span class="tag-partial">Uniform eps</span></td>
+                  <td><span class="tag-no">No</span></td>
+                  <td>1.00&times;</td>
+                  <td><span class="tag-no">No</span></td>
+                </tr>
+                <tr>
+                  <td>Robust FL (Median / Cosine)</td>
+                  <td><span class="tag-yes">Yes</span></td>
+                  <td><span class="tag-yes">Yes</span></td>
+                  <td><span class="tag-no">No</span></td>
+                  <td><span class="tag-no">No</span></td>
+                  <td>1.00&times;</td>
+                  <td><span class="tag-no">No</span></td>
+                </tr>
+                <tr>
+                  <td>HE / Blockchain FL (VFChain)</td>
+                  <td><span class="tag-partial">High compute</span></td>
+                  <td><span class="tag-partial">Limited</span></td>
+                  <td><span class="tag-no">No</span></td>
+                  <td><span class="tag-yes">On-chain</span></td>
+                  <td>&gt; 10&times;–50&times;</td>
+                  <td><span class="tag-no">Seconds/min</span></td>
+                </tr>
+                <tr class="row-highlight">
+                  <td>TrustFed-SDN (This Work)</td>
+                  <td><span class="tag-yes">Yes (Dir + Nat)</span></td>
+                  <td><span class="tag-yes">100% Mal. Rej.</span></td>
+                  <td><span class="tag-yes">Yes (51.2% MIA)</span></td>
+                  <td><span class="tag-yes">100% (1,500/1,500)</span></td>
+                  <td>1.26&times; – 1.29&times;</td>
+                  <td><span class="tag-yes">27.38 ms OVS</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <!-- ================================================================
+             CHAPTER 03: ARCHITECTURE & CRYPTOGRAPHIC PIPELINE
+             ================================================================ -->
+        <article class="chapter-page" id="ch03" data-chapter="3"
+          data-title="Architecture &amp; Crypto Pipeline">
+          <div class="chapter-header">
+            <span class="chapter-kicker">Chapter 03 · System Design</span>
+            <h2 class="chapter-title">System Architecture &amp; 7-Stage Cryptographic Loop</h2>
+            <p class="chapter-lede">
+              Combining cohort-adaptive DP-SGD, Byzantine update rejection, 48-bit pairwise SecAgg, Ed25519
+              transcripts, and OS-Ken OpenFlow control in 486.71 ms/round.
+            </p>
+          </div>
+
+          <div class="figure-card">
+            <div class="figure-viewport" data-title="TrustFed-SDN High-Level Methodology Architecture"
+              data-source="06_Branding_and_Assets / TrustFed_SDN_Methodology.png">
+              <img src="images/TrustFed_SDN_Methodology.png?v=2" alt="TrustFed-SDN Methodology Architecture Diagram">
+              <span class="zoom-chip">Click to enlarge</span>
+            </div>
+            <div class="figure-caption">
+              <span class="figure-caption-text"><strong>Architecture Overview:</strong> Multi-tenant local SDN
+                feature extraction, adaptive DP-SGD, pairwise masked &amp; signed updates, and server-side robust
+                verification.</span>
+            </div>
+          </div>
+
+          <h3 class="section-subhead">Core Mathematical Primitives</h3>
+          <div class="grid-2">
+            <div class="info-card">
+              <h4>1. Sample-Aware Adaptive DP-SGD</h4>
+              <p>
+                Minority tenant partitions leak disproportionate membership signal under uniform budgets. TrustFed-SDN
+                scales each tenant's per-round privacy budget by √(|D<sub>k</sub>|/mean) with clipping norm <em>C</em> and
+                Opacus R&eacute;nyi accountability:
+              </p>
+              <div class="formula-box">
+                eps_k = eps_bar * clip(|D_k| / D_mean, 0.5, 1.5)^0.5 ; sigma_k = calibrated_rdp(eps_k, delta=1e-5)
+              </div>
+              <p>
+                In InSDN (eps_bar = 4.0), the rare Finance cohort receives eps<sub>1</sub> = 2.85 while large cohorts get
+                higher utility budget, holding full-partition MIA AUC at <strong>51.18%</strong> and Finance MIA AUC at
+                <strong>54.27%</strong>.
+              </p>
+            </div>
+
+            <div class="info-card">
+              <h4>2. Two-Stage Byzantine Defense &amp; 48-Bit SecAgg</h4>
+              <p>
+                Unmasked pairwise-norm-bounded deltas undergo pairwise cosine similarity clustering (cutoff = 0.5) plus
+                coordinate trimmed mean (<em>&beta; = 0.2</em>). Surviving weights are fixed-point quantized at <em>Q = 20</em>
+                fractional bits, packed into 48-bit words, and blinded via X25519 Diffie-Hellman pairwise masks mod
+                <em>q = 2<sup>61</sup> &minus; 1</em>:
+              </p>
+              <div class="formula-box">
+                u_tilde_k = Q20(w_k) + sum_{j != k} sign(j - k) * PRG(DH(sk_k, pk_j)) mod (2^61 - 1)
+              </div>
+              <p>
+                Each bundle includes a canonical SHA-256 commitment and an Ed25519 signature (1,781-byte aggregate proof
+                overhead), yielding a compact <strong>1.26&times;–1.29&times;</strong> wire ratio vs plain FedAvg.
+              </p>
+            </div>
+          </div>
+
+          <div class="figure-card">
+            <div class="figure-viewport" data-title="TrustFed-SDN Step-by-Step Operational Workflow"
+              data-source="07_Website / TrustFed-Workflow.png">
+              <img src="images/TrustFed-Workflow.png" alt="TrustFed-SDN Workflow Diagram">
+              <span class="zoom-chip">Click to enlarge</span>
+            </div>
+            <div class="figure-caption">
+              <span class="figure-caption-text"><strong>Operational Flow:</strong> Sequential execution from local flow
+                telemetry to cryptographic proof verification and OpenFlow rule installation.</span>
+            </div>
+          </div>
+
+          <h3 class="section-subhead">Measured 7-Stage Live Round Pipeline Latency (<code>results/08_live/summary.json</code>)</h3>
+          <div class="stage-list">
+            <div class="stage-item">
+              <span class="stage-num">01</span>
+              <div>
+                <h5>Local DP-SGD Update (384.452 ms)</h5>
+                <p>GRU local epoch with Opacus-style gradient clipping &amp; Gaussian noise injection.</p>
+              </div>
+            </div>
+            <div class="stage-item">
+              <span class="stage-num">02</span>
+              <div>
+                <h5>Mask + Commit + Sign (11.162 ms)</h5>
+                <p>48-bit fixed-point quantization, DH pairwise blinding &amp; Ed25519 commitment signature.</p>
+              </div>
+            </div>
+            <div class="stage-item">
+              <span class="stage-num">03</span>
+              <div>
+                <h5>Tenant Upload (16.447 ms)</h5>
+                <p>Packed ciphertext stream dispatched asynchronously over localhost FL TCP control plane.</p>
+              </div>
+            </div>
+            <div class="stage-item">
+              <span class="stage-num">04</span>
+              <div>
+                <h5>Server Agg &amp; Proof (13.487 ms)</h5>
+                <p>Pairwise cancellation mod (2<sup>61</sup>&minus;1), robust defense check &amp; 1,781 B proof bundle.</p>
+              </div>
+            </div>
+            <div class="stage-item">
+              <span class="stage-num">05</span>
+              <div>
+                <h5>Global Download (54.840 ms)</h5>
+                <p>Signed global weights + cryptographic transcript broadcast back to tenant agents.</p>
+              </div>
+            </div>
+            <div class="stage-item">
+              <span class="stage-num">06</span>
+              <div>
+                <h5>Client Verify (5.554 ms)</h5>
+                <p>Zero-trust SHA-256 transcript &amp; Ed25519 signature verification before model swap.</p>
+              </div>
+            </div>
+            <div class="stage-item">
+              <span class="stage-num">07</span>
+              <div>
+                <h5>Controller Deploy (0.771 ms)</h5>
+                <p>OS-Ken 3.0.1 updates tenant flow scorer &amp; dispatches OVS OpenFlow 1.3 drop rules.</p>
+              </div>
+            </div>
+            <div class="stage-item">
+              <span class="stage-num">&Sigma;</span>
+              <div>
+                <h5>Total End-to-End Round: 486.714 ms</h5>
+                <p>Sub-second authenticated FL round (DP accounts for 79.0% of wall time; crypto &lt; 6.2%).</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ================================================================
+             CHAPTER 04: DATASETS, PARTITIONING & GRU BASELINES
+             ================================================================ -->
+        <article class="chapter-page" id="ch04" data-chapter="4"
+          data-title="Datasets &amp; GRU Baselines">
+          <div class="chapter-header">
+            <span class="chapter-kicker">Chapter 04 · Empirical Foundations</span>
+            <h2 class="chapter-title">SDN Datasets, Non-IID Splits &amp; GRU Model Selection</h2>
+            <p class="chapter-lede">
+              2.84 million flows cleaned without leakage, selecting the compact Sequence GRU (43,554 params) across
+              InSDN, ASEADOS-SDN-IoT (2026), and CICIDS2017.
+            </p>
+          </div>
+
+          <h3 class="section-subhead">Cleaned Dataset Inventory (Zero Split Overlap)</h3>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Dataset</th>
+                  <th>Raw Flows</th>
+                  <th>Cleaned Flows</th>
+                  <th>Selected Features</th>
+                  <th>Classes</th>
+                  <th>Class Balance / Role</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>InSDN (SDN Native)</strong></td>
+                  <td>343,889</td>
+                  <td>184,855</td>
+                  <td>19</td>
+                  <td>8</td>
+                  <td>64,218 Benign / 120,637 Attack · Primary SDN benchmark</td>
+                </tr>
+                <tr>
+                  <td><strong>ASEADOS-SDN-IoT (2026)</strong></td>
+                  <td>457,044</td>
+                  <td>426,111</td>
+                  <td>12</td>
+                  <td>5</td>
+                  <td>233,386 Benign / 192,725 Attack · Modern SDN-IoT traffic</td>
+                </tr>
+                <tr>
+                  <td><strong>CICIDS2017 (General)</strong></td>
+                  <td>2,830,743</td>
+                  <td>2,232,894</td>
+                  <td>22</td>
+                  <td>9</td>
+                  <td>1,896,512 Benign / 336,382 Attack · Cross-domain sanity check</td>
+                </tr>
+                <tr>
+                  <td><strong>Live SDN VM Capture</strong></td>
+                  <td>4,392</td>
+                  <td>4,392</td>
+                  <td>19 (InSDN) / 12 (ASEADOS)</td>
+                  <td>2</td>
+                  <td>1,659 Benign (37.8%) / 2,733 Attack (62.2%) · Ubuntu OVS testbed</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="section-subhead">Step 02 Centralized Binary Baselines (5 Seeds) &amp; GRU Selection</h3>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Parameters (InSDN)</th>
+                  <th>InSDN F1 %</th>
+                  <th>ASEADOS-SDN-IoT F1 %</th>
+                  <th>CICIDS2017 F1 %</th>
+                  <th>Decision Role</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>DNN (3-Layer MLP)</td>
+                  <td>11,330</td>
+                  <td>99.83 ± 0.03</td>
+                  <td>91.42 ± 0.02</td>
+                  <td>97.01 ± 0.33</td>
+                  <td>Fast tabular baseline</td>
+                </tr>
+                <tr class="row-highlight">
+                  <td>GRU (Selected Shared Backbone)</td>
+                  <td>43,554</td>
+                  <td>99.74 ± 0.05 (AUC 99.95%)</td>
+                  <td>91.23 ± 0.06</td>
+                  <td>96.66 ± 0.18</td>
+                  <td>Within 0.2 pp of DNN/RF + sequential</td>
+                </tr>
+                <tr>
+                  <td>LSTM</td>
+                  <td>57,314</td>
+                  <td>99.59 ± 0.13</td>
+                  <td>91.21 ± 0.15</td>
+                  <td>96.61 ± 0.09</td>
+                  <td>32% larger than GRU; lower F1</td>
+                </tr>
+                <tr>
+                  <td>Logistic Regression / RF</td>
+                  <td>Linear / Tree</td>
+                  <td>98.17 / 99.98</td>
+                  <td>72.82 / 92.87</td>
+                  <td>90.11 / 99.27</td>
+                  <td>Non-FL neural compatibility check</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout">
+            <strong>E1 &amp; E2 Non-IID Observations:</strong> Under Natural tenant partitions (<em>N=3</em>), plain
+            FedAvg achieves <strong>99.13 ± 0.06%</strong> on InSDN and <strong>90.51 ± 0.07%</strong> on
+            ASEADOS-SDN-IoT (beating Local-Only in 5/5 seeds, paired Wilcoxon <em>p = 0.0625</em>). Under extreme
+            heterogeneity (Dirichlet <em>&alpha; = 0.1</em> on ASEADOS), plain FedAvg drops sharply to
+            <strong>71.43%</strong> while Dirichlet <em>&alpha; = 0.5</em> maintains <strong>83.21 ± 1.94%</strong>.
+          </div>
+
+          <div class="figure-card">
+            <div class="figure-viewport" data-title="Figure 1 — E1 &amp; E2 Centralized vs. Non-IID Federated Baselines"
+              data-source="results/final/figures/fig01_e1_e2_baselines_non_iid.png"
+              data-pdf="images/figures/fig01_e1_e2_baselines_non_iid.pdf">
+              <img src="images/figures/fig01_e1_e2_baselines_non_iid.png"
+                alt="Figure 1: E1 and E2 Centralized vs Non-IID Federated Baselines">
+              <span class="zoom-chip">Click to enlarge</span>
+            </div>
+            <div class="figure-caption">
+              <span class="figure-caption-text"><strong>Fig. 1 (E1 &amp; E2):</strong> Centralized GRU vs. Local-Only vs.
+                FedAvg across Natural, IID, and Dirichlet Non-IID splits (5 seeds).</span>
+              <a class="pdf-chip" href="images/figures/fig01_e1_e2_baselines_non_iid.pdf" target="_blank"
+                rel="noopener">Vector PDF</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ================================================================
+             CHAPTER 05: SECURITY, ADAPTIVE DP & CRYPTOGRAPHIC SECAGG
+             ================================================================ -->
+        <article class="chapter-page" id="ch05" data-chapter="5"
+          data-title="Security, Adaptive DP &amp; SecAgg">
+          <div class="chapter-header">
+            <span class="chapter-kicker">Chapter 05 · Defense &amp; Cryptography</span>
+            <h2 class="chapter-title">Poisoning Defense (E3), Adaptive DP (E4) &amp; SecAgg (E5)</h2>
+            <p class="chapter-lede">
+              Stress-testing individual defense guarantees against Byzantine tenants, rare-cohort membership inference,
+              and 1,500 simulated ciphertext &amp; signature tampering trials.
+            </p>
+          </div>
+
+          <h3 class="section-subhead">E3: Byzantine Poisoning Robustness (20% &amp; 30% Compromised Tenants)</h3>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Dataset &amp; Attack</th>
+                  <th>Malicious Fraction</th>
+                  <th>Plain FedAvg F1 %</th>
+                  <th>Cosine Clustering F1 %</th>
+                  <th>FedAvg Backdoor ASR</th>
+                  <th>Defended ASR</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>InSDN · Label Flip</td>
+                  <td>20%</td>
+                  <td>53.45 ± 21.02</td>
+                  <td><strong>98.53 ± 0.07</strong></td>
+                  <td>—</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td>InSDN · Backdoor Trigger</td>
+                  <td>20%</td>
+                  <td>74.00 ± 19.88</td>
+                  <td><strong>98.53 ± 0.07</strong></td>
+                  <td>99.96%</td>
+                  <td><strong>0.00 ± 0.01%</strong></td>
+                </tr>
+                <tr>
+                  <td>InSDN · Scaling Attack</td>
+                  <td>20%</td>
+                  <td>25.09 ± 9.80</td>
+                  <td><strong>98.53 ± 0.07</strong></td>
+                  <td>—</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td>InSDN · Scaling Attack</td>
+                  <td>30%</td>
+                  <td>20.29 ± 4.09</td>
+                  <td><strong>98.51 ± 0.08</strong></td>
+                  <td>—</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td>ASEADOS · Scaling Attack</td>
+                  <td>20%</td>
+                  <td>26.00 ± 4.00</td>
+                  <td><strong>74.81 ± 6.46</strong></td>
+                  <td>99.96% (BD)</td>
+                  <td>59.88 ± 48.81% (BD)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="figure-card">
+            <div class="figure-viewport" data-title="Figure 2 — E3 Byzantine Poisoning Robustness &amp; Backdoor ASR"
+              data-source="results/final/figures/fig02_e3_poisoning_robustness.png"
+              data-pdf="images/figures/fig02_e3_poisoning_robustness.pdf">
+              <img src="images/figures/fig02_e3_poisoning_robustness.png"
+                alt="Figure 2: E3 Poisoning Robustness across Label Flip, Backdoor, and Scaling">
+              <span class="zoom-chip">Click to enlarge</span>
+            </div>
+            <div class="figure-caption">
+              <span class="figure-caption-text"><strong>Fig. 2 (E3):</strong> Plain FedAvg collapses to 20%–53% F1 under
+                poisoning while Cosine Clustering preserves near-clean detection and 0.00% ASR on InSDN.</span>
+              <a class="pdf-chip" href="images/figures/fig02_e3_poisoning_robustness.pdf" target="_blank"
+                rel="noopener">Vector PDF</a>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="figure-card" style="margin:0;">
+              <div class="figure-viewport"
+                data-title="Figure 3 — E4 Adaptive DP Privacy vs. Membership Inference AUC"
+                data-source="results/final/figures/fig03_e4_adaptive_dp_mia.png"
+                data-pdf="images/figures/fig03_e4_adaptive_dp_mia.pdf">
+                <img src="images/figures/fig03_e4_adaptive_dp_mia.png"
+                  alt="Figure 3: E4 Adaptive DP Privacy vs Utility and MIA AUC">
+                <span class="zoom-chip">Enlarge</span>
+              </div>
+              <div class="figure-caption">
+                <span class="figure-caption-text"><strong>Fig. 3 (E4 — Adaptive DP):</strong> At eps_bar=4.0 on InSDN,
+                  Adaptive DP maintains <strong>97.14%</strong> F1 while cutting full MIA AUC from 57.31% (No DP) to
+                  <strong>51.18%</strong> (Finance cohort: <strong>54.27%</strong> vs 54.52% Uniform DP).</span>
+                <a class="pdf-chip" href="images/figures/fig03_e4_adaptive_dp_mia.pdf" target="_blank"
+                  rel="noopener">PDF</a>
+              </div>
+            </div>
+
+            <div class="figure-card" style="margin:0;">
+              <div class="figure-viewport"
+                data-title="Figure 4 — E5 SecAgg Tamper Detection &amp; Quantization Fidelity"
+                data-source="results/final/figures/fig04_e5_verifiable_secagg.png"
+                data-pdf="images/figures/fig04_e5_verifiable_secagg.pdf">
+                <img src="images/figures/fig04_e5_verifiable_secagg.png"
+                  alt="Figure 4: E5 SecAgg Tamper Rejection and Q20 Fidelity">
+                <span class="zoom-chip">Enlarge</span>
+              </div>
+              <div class="figure-caption">
+                <span class="figure-caption-text"><strong>Fig. 4 (E5 — SecAgg Proofs):</strong> <strong>1,500/1,500</strong>
+                  tampered bundles rejected (<strong>0/300</strong> honest false alarms); <em>Q = 20</em> RMSE
+                  <strong>2.74e-07</strong>, F1 99.53% vs 99.67% plain (<em>p = 0.6250</em>).</span>
+                <a class="pdf-chip" href="images/figures/fig04_e5_verifiable_secagg.pdf" target="_blank"
+                  rel="noopener">PDF</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ================================================================
+             CHAPTER 06: ABLATION LADDER, SCALABILITY & SCORECARD
+             ================================================================ -->
+        <article class="chapter-page" id="ch06" data-chapter="6"
+          data-title="Ablation, Scale &amp; Scorecard">
+          <div class="chapter-header">
+            <span class="chapter-kicker">Chapter 06 · Unified Evaluation</span>
+            <h2 class="chapter-title">E6 Ablation Ladder, E8 Scalability &amp; Target Scorecard</h2>
+            <p class="chapter-lede">
+              Proving all defense layers work together simultaneously across 12-round 10-tenant non-IID training,
+              scaling up to 20 tenants, and meeting all Section 7 targets.
+            </p>
+          </div>
+
+          <h3 class="section-subhead">E6: 4-Rung Cumulative Stack Ablation (<em>N = 10</em> Non-IID, 12 Rounds, 20% Attack)</h3>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Rung</th>
+                  <th>InSDN Clean F1</th>
+                  <th>InSDN Label-Flip</th>
+                  <th>InSDN Scaling</th>
+                  <th>ASEADOS Clean</th>
+                  <th>ASEADOS Scaling</th>
+                  <th>Mal. Reject / Wire</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>R1 · Plain FedAvg</td>
+                  <td>96.26%</td>
+                  <td>18.43%</td>
+                  <td>21.73%</td>
+                  <td>71.42%</td>
+                  <td>29.38%</td>
+                  <td>0.0% / 3.48 MB (1.00&times;)</td>
+                </tr>
+                <tr>
+                  <td>R2 · + Adaptive DP</td>
+                  <td>76.04%</td>
+                  <td>38.76%</td>
+                  <td>30.33%</td>
+                  <td>61.55%</td>
+                  <td>28.30%</td>
+                  <td>0.0% / 3.48 MB (1.00&times;)</td>
+                </tr>
+                <tr>
+                  <td>R3 · + Robust Filter</td>
+                  <td>75.80%</td>
+                  <td>75.97%</td>
+                  <td>75.97%</td>
+                  <td>62.83%</td>
+                  <td>64.71%</td>
+                  <td>100.0% / 3.48 MB (1.00&times;)</td>
+                </tr>
+                <tr class="row-highlight">
+                  <td>R4 · Full TrustFed-SDN</td>
+                  <td>76.04 ± 0.22%</td>
+                  <td>75.97 ± 0.29%</td>
+                  <td>75.97 ± 0.29%</td>
+                  <td>61.55 ± 0.25%</td>
+                  <td>64.71 ± 2.60%</td>
+                  <td>100.0% (0% FP) / 4.41 MB (1.27&times;)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="figure-card">
+            <div class="figure-viewport" data-title="Figure 5 — E6 4-Rung Cumulative Ablation Ladder"
+              data-source="results/final/figures/fig05_e6_ablation_ladder.png"
+              data-pdf="images/figures/fig05_e6_ablation_ladder.pdf">
+              <img src="images/figures/fig05_e6_ablation_ladder.png"
+                alt="Figure 5: E6 Cumulative Stack Ablation across R1 to R4">
+              <span class="zoom-chip">Click to enlarge</span>
+            </div>
+            <div class="figure-caption">
+              <span class="figure-caption-text"><strong>Fig. 5 (E6):</strong> Adding Adaptive DP provides formal privacy,
+                Cosine + Median eliminates poisoning collapse (+54.24 pts on InSDN scaling), and 48-bit SecAgg adds
+                cryptographic integrity with zero utility penalty vs R3.</span>
+              <a class="pdf-chip" href="images/figures/fig05_e6_ablation_ladder.pdf" target="_blank"
+                rel="noopener">Vector PDF</a>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="figure-card" style="margin:0;">
+              <div class="figure-viewport" data-title="Figure 7 — E8 Scalability (N = 3 to N = 20 Tenants)"
+                data-source="results/final/figures/fig07_e8_scalability.png"
+                data-pdf="images/figures/fig07_e8_scalability.pdf">
+                <img src="images/figures/fig07_e8_scalability.png"
+                  alt="Figure 7: E8 Scalability and Wire Ratio from 3 to 20 Tenants">
+                <span class="zoom-chip">Enlarge</span>
+              </div>
+              <div class="figure-caption">
+                <span class="figure-caption-text"><strong>Fig. 7 (E8 — Scalability):</strong> Crypto round time grows
+                  gently (21.51 ms &rarr; 82.80 ms at N=20); wire ratio stays <strong>1.256&times;–1.290&times;</strong>;
+                  InSDN F1 holds <strong>98.68%</strong> at N=20.</span>
+                <a class="pdf-chip" href="images/figures/fig07_e8_scalability.pdf" target="_blank"
+                  rel="noopener">PDF</a>
+              </div>
+            </div>
+
+            <div class="figure-card" style="margin:0;">
+              <div class="figure-viewport"
+                data-title="Figure 8 — E9 Domain Transfer &amp; E10 Hyperparameter Sensitivity"
+                data-source="results/final/figures/fig08_e9_e10_transfer_sensitivity.png"
+                data-pdf="images/figures/fig08_e9_e10_transfer_sensitivity.pdf">
+                <img src="images/figures/fig08_e9_e10_transfer_sensitivity.png"
+                  alt="Figure 8: E9 Domain Transfer and E10 Trimming Beta, Clipping C, and Quantization Q">
+                <span class="zoom-chip">Enlarge</span>
+              </div>
+              <div class="figure-caption">
+                <span class="figure-caption-text"><strong>Fig. 8 (E9 &amp; E10):</strong> Trimming
+                  <em>&beta; = 0.2</em> rescues poisoned rounds (98.10% vs 38.49% at <em>&beta; = 0.1</em>);
+                  <em>Q = 16/20/24</em> stays invariant at 99.53%–99.59%.</span>
+                <a class="pdf-chip" href="images/figures/fig08_e9_e10_transfer_sensitivity.pdf" target="_blank"
+                  rel="noopener">PDF</a>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="section-subhead">Section 7 Empirical Scorecard (<code>poster_targets_comparison.csv</code>)</h3>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Criterion</th>
+                  <th>Thesis Proposal Target</th>
+                  <th>Measured Empirical Result</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Detection Utility</td>
+                  <td>Comparable to centralized (~99.7% InSDN); beat plain FedAvg under attack</td>
+                  <td>Centralized GRU 99.74%, FedAvg Nat N=3 99.13%, Full Stack clean 76.04%; 20% scaling: 75.97% vs 21.73%</td>
+                  <td><span class="tag-yes">Met</span></td>
+                </tr>
+                <tr>
+                  <td>Wire Overhead</td>
+                  <td>~1.2&times;–1.5&times; plain FedAvg</td>
+                  <td>1.26&times; (N=3) to 1.27&times; (N=10), 1.29&times; (N=20) via 48-bit SecAgg + proofs</td>
+                  <td><span class="tag-yes">Met</span></td>
+                </tr>
+                <tr>
+                  <td>20% Poisoning Drop</td>
+                  <td>Drop &lt; 5 pts (vs &gt; 15 pts FedAvg)</td>
+                  <td>TrustFed-SDN drop &lt; 0.1 pts (+0.07) vs FedAvg collapse 74.53 pts</td>
+                  <td><span class="tag-yes">Met</span></td>
+                </tr>
+                <tr>
+                  <td>Privacy (MIA AUC)</td>
+                  <td>Near random guessing (~50–55%)</td>
+                  <td>Full MIA AUC 51.18%, rare-cohort Finance 54.27% (eps_bar = 4.0)</td>
+                  <td><span class="tag-yes">Met</span></td>
+                </tr>
+                <tr>
+                  <td>Crypto Integrity</td>
+                  <td>100% tamper detection, 0% false alarm</td>
+                  <td>100.0% detected (1,500/1,500), 0.0% honest false alarms (0/300)</td>
+                  <td><span class="tag-yes">Met</span></td>
+                </tr>
+                <tr>
+                  <td>Live SDN &amp; OVS</td>
+                  <td>L1 tenant isolation, fast OVS drop, 0% benign collateral</td>
+                  <td>0% intra loss, 100% cross block, 27.38 ms OVS install, 100% attack block, 2.70% calibrated live FBR</td>
+                  <td><span class="tag-partial">Met (Calibrated)</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <!-- ================================================================
+             CHAPTER 07: LIVE SDN TESTBED & CLOSED-LOOP OVS MITIGATION
+             ================================================================ -->
+        <article class="chapter-page" id="ch07" data-chapter="7"
+          data-title="Live SDN Testbed &amp; OVS Mitigation">
+          <div class="chapter-header">
+            <span class="chapter-kicker">Chapter 07 · Ubuntu 22.04 Live Validation</span>
+            <h2 class="chapter-title">Live Open vSwitch + OS-Ken Testbed &amp; Domain Adaptation</h2>
+            <p class="chapter-lede">
+              Verified packet-level enforcement inside L1 isolated Linux namespaces with real OVS flow drops, TTL expiry,
+              and closed-loop false-block calibration.
+            </p>
+          </div>
+
+          <div class="callout callout-warn">
+            <strong>Honest Testbed Scope Note (DEV-004):</strong> While early proposal sketches discussed hypervisor-level
+            L3 VM isolation, the implemented live testbed runs inside an Ubuntu 22.04 VMware VM using <strong>L1 Linux
+              network namespaces (<code>t1..t3</code>)</strong> connected to per-tenant Open vSwitch bridges
+            (<code>br_t1..br_t3</code>) and <strong>OS-Ken 3.0.1</strong> OpenFlow 1.3 SDN controllers across subnets
+            <code>10.10.1.0/24</code> – <code>10.10.3.0/24</code>.
+          </div>
+
+          <div class="grid-2">
+            <div class="info-card">
+              <h4>E7: Live End-to-End FL &amp; Tamper Resilience (5 Seeds)</h4>
+              <ul>
+                <li><strong>Clean Live Macro-F1:</strong> <code>64.26 ± 1.13%</code> (Attack Detection Rate:
+                  <strong>92.87%</strong> on 4,392 live captured flows).</li>
+                <li><strong>Under 33% Scaling Attack:</strong> Defended F1 <code>53.72 ± 1.12%</code> vs Unguarded
+                  <code>31.43%</code> with <strong>100% malicious rejection</strong>.</li>
+                <li><strong>Live Wire Tampering:</strong> <code>4/4</code> live tampered packets caught;
+                  <code>0/11</code> honest false alarms.</li>
+                <li><strong>Closed-Loop OVS Install:</strong> <code>27.38 ms</code> mean <code>priority=300</code> drop
+                  installation; <strong>100% attacker block</strong>, <strong>0% benign collateral</strong>, automatic
+                  TTL expiry back to baseline ping.</li>
+              </ul>
+            </div>
+
+            <div class="info-card">
+              <h4>E9: Sim-to-Live Domain Shift &amp; Calibration Fix</h4>
+              <ul>
+                <li><strong>Root Cause Found:</strong> Raw synthetic-trained models suffered a high raw False Block Rate
+                  (<code>64.26%</code>) when evaluating live Ubuntu kernel socket flows (<em>F1 44.25%</em> zero-shot).</li>
+                <li><strong>Threshold Calibration Fix:</strong> Tuning decision threshold on a small validation window
+                  (<em>&theta; = 0.98</em>) drops live False Block Rate from <strong>64.26% &rarr; 2.70% (9/333)</strong>
+                  while preserving high attack recall.</li>
+                <li><strong>3-Epoch Live Fine-Tune:</strong> Few-shot adaptation restores InSDN live F1 from
+                  <code>44.25% &rarr; 75.46 ± 0.14%</code> (ASEADOS: <code>33.46% &rarr; 74.62%</code>).</li>
+                <li><strong>Data-Plane Overhead:</strong> <code>0.0%</code> intra-tenant loss (18/18), <code>100%</code>
+                  cross-tenant block (6/6), RTT <code>0.071 &rarr; 0.080 ms (+0.009 ms)</code>, controller RSS
+                  <code>67.3 MB</code>.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="figure-card">
+            <div class="figure-viewport"
+              data-title="Figure 6 — E7 Live SDN Testbed Latencies, Tamper Defense &amp; OVS Drop Calibration"
+              data-source="results/final/figures/fig06_e7_live_sdn_testbed.png"
+              data-pdf="images/figures/fig06_e7_live_sdn_testbed.pdf">
+              <img src="images/figures/fig06_e7_live_sdn_testbed.png"
+                alt="Figure 6: E7 Live SDN Testbed Breakdown and OVS Mitigation Performance">
+              <span class="zoom-chip">Click to enlarge</span>
+            </div>
+            <div class="figure-caption">
+              <span class="figure-caption-text"><strong>Fig. 6 (E7 — Live Testbed):</strong> 7-stage mean round time
+                (486.714 ms), 100% OVS attack mitigation in 27.38 ms, and False Block Rate reduction (64.26% &rarr; 2.70%)
+                under calibrated thresholding.</span>
+              <a class="pdf-chip" href="images/figures/fig06_e7_live_sdn_testbed.pdf" target="_blank"
+                rel="noopener">Vector PDF</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ================================================================
+             CHAPTER 08: BUILD LOGBOOK, REFLECTIONS & DEVIATIONS
+             ================================================================ -->
+        <article class="chapter-page" id="ch08" data-chapter="8"
+          data-title="Build Logbook &amp; Deviations">
+          <div class="chapter-header">
+            <span class="chapter-kicker">Chapter 08 · Engineering Record</span>
+            <h2 class="chapter-title">Steps 00–10 Progress, Honest Reflections &amp; Deviations</h2>
+            <p class="chapter-lede">
+              Transparent engineering accounting: every completed thesis stage, what succeeded cleanly, what fell short,
+              and all documented deviations from initial plans.
+            </p>
+          </div>
+
+          <h3 class="section-subhead">Verified Project Milestone Log (Steps 00–10)</h3>
+          <div class="progress-list">
+            <div class="progress-row">
+              <span class="step-badge">Step 00</span>
+              <span class="step-desc">Environment Bootstrap, Dual Python VenVs (<code>.venv</code> GPU + Ubuntu <code>.venv-ryu</code>), CI/Test Skeleton</span>
+              <span class="status-done">Approved</span>
+            </div>
+            <div class="progress-row">
+              <span class="step-badge">Step 01</span>
+              <span class="step-desc">InSDN, ASEADOS-SDN-IoT &amp; CICIDS2017 Ingestion, Leakage Audit &amp; Non-IID Partitions</span>
+              <span class="status-done">Approved</span>
+            </div>
+            <div class="progress-row">
+              <span class="step-badge">Step 02</span>
+              <span class="step-desc">5-Seed Centralized Baselines (DNN/GRU/LSTM/LR/RF) &amp; Shared GRU Backbone Lock-In</span>
+              <span class="status-done">Approved</span>
+            </div>
+            <div class="progress-row">
+              <span class="step-badge">Step 03</span>
+              <span class="step-desc">Multi-Tenant FedAvg Baseline &amp; Natural / IID / Dirichlet Heterogeneity Evaluation</span>
+              <span class="status-done">Approved</span>
+            </div>
+            <div class="progress-row">
+              <span class="step-badge">Step 04</span>
+              <span class="step-desc">Byzantine Attacks (Label Flip, Backdoor, Scaling) &amp; Cosine + Trimmed Mean Defense</span>
+              <span class="status-done">Approved</span>
+            </div>
+            <div class="progress-row">
+              <span class="step-badge">Step 05</span>
+              <span class="step-desc">Adaptive Cohort-Scaled R&eacute;nyi DP-SGD &amp; Empirical Membership Inference (MIA) Suite</span>
+              <span class="status-done">Approved</span>
+            </div>
+            <div class="progress-row">
+              <span class="step-badge">Step 06</span>
+              <span class="step-desc">48-Bit Pairwise Diffie-Hellman SecAgg + SHA-256 Commitments + Ed25519 Signed Transcripts</span>
+              <span class="status-done">Approved</span>
+            </div>
+            <div class="progress-row">
+              <span class="step-badge">Step 07</span>
+              <span class="step-desc">Unified End-to-End 4-Rung Ablation Engine (<code>R1..R4</code>) &amp; Wire Overhead Profiling</span>
+              <span class="status-done">Approved</span>
+            </div>
+            <div class="progress-row">
+              <span class="step-badge">Step 08</span>
+              <span class="step-desc">Ubuntu 22.04 Live Namespace + OVS + OS-Ken 1.3 Closed-Loop Mitigation &amp; Calibration</span>
+              <span class="status-done">Approved</span>
+            </div>
+            <div class="progress-row">
+              <span class="step-badge">Step 09</span>
+              <span class="step-desc">Full 5-Seed Evaluation Suite (E1–E10), Wilcoxon Tests, 8 Publication Figures &amp; LaTeX Tables</span>
+              <span class="status-done">Approved</span>
+            </div>
+            <div class="progress-row">
+              <span class="step-badge">Step 10</span>
+              <span class="step-desc">10-Chapter Book Website, Verified QR Generator (<code>v4-H</code>), Architecture/Reproduce/Audit Docs &amp; <code>v1.0</code> Tag</span>
+              <span class="status-done">Approved</span>
+            </div>
+          </div>
+
+          <h3 class="section-subhead">Honest Reflection: What Worked vs. Limitations</h3>
+          <div class="grid-2">
+            <div class="callout callout-ok" style="margin:0;">
+              <strong>What Worked Decisively:</strong>
+              <ul style="margin:8px 0 0;padding-left:18px;">
+                <li>Two-stage cosine + median clustering completely stops InSDN poisoning (<strong>75.97% vs 21.73%</strong>
+                  in R4; <strong>0.00% ASR</strong> in E3).</li>
+                <li>48-bit quantized Diffie-Hellman masking keeps wire ratio compact at <strong>1.26&times;–1.29&times;</strong>
+                  while catching <strong>1,500/1,500</strong> tampers with zero false alarms.</li>
+                <li>OS-Ken + OVS closed-loop isolation achieves <strong>27.38 ms</strong> rule deployment and
+                  <strong>0% benign drop collateral</strong> after threshold calibration.</li>
+              </ul>
+            </div>
+
+            <div class="callout callout-warn" style="margin:0;">
+              <strong>Open Limitations &amp; Failures Noted Honestly:</strong>
+              <ul style="margin:8px 0 0;padding-left:18px;">
+                <li><strong>DP Utility Drop on 12-Round Non-IID:</strong> In E6 InSDN (eps_bar=4.0), clean macro-F1 drops
+                  from <code>96.26% &rarr; 76.04%</code> primarily due to benign-class threshold shift under noise.</li>
+                <li><strong>ASEADOS Adaptive Attack / Extreme Heterogeneity:</strong> Under Dir <em>&alpha;=0.1</em>
+                  plain FedAvg degrades to <code>71.43%</code>, and on 20% ASEADOS backdoor E3 mean ASR hits
+                  <code>59.88%</code> across heterogeneous seeds (compared to 0.00% on InSDN).</li>
+                <li><strong>Wilcoxon Sample Size (<em>n=5</em>):</strong> With 5 matched seeds, consistent 5/5 wins reach
+                  <em>p = 0.0625</em> (two-sided floor for <em>n=5</em>), not <em>p &lt; 0.05</em> without more seeds.</li>
+              </ul>
+            </div>
+          </div>
+
+          <h3 class="section-subhead">Documented Engineering Deviations (<code>docs/DEVIATIONS.md</code>)</h3>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Area</th>
+                  <th>Original Expectation</th>
+                  <th>Implemented Reality &amp; Rationale</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>DEV-001</code></td>
+                  <td>SDN Controller Stack</td>
+                  <td>Legacy unmaintained <code>ryu==4.34</code></td>
+                  <td>Maintained <code>os-ken==3.0.1</code> OpenFlow 1.3 controller on Python 3.10+ (<code>.venv-ryu</code>)</td>
+                </tr>
+                <tr>
+                  <td><code>DEV-002</code></td>
+                  <td>Dataset Suite</td>
+                  <td><code>InSDN</code> + <code>CICIDS2017</code> only</td>
+                  <td>Added official 2026 <code>ASEADOS-SDN-IoT</code> dataset (426,111 cleaned flows) alongside InSDN &amp; CICIDS2017</td>
+                </tr>
+                <tr>
+                  <td><code>DEV-003</code></td>
+                  <td>Live FL Wire RPC</td>
+                  <td>Flower wrapper sketch</td>
+                  <td>Direct localhost HTTP/JSON + binary 48-bit SecAgg RPC (<code>testbed/fl/protocol_http.py</code>) with byte-exact proofs</td>
+                </tr>
+                <tr>
+                  <td><code>DEV-004</code></td>
+                  <td>Testbed, Threshold &amp; Site</td>
+                  <td>L3 VM isolation, 0.5 threshold &amp; SPA</td>
+                  <td>L1 namespace + OVS testbed, calibrated <em>&theta; = 0.98</em> (FBR 64.26% &rarr; 2.70%), and 10-chapter Digital Monograph</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <!-- ================================================================
+             CHAPTER 09: REPRODUCIBILITY, REPOSITORY MAP & REFERENCES
+             ================================================================ -->
+        <article class="chapter-page" id="ch09" data-chapter="9"
+          data-title="Reproducibility &amp; References">
+          <div class="chapter-header">
+            <span class="chapter-kicker">Chapter 09 · Artifacts &amp; Citations</span>
+            <h2 class="chapter-title">Reproducibility Guide, Code Map &amp; References</h2>
+            <p class="chapter-lede">
+              Exact commands to verify all unit tests, regenerate empirical figures, reproduce live OVS trials, and cite
+              the TrustFed-SDN thesis release.
+            </p>
+          </div>
+
+          <h3 class="section-subhead">Quick-Start Reproduction &amp; Verification Commands</h3>
+          <div class="code-card">
+            <div class="code-card-head">
+              <span>Windows PowerShell (ML / Crypto / Unit Verification · Tag v1.0)</span>
+              <button class="copy-btn" type="button" data-copy-target="cmdQuick">Copy</button>
+            </div>
+            <pre id="cmdQuick">git clone https://github.com/naimurhamim/TrustFed-SDN.git &amp;&amp; cd TrustFed-SDN
+.\make.cmd install          # creates Python 3.12 venv + installs torch/requirements
+.\make.cmd check            # runs ruff lint + full pytest suite (crypto, FL, live, final)
+.\make.cmd reproduce-quick  # regenerates clean smoke artifacts &amp; verifies outputs
+.\make.cmd qr               # rebuilds and cryptographically verifies SVG/PNG/PDF QR codes</pre>
+          </div>
+
+          <div class="code-card">
+            <div class="code-card-head">
+              <span>Ubuntu 22.04 Live Namespace + Open vSwitch + OS-Ken Demo</span>
+              <button class="copy-btn" type="button" data-copy-target="cmdLive">Copy</button>
+            </div>
+            <pre id="cmdLive">source .venv-ryu/bin/activate
+make demo                   # boots br_t1..br_t3, t1..t3 namespaces, OS-Ken 3.0.1 &amp; FL loop
+make reproduce              # full 5-seed E1-E10 sweep + 8 publication figures + LaTeX tables</pre>
+          </div>
+
+          <h3 class="section-subhead">Repository Module Architecture (<code>TrustFed-SDN/</code>)</h3>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Path / Package</th>
+                  <th>Purpose &amp; Key Components</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>trustfed/data/</code></td>
+                  <td>Dataset cleaners, zero-overlap split guards, Natural &amp; Dirichlet partitioners</td>
+                </tr>
+                <tr>
+                  <td><code>trustfed/models/</code></td>
+                  <td>Sequence GRU backbone (43,554 params InSDN) &amp; tabular/RNN comparison wrappers</td>
+                </tr>
+                <tr>
+                  <td><code>trustfed/fl/, privacy/ &amp; aggregation/</code></td>
+                  <td>FedAvg, Adaptive Cohort DP-SGD + MIA suite, Cosine Clustering + Trimmed Mean defenses</td>
+                </tr>
+                <tr>
+                  <td><code>trustfed/verify/</code></td>
+                  <td>Fixed-point Q20 48-bit packer, X25519 pairwise DH SecAgg in Z<sub>q</sub>, SHA-256 &amp; Ed25519 transcripts</td>
+                </tr>
+                <tr>
+                  <td><code>testbed/</code></td>
+                  <td>OS-Ken 3.0.1 OpenFlow 1.3 controller, live flow feature extractor, OVS priority=300 mitigator</td>
+                </tr>
+                <tr>
+                  <td><code>sim/ &amp; scripts/</code></td>
+                  <td>Full 5-seed E1–E10 evaluator, Wilcoxon statistics, Matplotlib plotter &amp; ISO/IEC 18004 QR generator</td>
+                </tr>
+                <tr>
+                  <td><code>docs/ &amp; tests/</code></td>
+                  <td><code>ARCHITECTURE.md</code>, <code>REPRODUCE.md</code>, <code>FINAL_AUDIT.md</code>, <code>DEVIATIONS.md</code> &amp; automated pytest suite</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="code-card">
+            <div class="code-card-head">
+              <span>BibTeX Citation (<code>CITATION.cff</code> v1.0.0)</span>
+              <button class="copy-btn" type="button" data-copy-target="bibtexBlock">Copy</button>
+            </div>
+            <pre id="bibtexBlock">@misc{bhowmik2026trustfedsdn,
+  title        = {TrustFed-SDN: Privacy-Preserving and Verifiable Federated Learning for Multi-Tenant SDN Security},
+  author       = {Bhowmik, Pritom Kumar and Rashid, MD Naimur and Das, Saurav Chandra},
+  year         = {2026},
+  month        = nov,
+  institution  = {Department of IoT and Robotics Engineering, University of Frontier Technology, Bangladesh},
+  version      = {v1.0.0},
+  url          = {https://github.com/naimurhamim/TrustFed-SDN},
+  note         = {Live Companion Monograph: https://trustfed.naimurrashid.dev/}
+}</pre>
+          </div>
+
+          <h3 class="section-subhead">Peer-Reviewed Foundations (8 Core References)</h3>
+          <div class="ref-list">
+            <a class="ref-row" href="https://doi.org/10.3390/s26030890" target="_blank" rel="noopener">
+              <span class="ref-idx">01</span>
+              <span>
+                <span class="ref-title">Privacy Protection Optimization Method for Cloud Platforms Based on Federated Learning and Homomorphic Encryption</span>
+                <span class="ref-meta">J. Wang &amp; Y. Wang · Sensors, vol. 26, no. 3, p. 890 · 2026</span>
+              </span>
+              <span class="ref-doi">DOI &rarr;</span>
+            </a>
+
+            <a class="ref-row" href="https://doi.org/10.1109/ICNC59896.2024.10556115" target="_blank" rel="noopener">
+              <span class="ref-idx">02</span>
+              <span>
+                <span class="ref-title">Federated Learning-Based Solution for DDoS Detection in SDN</span>
+                <span class="ref-meta">J. Mateus &amp; G.-A. Lusilao Zodi · Proc. ICNC, Cape Town · 2024</span>
+              </span>
+              <span class="ref-doi">DOI &rarr;</span>
+            </a>
+
+            <a class="ref-row" href="https://doi.org/10.1109/TIFS.2022.3227435" target="_blank" rel="noopener">
+              <span class="ref-idx">03</span>
+              <span>
+                <span class="ref-title">Privacy-Preserving and Verifiable Federated Learning Framework for Edge Computing</span>
+                <span class="ref-meta">H. Zhou, G. Yang, Y. Huang, H. Dai &amp; Y. Xiang · IEEE Trans. Inf. Forensics Secur., vol. 18, pp. 565–580 · 2023</span>
+              </span>
+              <span class="ref-doi">DOI &rarr;</span>
+            </a>
+
+            <a class="ref-row" href="https://doi.org/10.1109/JRFID.2023.3279329" target="_blank" rel="noopener">
+              <span class="ref-idx">04</span>
+              <span>
+                <span class="ref-title">SDN-Based Federated Learning Approach for Satellite-IoT Framework to Enhance Data Security and Privacy in Space Communication</span>
+                <span class="ref-meta">R. Uddin &amp; S. A. P. Kumar · IEEE J. Radio Freq. Identif., vol. 7, pp. 424–440 · 2023</span>
+              </span>
+              <span class="ref-doi">DOI &rarr;</span>
+            </a>
+
+            <a class="ref-row" href="https://doi.org/10.3390/app13031431" target="_blank" rel="noopener">
+              <span class="ref-idx">05</span>
+              <span>
+                <span class="ref-title">Low Rate DDoS Detection Using Weighted Federated Learning in SDN Control Plane in IoT Network</span>
+                <span class="ref-meta">M. N. Ali, M. Imran, M. S. ud din &amp; B.-S. Kim · Appl. Sci., vol. 13, no. 3, p. 1431 · 2023</span>
+              </span>
+              <span class="ref-doi">DOI &rarr;</span>
+            </a>
+
+            <a class="ref-row" href="https://doi.org/10.1109/TNSE.2021.3050781" target="_blank" rel="noopener">
+              <span class="ref-idx">06</span>
+              <span>
+                <span class="ref-title">VFChain: Enabling Verifiable and Auditable Federated Learning via Blockchain Systems</span>
+                <span class="ref-meta">Z. Peng, J. Xu, X. Chu, S. Gao, Y. Yao, R. Gu &amp; Y. Tang · IEEE Trans. Netw. Sci. Eng., vol. 9, no. 1, pp. 173–186 · 2022</span>
+              </span>
+              <span class="ref-doi">DOI &rarr;</span>
+            </a>
+
+            <a class="ref-row" href="https://doi.org/10.1109/OJCOMS.2025.3644477" target="_blank" rel="noopener">
+              <span class="ref-idx">07</span>
+              <span>
+                <span class="ref-title">A Survey on Security and Privacy in Federated Learning-Based Intrusion Detection Systems for 5G and Beyond Networks</span>
+                <span class="ref-meta">H. Rezaei, R. Taheri, E. Nowroozi, M. Hajizadeh, S. Shiaeles &amp; T. Bauschert · IEEE Open J. Commun. Soc., vol. 7, pp. 253–300 · 2026</span>
+              </span>
+              <span class="ref-doi">DOI &rarr;</span>
+            </a>
+
+            <a class="ref-row" href="https://doi.org/10.1007/s44443-026-00625-6" target="_blank" rel="noopener">
+              <span class="ref-idx">08</span>
+              <span>
+                <span class="ref-title">Collaborative Intrusion Detection Systems in SD-WAN Enterprise Networks with Federated Learning: A Comprehensive Survey</span>
+                <span class="ref-meta">W. Almuseelem · J. King Saud Univ. Comput. Inf. Sci., vol. 38, p. 379 · 2026</span>
+              </span>
+              <span class="ref-doi">DOI &rarr;</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- ================================================================
+             CHAPTER 10: TEAM, POSTER & VERIFIED QR COLOPHON
+             ================================================================ -->
+        <article class="chapter-page" id="ch10" data-chapter="10"
+          data-title="Team, Poster &amp; QR Colophon">
+          <div class="chapter-header">
+            <span class="chapter-kicker">Chapter 10 · Authors &amp; Colophon</span>
+            <h2 class="chapter-title">Research Team, Defense Poster &amp; Verified QR</h2>
+            <p class="chapter-lede">
+              Developed in the Department of IoT &amp; Robotics Engineering, University of Frontier Technology,
+              Bangladesh — openly licensed under MIT.
+            </p>
+          </div>
+
+          <div class="team-grid">
+            <div class="team-card">
+              <div class="team-avatar-wrap">
+                <img src="images/profiles/Pritom_Kumar.png?v=2" alt="Pritom Kumar Bhowmik" class="team-avatar">
+              </div>
+              <span class="team-role">Co-Researcher</span>
+              <h3 class="team-name">Pritom Kumar Bhowmik</h3>
+              <p class="team-id">Student ID 2101005</p>
+              <p class="team-bio">
+                Department of Internet of Things &amp; Robotics Engineering, University of Frontier Technology,
+                Bangladesh.
+              </p>
+            </div>
+
+            <div class="team-card">
+              <div class="team-avatar-wrap">
+                <img src="images/profiles/MD_NAIMUR_RASHID.png?v=2" alt="MD Naimur Rashid" class="team-avatar">
+              </div>
+              <span class="team-role">Co-Researcher</span>
+              <h3 class="team-name">
+                <a href="https://naimurrashid.dev/" target="_blank" rel="noopener">MD Naimur Rashid &#8599;</a>
+              </h3>
+              <p class="team-id">Student ID 2101042</p>
+              <p class="team-bio">
+                Department of Internet of Things &amp; Robotics Engineering, University of Frontier Technology,
+                Bangladesh.
+              </p>
+            </div>
+
+            <div class="team-card supervisor">
+              <div class="team-avatar-wrap">
+                <img src="images/profiles/Sourav_Chandra_Das.png?v=3" alt="Saurav Chandra Das" class="team-avatar">
+              </div>
+              <span class="team-role">Thesis Supervisor</span>
+              <h3 class="team-name">Saurav Chandra Das</h3>
+              <p class="team-id">Lecturer, Dept. of IRE</p>
+              <p class="team-bio">
+                Faculty advisor and research supervisor guiding privacy-preserving FL &amp; SDN security at UFTB.
+              </p>
+            </div>
+          </div>
+
+          <div class="qr-showcase">
+            <div class="qr-frame">
+              <img src="images/qr/trustfed_qr.svg" alt="Verified QR Code for https://trustfed.naimurrashid.dev/">
+            </div>
+            <div>
+              <div class="badge-row" style="margin-bottom:10px;">
+                <span class="badge badge-ok">Decoder Verified · Zero RS Syndrome</span>
+                <span class="badge">QR Version 4-H · 33&times;33 · 30% ECC</span>
+              </div>
+              <h3 style="margin:0 0 8px;font-family:var(--font-head);">Print-Grade Verified Thesis QR &amp; Defense Poster</h3>
+              <p style="margin:0 0 14px;font-size:0.9rem;color:var(--text-dim);">
+                Every release build generates and independently decodes the print QR matrix via GF(256) Reed-Solomon
+                syndrome verification for <code>https://trustfed.naimurrashid.dev/</code>.
+              </p>
+              <div class="cta-row" style="margin:0;">
+                <a class="btn btn-primary" href="Thesis-Poster-TrustFed-Presentationv2-4-by-3.pdf" target="_blank"
+                  rel="noopener">Open Defense Poster (PDF)</a>
+                <a class="btn btn-outline" href="images/qr/trustfed_qr.svg" download="trustfed_qr.svg">QR SVG</a>
+                <a class="btn btn-outline" href="images/qr/trustfed_qr.png" download="trustfed_qr.png">QR PNG (1080px)</a>
+                <a class="btn btn-outline" href="images/qr/trustfed_qr.pdf" target="_blank" rel="noopener">QR Print PDF</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout" style="margin-top:24px;">
+            <strong>Open Source &amp; Dataset Compliance Colophon:</strong> All framework code is released under the
+            <strong>MIT License</strong> (Copyright &copy; 2026 MD Naimur Rashid, Pritom Kumar Bhowmik, Saurav Chandra
+            Das). Third-party benchmark CSVs (InSDN, ASEADOS-SDN-IoT, CICIDS2017) are excluded from git history in strict
+            compliance with upstream academic redistribution terms; reproduction instructions are provided in Chapter 09 and
+            <code>docs/REPRODUCE.md</code>.
+          </div>
+        </article>
+
+        <!-- ============ BOOK PAGE-TURN FOOTER ============ -->
+        <footer class="page-turn-footer">
+          <div class="page-turn-row">
+            <button id="prevPageBtn" class="turn-btn prev" type="button" disabled>
+              <span aria-hidden="true">&larr;</span>
+              <span>
+                <span class="turn-dir">Previous Page</span>
+                <span id="prevPageTitle" class="turn-label">Front Cover</span>
+              </span>
+            </button>
+
+            <div class="page-strip" aria-label="Jump to chapter number">
+              <button class="page-pip active" type="button" data-goto="1">01</button>
+              <button class="page-pip" type="button" data-goto="2">02</button>
+              <button class="page-pip" type="button" data-goto="3">03</button>
+              <button class="page-pip" type="button" data-goto="4">04</button>
+              <button class="page-pip" type="button" data-goto="5">05</button>
+              <button class="page-pip" type="button" data-goto="6">06</button>
+              <button class="page-pip" type="button" data-goto="7">07</button>
+              <button class="page-pip" type="button" data-goto="8">08</button>
+              <button class="page-pip" type="button" data-goto="9">09</button>
+              <button class="page-pip" type="button" data-goto="10">10</button>
+            </div>
+
+            <button id="nextPageBtn" class="turn-btn next" type="button">
+              <span>
+                <span class="turn-dir">Next Page</span>
+                <span id="nextPageTitle" class="turn-label">Ch. 02 · Abstract, Threat Model &amp; Gap</span>
+              </span>
+              <span aria-hidden="true">&rarr;</span>
+            </button>
+          </div>
+
+          <div class="keyboard-hint">
+            Tip: Press <strong>&larr; / &rarr;</strong> arrow keys to turn book pages, click any figure to zoom, or click
+            <strong>Scroll All</strong> in the header to read continuously.
+          </div>
+        </footer>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ============ FULL-SCREEN FIGURE LIGHTBOX ============ -->
+  <div id="lightboxModal" class="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightboxTitle">
+    <div class="lightbox-card">
+      <div class="lightbox-head">
+        <span id="lightboxTitle" class="lightbox-title">Figure Preview</span>
+        <button id="lightboxCloseBtn" class="mini-nav-btn" type="button">Close &times;</button>
+      </div>
+      <div class="lightbox-body">
+        <img id="lightboxImg" src="" alt="Expanded thesis figure">
+      </div>
+      <div class="lightbox-foot">
+        <span id="lightboxSource"></span>
+        <a id="lightboxPdfLink" class="pdf-chip" href="#" target="_blank" rel="noopener">Open Vector PDF</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/particles.js"></script>
+  <script src="js/script.js"></script>
+</body>
+
+</html>

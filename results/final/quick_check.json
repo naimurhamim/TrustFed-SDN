@@ -1,7 +1,7 @@
 {
   "mode": "reproduce-quick",
-  "timestamp_utc": "2026-11-15T07:29:50.806422+00:00",
-  "wall_time_sec": 19.815552000000025,
+  "timestamp_utc": "2026-11-15T09:20:25.621197+00:00",
+  "wall_time_sec": 16.91325019999931,
   "smoke_runs": [
     {
       "dataset": "insdn",
@@ -19,8 +19,8 @@
       "backdoor_asr": 0.0,
       "malicious_rejection_rate": 0.0,
       "honest_false_rejection_rate": 0.0,
-      "mean_round_ms": 1125.9804666657753,
-      "mean_agg_ms": 394.05906666676555,
+      "mean_round_ms": 974.8112666675297,
+      "mean_agg_ms": 398.8216333333791,
       "comm_bytes_per_round": 4421070,
       "mean_epsilon_spent": 3.9998061370404434
     },
@@ -40,8 +40,8 @@
       "backdoor_asr": 0.16627984084880637,
       "malicious_rejection_rate": 0.0,
       "honest_false_rejection_rate": 0.0,
-      "mean_round_ms": 740.9402000005988,
-      "mean_agg_ms": 282.27673333337106,
+      "mean_round_ms": 664.9830333317368,
+      "mean_agg_ms": 283.9959000005668,
       "comm_bytes_per_round": 4421060,
       "mean_epsilon_spent": 3.9998061370404434
     },
@@ -61,8 +61,8 @@
       "backdoor_asr": 0.0,
       "malicious_rejection_rate": 1.0,
       "honest_false_rejection_rate": 0.0,
-      "mean_round_ms": 698.4204666662966,
-      "mean_agg_ms": 189.7132666666342,
+      "mean_round_ms": 628.5423333356448,
+      "mean_agg_ms": 229.44690000076662,
       "comm_bytes_per_round": 4405710,
       "mean_epsilon_spent": 3.9998061370404434
     },
@@ -82,8 +82,8 @@
       "backdoor_asr": 0.12196065428824049,
       "malicious_rejection_rate": 1.0,
       "honest_false_rejection_rate": 0.0,
-      "mean_round_ms": 671.8255999997685,
-      "mean_agg_ms": 203.89510000010583,
+      "mean_round_ms": 560.3090666657712,
+      "mean_agg_ms": 191.5022666665512,
       "comm_bytes_per_round": 4405730,
       "mean_epsilon_spent": 3.9998061370404434
     }

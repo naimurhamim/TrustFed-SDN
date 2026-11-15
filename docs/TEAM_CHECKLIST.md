@@ -11,9 +11,9 @@
 
 - **Last Updated By:** `@Naimur`
 - **Date:** `2026-11-15`
-- **Active Step:** `Step 09 - Full Evaluation, Ablation, Figures, and Tables` (`approved`, tagged `step-09-done`; ready for `Step 10 - Website, Docs, Release` when directed)
-- **What Was Just Completed:** Implemented `SecureAggregator(..., robust_screening=True)` pre-unmask screening (`trustfed/aggregation/secure.py`), created all 11 YAML configs (`configs/experiments/final/`), wired `make reproduce` & `make reproduce-quick` (`Makefile` & `make.cmd`), added `tests/test_final_evaluation.py`, completed all 5-seed (`0..4`) `E6` ablation ladder & `E8` (`N=20`) GPU runs + `N in {3,5,10,20}` crypto overhead + `E10` DP clip sweeps (`results/final/`), generated all 16 publication figures (`figures/fig01..08.{pdf,png}`) and 9 LaTeX booktabs tables (`tables/tab01..09*.tex`), verified `make reproduce-quick` & `make check` (`74/74` pytest), wrote `docs/RESULTS_SUMMARY.md`, appended Section 10 of `docs/EXPERIMENT_RESULTS_LOG.md`, and tagged `step-09-done`.
-- **Next Task for Team:** Review `docs/RESULTS_SUMMARY.md`, `figures/`, `tables/`, and `docs/EXPERIMENT_RESULTS_LOG.md` Section 10, run `git pull --tags`, and start `Step 10 - Website, Docs, Release` (`10.1`–`10.5`) when directed.
+- **Active Step:** `Step 10 - Website, QR Code, Documentation, and Release` (`approved`, tagged `step-10-done` & `v1.0` — Thesis Release Complete)
+- **What Was Just Completed:** Built ISO/IEC 18004 QR generator + GF(256) decoder (`scripts/make_qr.py`, generating `v4-H` SVG/PNG/PDF + `qr_verification.json`), redesigned `site/` & `07_Website/trustfed-sdn-site/` as a dual-theme **10-Chapter Interactive Research Monograph** hydrating live KPIs from `data/key_numbers.json` with clickable `fig01..fig08` zoom & defense poster, added `qr` & `site-preview` targets (`Makefile` & `make.cmd`), authored `README.md`, `LICENSE`, `CITATION.cff`, `docs/ARCHITECTURE.md`, `docs/REPRODUCE.md`, `docs/FINAL_AUDIT.md`, and `DEV-004` (`docs/DEVIATIONS.md`), added `test_step10_qr_docs_site_and_release`, and verified clean `make format`, `make lint`, `make reproduce-quick`, and `make check`.
+- **Next Task for Team:** All Steps `00`–`10` approved and tagged (`v1.0`). Pull latest `main` + tags (`git pull --tags`) and open `https://trustfed.naimurrashid.dev/`.
 
 ---
 
@@ -98,8 +98,8 @@
 - [x] `09.5` Write `docs/RESULTS_SUMMARY.md` & `results/final/key_numbers.json`, update `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 09`, and tag `step-09-done` (`@Naimur`, `2026-11-15`)
 
 ### Step 10 — Website, QR Code, Documentation, and Release (`docs/steps/STEP_10_website_docs_release.md`)
-- [ ] `10.1` Confirm public visibility scope, dataset-license compliance, and open-source code license
-- [ ] `10.2` Build responsive project website in `site/` loading all numbers dynamically from `results/final/key_numbers.json`
-- [ ] `10.3` Deploy to `https://trustfed.naimurrashid.dev/` and verify high-res print QR code via `scripts/make_qr.py`
-- [ ] `10.4` Complete `docs/ARCHITECTURE.md`, `docs/REPRODUCE.md`, `CITATION.cff`, `LICENSE`, and `docs/FINAL_AUDIT.md`
-- [ ] `10.5` Verify fresh-clone `make reproduce-quick`, tag `v1.0` & `step-10-done`, and get final `approved step 10`
+- [x] `10.1` Confirm public visibility scope, dataset-license compliance, and open-source code license (`@Naimur`, `2026-11-15`)
+- [x] `10.2` Build responsive project website in `site/` loading all numbers dynamically from `results/final/key_numbers.json` (`@Naimur`, `2026-11-15`)
+- [x] `10.3` Deploy to `https://trustfed.naimurrashid.dev/` and verify high-res print QR code via `scripts/make_qr.py` (`@Naimur`, `2026-11-15`)
+- [x] `10.4` Complete `docs/ARCHITECTURE.md`, `docs/REPRODUCE.md`, `CITATION.cff`, `LICENSE`, and `docs/FINAL_AUDIT.md` (`@Naimur`, `2026-11-15`)
+- [x] `10.5` Verify fresh-clone `make reproduce-quick`, tag `v1.0` & `step-10-done`, and get final `approved step 10` (`@Naimur`, `2026-11-15`)

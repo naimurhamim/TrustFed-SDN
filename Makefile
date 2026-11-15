@@ -6,7 +6,7 @@ else
 	PIP := .venv/bin/pip
 endif
 
-.PHONY: help install status lint format test check probe smoke-testbed testbed-up testbed-down notify demo reproduce reproduce-quick
+.PHONY: help install status lint format test check probe smoke-testbed testbed-up testbed-down notify demo reproduce reproduce-quick qr site-preview
 
 help:
 	@echo TrustFed-SDN Makefile targets:
@@ -18,6 +18,8 @@ help:
 	@echo   check            Run lint + pytest + package import smoke check
 	@echo   probe            Run hardware and environment probe script
 	@echo   smoke-testbed    Run Linux Mininet + OVS + RYU smoke test (Linux root required)
+	@echo   qr               Regenerate and verify SVG/PNG/PDF QR codes via scripts/make_qr.py
+	@echo   site-preview     Serve site/ locally at http://127.0.0.1:8080
 
 install:
 	$(PIP) install -e ".[dev]"
@@ -62,4 +64,10 @@ reproduce:
 
 reproduce-quick:
 	$(PYTHON) scripts/run_step09_full_evaluation.py --quick
+
+qr:
+	$(PYTHON) scripts/make_qr.py
+
+site-preview:
+	$(PYTHON) -m http.server 8080 --directory site
 

@@ -1,0 +1,82 @@
+{
+  "generated_at_utc": "2026-11-15T07:25:44.000788+00:00",
+  "datasets": {
+    "insdn": {
+      "raw_rows": 343889,
+      "cleaned_rows": 184855,
+      "selected_features": 19,
+      "num_classes": 8,
+      "source": "results/01_data/summary.json"
+    },
+    "aseados_sdn_iot": {
+      "raw_rows": 457044,
+      "cleaned_rows": 426111,
+      "selected_features": 12,
+      "num_classes": 5,
+      "source": "results/01_data/summary.json"
+    },
+    "cicids2017": {
+      "raw_rows": 2830743,
+      "cleaned_rows": 2232894,
+      "selected_features": 22,
+      "num_classes": 9,
+      "source": "results/01_data/summary.json"
+    }
+  },
+  "centralized_gru_insdn_binary_f1_pct": {
+    "value": 99.74,
+    "std": 0.05,
+    "source": "results/02_baselines/per_seed_centralized.csv"
+  },
+  "fedavg_insdn_natural_n3_f1_pct": {
+    "value": 99.13,
+    "std": 0.06,
+    "source": "results/03_fedavg/per_seed_summary.csv"
+  },
+  "e6_insdn_r4_clean_f1_pct": {
+    "value": 76.04,
+    "std": 0.22,
+    "source": "results/final/e6_ablation_summary.csv"
+  },
+  "e6_insdn_r4_scaling20_f1_pct": {
+    "value": 75.97,
+    "std": 0.29,
+    "source": "results/final/e6_ablation_summary.csv"
+  },
+  "e6_insdn_r1_scaling20_f1_pct": {
+    "value": 21.73,
+    "std": 8.7,
+    "source": "results/final/e6_ablation_summary.csv"
+  },
+  "secagg_tamper_detection_pct": {
+    "value": 100.0,
+    "trials": 1500,
+    "honest_false_alarms": 0,
+    "source": "results/06_verify/tamper_test_table.csv"
+  },
+  "secagg_wire_overhead_ratio_n3_n10": {
+    "n3": 1.256,
+    "n10": 1.27,
+    "n20": 1.29,
+    "source": "results/final/e8_overhead_by_n.csv"
+  },
+  "adaptive_dp_insdn_mia_auc_pct_eps4": {
+    "full_partition": 51.18,
+    "rare_cohort_finance": 54.27,
+    "source": "results/05_dp/mia_evaluation.csv"
+  },
+  "live_testbed": {
+    "captured_flows": 4392,
+    "honest_live_f1_pct": 64.26,
+    "honest_live_adr_pct": 92.87,
+    "poisoned_defended_f1_pct": 53.72,
+    "poisoned_unguarded_f1_pct": 31.43,
+    "malicious_rejection_pct": 100.0,
+    "mean_round_ms": 486.71,
+    "vm_ovs_drop_install_ms": 27.38,
+    "vm_attack_block_pct": 100.0,
+    "vm_false_block_pct": 0.0,
+    "calibrated_live_fbr_pct": 2.7,
+    "source": "results/08_live/summary.json"
+  }
+}

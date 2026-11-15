@@ -36,6 +36,8 @@ if /I "%TARGET%"=="help" (
     echo   demo             Run quick Step 08 live pipeline end-to-end demo
     echo   reproduce        Run full Step 09 evaluation and generate figures/tables
     echo   reproduce-quick  Run fast Step 09 verification and regenerate figures/tables
+    echo   qr               Regenerate and verify SVG/PNG/PDF QR codes
+    echo   site-preview     Serve site\ locally at http://127.0.0.1:8080
     exit /b 0
 )
 
@@ -87,6 +89,14 @@ if /I "%TARGET%"=="reproduce" (
 )
 if /I "%TARGET%"=="reproduce-quick" (
     "%PY%" scripts/run_step09_full_evaluation.py --quick
+    exit /b %ERRORLEVEL%
+)
+if /I "%TARGET%"=="qr" (
+    "%PY%" scripts/make_qr.py
+    exit /b %ERRORLEVEL%
+)
+if /I "%TARGET%"=="site-preview" (
+    "%PY%" -m http.server 8080 --directory site
     exit /b %ERRORLEVEL%
 )
 

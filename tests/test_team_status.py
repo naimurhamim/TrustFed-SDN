@@ -21,7 +21,7 @@ def test_parse_team_checklist_reads_real_file() -> None:
     assert summary.total_count >= 40
     assert summary.completed_count >= 7
     assert len(summary.handoff_notes) >= 3
-    assert len(summary.next_tasks) >= 1
+    assert len(summary.next_tasks) >= 1 or summary.completed_count == summary.total_count
 
 
 def test_verify_dataset_manifest_detects_present_and_missing(tmp_path: Path) -> None:
