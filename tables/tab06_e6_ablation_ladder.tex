@@ -1,0 +1,23 @@
+% Generated automatically from results/final/e6_ablation_summary.csv
+\begin{table}[t]
+\centering
+\caption{E6: Five-rung ablation ladder Macro-F1 (\% $\pm$ std over 5 seeds) under clean and 20\% poisoned conditions.}
+\label{tab:e6_ablation}
+\begin{tabular}{llrrrr}
+\toprule
+Dataset & Rung & Clean & Label-Flip 20\% & Backdoor 20\% & Scaling 20\% \\
+\midrule
+InSDN & 1. Plain FedAvg & 96.26 $\pm$ 1.42 & 18.43 $\pm$ 13.07 & 79.73 $\pm$ 12.21 & 21.73 $\pm$ 8.70 \\
+InSDN & 2. + Adaptive DP & 76.04 $\pm$ 0.22 & 38.76 $\pm$ 9.08 & 72.80 $\pm$ 3.93 & 30.33 $\pm$ 14.10 \\
+InSDN & 3. + DP + Robust & 75.80 $\pm$ 0.16 & 75.97 $\pm$ 0.29 & 75.97 $\pm$ 0.29 & 75.97 $\pm$ 0.29 \\
+InSDN & \textbf{4. Full TrustFed-SDN (Sim)} & 76.04 $\pm$ 0.22 & 75.97 $\pm$ 0.29 & 75.97 $\pm$ 0.29 & 75.97 $\pm$ 0.29 \\
+\midrule
+ASEADOS & 1. Plain FedAvg & 71.42 $\pm$ 3.41 & 27.79 $\pm$ 7.67 & 64.40 $\pm$ 7.25 & 29.38 $\pm$ 2.74 \\
+ASEADOS & 2. + Adaptive DP & 61.55 $\pm$ 0.25 & 28.34 $\pm$ 3.44 & 61.99 $\pm$ 2.39 & 28.30 $\pm$ 3.48 \\
+ASEADOS & 3. + DP + Robust & 62.83 $\pm$ 1.22 & 64.71 $\pm$ 2.60 & 64.71 $\pm$ 2.60 & 64.71 $\pm$ 2.60 \\
+ASEADOS & \textbf{4. Full TrustFed-SDN (Sim)} & 61.55 $\pm$ 0.25 & 64.71 $\pm$ 2.60 & 64.71 $\pm$ 2.60 & 64.71 $\pm$ 2.60 \\
+\midrule
+Live SDN & 5. Live Testbed (33\% Atk) & 64.26 $\pm$ 1.13 & --- & --- & 53.72 $\pm$ 1.12 \\
+\bottomrule
+\end{tabular}
+\end{table}

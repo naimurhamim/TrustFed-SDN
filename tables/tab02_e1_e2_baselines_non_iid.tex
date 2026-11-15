@@ -1,0 +1,29 @@
+% Generated automatically from results/02_baselines/ and results/03_fedavg/
+\begin{table}[t]
+\centering
+\caption{E1 \& E2: Binary intrusion detection Macro-F1 (\% $\pm$ std over 5 seeds) across centralized, local-only, and FedAvg non-IID regimes.}
+\label{tab:e1_e2_baselines}
+\begin{tabular}{llrr}
+\toprule
+Dataset & Training Regime & Global Macro-F1 (\%) & Accuracy (\%) \\
+\midrule
+InSDN & Centralized GRU & 99.74 $\pm$ 0.05 & 99.76 $\pm$ 0.05 \\
+InSDN & Local-Only (Tenant Mean) & 98.94 $\pm$ 0.01 & 99.04 $\pm$ 0.01 \\
+InSDN & FedAvg (Natural N=3) & 99.13 $\pm$ 0.06 & 99.21 $\pm$ 0.00 \\
+InSDN & FedAvg (Dirichlet $\alpha=0.5$, N=10) & 98.77 $\pm$ 0.07 & 98.89 $\pm$ 0.00 \\
+InSDN & FedAvg (IID N=10) & 98.92 $\pm$ 0.13 & 99.02 $\pm$ 0.00 \\
+\midrule
+ASEADOS-SDN-IoT & Centralized GRU & 91.23 $\pm$ 0.06 & 91.26 $\pm$ 0.05 \\
+ASEADOS-SDN-IoT & Local-Only (Tenant Mean) & 89.71 $\pm$ 0.08 & 89.82 $\pm$ 0.07 \\
+ASEADOS-SDN-IoT & FedAvg (Natural N=3) & 90.51 $\pm$ 0.07 & 90.54 $\pm$ 0.07 \\
+ASEADOS-SDN-IoT & FedAvg (Dirichlet $\alpha=0.5$, N=10) & 83.21 $\pm$ 1.94 & 83.28 $\pm$ 1.95 \\
+ASEADOS-SDN-IoT & FedAvg (IID N=10) & 85.45 $\pm$ 0.40 & 85.57 $\pm$ 0.37 \\
+\midrule
+CICIDS2017 & Centralized GRU & 96.66 $\pm$ 0.18 & 98.33 $\pm$ 0.10 \\
+CICIDS2017 & Local-Only (Tenant Mean) & 95.82 $\pm$ 0.08 & 97.96 $\pm$ 0.04 \\
+CICIDS2017 & FedAvg (Natural N=3) & 90.50 $\pm$ 1.03 & 95.06 $\pm$ 0.62 \\
+CICIDS2017 & FedAvg (Dirichlet $\alpha=0.5$, N=10) & 84.34 $\pm$ 2.63 & 91.05 $\pm$ 1.69 \\
+CICIDS2017 & FedAvg (IID N=10) & 78.49 $\pm$ 1.56 & 86.55 $\pm$ 1.03 \\
+\bottomrule
+\end{tabular}
+\end{table}

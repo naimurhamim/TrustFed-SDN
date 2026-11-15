@@ -1,0 +1,29 @@
+% Generated automatically from results/final/statistical_tests.csv and poster_targets_comparison.csv
+\begin{table}[t]
+\centering
+\caption{Key paired Wilcoxon signed-rank tests ($n=5$ seeds) and PROJECT\_PLAN Section 7 target verification.}
+\label{tab:stats_targets}
+\begin{tabular}{llrrr}
+\toprule
+Exp. & Paired Comparison & Mean $\Delta$ & Wilcoxon $p$ & Wins \\
+\midrule
+E1 (insdn) & FedAvg (Natural N=3) vs. Local-Only (Global F1 \%) & +0.19 & 0.0625 & 5/5 \\
+E3 (insdn) & CosineClustering vs. FedAvg (scaling pf=20\%, F1 \%) & +73.44 & 0.0625 & 5/5 \\
+E3 (insdn) & CosineClustering vs. FedAvg (scaling pf=30\%, F1 \%) & +78.21 & 0.0625 & 5/5 \\
+E4 (insdn) & Adaptive DP vs. Uniform DP Global F1 (eps=2.0) & +0.35 & 0.8125 & 3/5 \\
+E4 (insdn) & Finance Cohort MIA AUC Reduction: Uniform - Adaptive (eps=2.0) & +0.74 & 0.3125 & 3/5 \\
+E4 (insdn) & Adaptive DP vs. Uniform DP Global F1 (eps=4.0) & -0.03 & 0.8125 & 2/5 \\
+E4 (insdn) & Finance Cohort MIA AUC Reduction: Uniform - Adaptive (eps=4.0) & +0.25 & 0.3125 & 3/5 \\
+E5 (insdn) & SecureFedAvg (Q20) vs. Plain FedAvg (F1 \% Equivalence) & -0.14 & 0.6250 & 2/5 \\
+E6 (insdn) & R4 Full TrustFed-SDN vs. R1 FedAvg (scaling, F1 \%) & +54.24 & 0.0625 & 5/5 \\
+\midrule
+\multicolumn{5}{l}{\textbf{PROJECT\_PLAN Section 7 Target Check}} \\
+Target & Detection (Clean Macro-F1 vs. Centralized / FedAvg) & \multicolumn{2}{l}{Comparable to centralized (~99.7\% InSDN); beats plain FedAvg under attack} & \textbf{Met} \\
+Target & Communication Overhead (Round-Trip Wire Bytes) & \multicolumn{2}{l}{~1.2x-1.5x plain FedAvg} & \textbf{Met} \\
+Target & Robustness at 20\% Poisoned Tenants & \multicolumn{2}{l}{Drop $<$ 5 pts (vs. $>$ 15 pts for plain FedAvg)} & \textbf{Met} \\
+Target & Privacy (MIA Success / AUC Under Adaptive DP) & \multicolumn{2}{l}{Close to random guessing (~50-55\%)} & \textbf{Met} \\
+Target & Cryptographic Integrity Verification (Tamper / False Alarm) & \multicolumn{2}{l}{100\% tamper detection, 0\% honest false alarms} & \textbf{Met} \\
+Target & Live SDN Controller Deployment \& OVS Mitigation & \multicolumn{2}{l}{L1 tenant isolation, low-latency OVS drop with 0\% benign collateral} & \textbf{Met (with domain-shift calibration caveat)} \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,43 @@
+# E6 — Complete 5-Rung Ablation Ladder Across Clean & Poisoned Conditions (5 Seeds)
+experiment_id: E6_ablation_ladder
+datasets:
+  - insdn
+  - aseados_sdn_iot
+partition_type: natural
+num_tenants: 10
+rounds: 12
+local_epochs: 1
+batch_size: 512
+expected_batch_size: 512
+lr: 0.0025
+weight_decay: 0.0001
+max_train_samples: 12000
+mean_epsilon: 4.0
+delta: 1.0e-5
+max_grad_norm: 0.5
+scale_bits: 20
+poison_fraction: 0.2
+conditions:
+  - clean
+  - label_flip
+  - backdoor
+  - scaling
+rungs:
+  - R1_FedAvg
+  - R2_FedAvg_AdaptiveDP
+  - R3_FedAvg_AdaptiveDP_Robust
+  - R4_Full_Sim_Verifiable
+  - R5_Full_Live_Testbed
+live_source: results/08_live/summary.json
+seeds: [0, 1, 2, 3, 4]
+metrics:
+  - accuracy
+  - f1_macro
+  - f1_attack
+  - attack_detection_rate
+  - false_positive_rate
+  - roc_auc
+  - backdoor_asr
+  - malicious_rejection_rate
+  - round_time_ms
+  - comm_bytes_per_round

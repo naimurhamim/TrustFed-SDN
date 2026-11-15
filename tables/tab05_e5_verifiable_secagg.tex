@@ -1,0 +1,23 @@
+% Generated automatically from results/06_verify/
+\begin{table}[t]
+\centering
+\caption{E5: Verifiable secure aggregation tamper detection ($1,500$ trials), false alarms ($300$ rounds), quantization error, and 5-seed accuracy equivalence.}
+\label{tab:e5_verifiable}
+\begin{tabular}{lrrrr}
+\toprule
+Scenario / Configuration & Trials & InSDN F1 / Rate & ASEADOS F1 / Rate & Quant. RMSE \\
+\midrule
+Modified Aggregate (+0.05) & 300 & 300/300 (100.0\%) & --- & --- \\
+Modified Aggregate (+1 LSB) & 300 & 300/300 (100.0\%) & --- & --- \\
+Dropped Tenant Submission & 300 & 300/300 (100.0\%) & --- & --- \\
+Replayed Old Update & 300 & 300/300 (100.0\%) & --- & --- \\
+Substituted Tenant Update & 300 & 300/300 (100.0\%) & --- & --- \\
+Honest Rounds (False Alarm) & 300 & 0/300 (0.0\%) & --- & --- \\
+\midrule
+Plain FedAvg (Float32) & 5 seeds & 99.67 $\pm$ 0.19\% & 91.01 $\pm$ 0.23\% & 0 \\
+SecureFedAvg (Q=16) & 5 seeds & 99.59 $\pm$ 0.21\% & 90.67 $\pm$ 0.96\% & 4.40e-06 \\
+\textbf{SecureFedAvg (Q=20, Default)} & 5 seeds & 99.53 $\pm$ 0.21\% & 90.47 $\pm$ 1.20\% & 2.74e-07 \\
+SecureFedAvg (Q=24) & 5 seeds & 99.58 $\pm$ 0.21\% & 90.74 $\pm$ 0.73\% & 1.82e-08 \\
+\bottomrule
+\end{tabular}
+\end{table}

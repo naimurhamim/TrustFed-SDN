@@ -1,0 +1,30 @@
+# E2 — Non-IID Severity Study (Natural Specialty vs. Dirichlet alpha in {0.1, 0.5, 1.0} vs. IID)
+experiment_id: E2_non_iid_study
+step_sources:
+  - results/03_fedavg/per_seed_summary.csv
+  - results/03_fedavg/per_round_metrics.csv
+datasets:
+  - insdn
+  - aseados_sdn_iot
+tasks:
+  - binary
+  - multiclass
+partition_regimes:
+  - natural_n3
+  - dirichlet_a0.1_n10
+  - dirichlet_a0.5_n10
+  - dirichlet_a1.0_n10
+  - iid_n10
+aggregator: fedavg
+rounds: 30
+local_epochs: 3
+batch_size: 128
+lr: 0.001
+weight_decay: 0.0001
+seeds: [0, 1, 2, 3, 4]
+metrics:
+  - accuracy
+  - f1_macro
+  - tenant_f1_macro_min
+  - round_to_95pct_f1
+  - total_comm_bytes

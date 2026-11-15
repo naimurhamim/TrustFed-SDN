@@ -1,0 +1,27 @@
+# E10 — Hyperparameter Sensitivity (Trimming Fraction beta, DP Clipping Norm C, Quantization Q)
+experiment_id: E10_hyperparameter_sensitivity
+step_sources_existing:
+  - results/04_robust/per_seed_summary.csv
+  - results/06_verify/accuracy_equivalence.csv
+  - results/06_verify/quantization_error.csv
+trimming_beta_values: [0.1, 0.2]
+dp_clipping_sweep:
+  dataset: insdn
+  dp_policy: adaptive
+  mean_epsilon: 2.0
+  delta: 1.0e-5
+  max_grad_norms: [0.5, 1.0, 2.0]
+  rounds: 12
+  local_epochs: 1
+  expected_batch_size: 512
+  lr: 0.0025
+  max_train_samples: 12000
+quantization_scale_bits: [16, 20, 24]
+seeds: [0, 1, 2, 3, 4]
+metrics:
+  - f1_macro
+  - accuracy
+  - attack_detection_rate
+  - false_positive_rate
+  - mia_local_auc_mean
+  - rmse

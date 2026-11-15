@@ -1,0 +1,29 @@
+# E8 — Scalability in Number of SDN Tenants N in {3, 5, 10, 20}
+experiment_id: E8_scalability
+step_sources_existing:
+  - results/03_fedavg/per_seed_summary.csv
+  - results/06_verify/overhead_breakdown.csv
+datasets:
+  - insdn
+  - aseados_sdn_iot
+partition_type: dirichlet
+dirichlet_alpha: 0.5
+tenant_counts: [3, 5, 10, 20]
+n20_extension:
+  num_tenants: 20
+  rounds: 15
+  local_epochs: 2
+  batch_size: 256
+  lr: 0.002
+  weight_decay: 0.0001
+  max_train_samples: 16000
+  aggregators:
+    - fedavg
+    - secure_robust
+seeds: [0, 1, 2, 3, 4]
+metrics:
+  - f1_macro
+  - accuracy
+  - total_secure_protocol_ms
+  - roundtrip_ratio_48bit
+  - bytes_per_round

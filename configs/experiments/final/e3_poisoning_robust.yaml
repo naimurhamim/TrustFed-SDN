@@ -1,0 +1,35 @@
+# E3 — Data & Model Poisoning Matrix (3 Attacks x 4 Poison Fractions x 6 Aggregators)
+experiment_id: E3_poisoning_robustness
+step_sources:
+  - results/04_robust/per_seed_summary.csv
+  - results/04_robust/per_round_metrics.csv
+datasets:
+  - insdn
+  - aseados_sdn_iot
+partition_type: dirichlet
+dirichlet_alpha: 0.5
+num_tenants: 10
+attacks:
+  - none
+  - label_flip
+  - backdoor
+  - scaling
+poison_fractions: [0.0, 0.1, 0.2, 0.3]
+aggregators:
+  - fedavg
+  - static_weight
+  - trimmed_mean_b0.1
+  - trimmed_mean_b0.2
+  - median
+  - clustering
+rounds: 16
+local_epochs: 2
+batch_size: 128
+lr: 0.001
+seeds: [0, 1, 2, 3, 4]
+metrics:
+  - f1_macro
+  - accuracy
+  - backdoor_asr
+  - malicious_rejection_rate
+  - honest_false_rejection_rate

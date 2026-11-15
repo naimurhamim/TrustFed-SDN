@@ -32,9 +32,12 @@ def build_aggregator(name: str, **kwargs: Any) -> Aggregator:
         return CosineClusteringAggregator(**kwargs)
     if norm in ("secure", "secure_fedavg", "verifiable"):
         return SecureAggregator(**kwargs)
+    if norm in ("secure_robust", "trustfed_full", "verifiable_robust"):
+        return SecureAggregator(robust_screening=True, **kwargs)
     raise ValueError(
         f"Unknown aggregator '{name}'. Choose from: 'fedavg', 'static_weight', "
-        "'trimmed_mean_b0.1', 'trimmed_mean_b0.2', 'median', 'clustering', 'secure_fedavg'."
+        "'trimmed_mean_b0.1', 'trimmed_mean_b0.2', 'median', 'clustering', "
+        "'secure_fedavg', 'secure_robust'."
     )
 
 

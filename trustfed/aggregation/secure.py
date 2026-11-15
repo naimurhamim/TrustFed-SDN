@@ -8,6 +8,7 @@ from typing import Any
 
 import torch
 
+from trustfed.aggregation.clustering import CosineClusteringAggregator
 from trustfed.fl.aggregator import AggregationResult, Aggregator, ClientUpdate
 from trustfed.verify.masking import (
     MODULUS_M,
@@ -33,6 +34,9 @@ class SecureAggregator(Aggregator):
     dual-prime keyed linear homomorphic checksums, SHA-256 Merkle tree commitments,
     and Ed25519 digital signatures into the unified `Aggregator` interface so it
     plugs directly into `FLServer` (`sim/`) and the live testbed (`testbed/`).
+    When `robust_screening=True`, updates are first screened with
+    `CosineClusteringAggregator` and cryptographic secure aggregation runs over
+    the accepted honest cohort.
     """
 
     name: str = "secure_fedavg"
@@ -46,6 +50,9 @@ class SecureAggregator(Aggregator):
         expected_clients: Sequence[str] | None = None,
         verify_on_aggregate: bool = True,
         raise_on_tamper: bool = True,
+        robust_screening: bool = False,
+        max_norm_factor: float = 2.5,
+        min_cosine_to_median: float = 0.0,
     ) -> None:
         self.scale_bits = int(scale_bits)
         self.seed = int(seed)
@@ -57,7 +64,20 @@ class SecureAggregator(Aggregator):
         )
         self.verify_on_aggregate = bool(verify_on_aggregate)
         self.raise_on_tamper = bool(raise_on_tamper)
+        self.robust_screening = bool(robust_screening)
+        self.max_norm_factor = float(max_norm_factor)
+        self.min_cosine_to_median = float(min_cosine_to_median)
+        if self.robust_screening:
+            self.name = "secure_robust"
 
+        self._robust_screener = (
+            CosineClusteringAggregator(
+                max_norm_factor=self.max_norm_factor,
+                min_cosine_to_median=self.min_cosine_to_median,
+            )
+            if self.robust_screening
+            else None
+        )
         self._materials: dict[str, TenantKeyMaterial] | None = None
         self._registry: TenantPublicRegistry | None = None
         self._group_key: bytes | None = None
@@ -69,9 +89,12 @@ class SecureAggregator(Aggregator):
     def _ensure_keys(self, client_ids: Sequence[str]) -> None:
         ordered = tuple(sorted(str(c) for c in client_ids))
         if self._registry is not None:
-            if set(ordered) == set(self._registry.client_ids):
+            registered = set(self._registry.client_ids)
+            if set(ordered) == registered:
                 return
-            missing = sorted(set(self._registry.client_ids) - set(ordered))
+            if self.robust_screening and set(ordered).issubset(registered):
+                return
+            missing = sorted(registered - set(ordered))
             raise RuntimeError(
                 f"Round aborted: tenant set changed or dropout occurred (missing={missing})."
             )
@@ -108,11 +131,25 @@ class SecureAggregator(Aggregator):
 
         t_total_start = time.perf_counter()
 
+        # 0. Optional Byzantine update screening before cryptographic secure aggregation
+        robust_screen_ms = 0.0
+        rejected_clients: list[str] = []
+        active_updates: list[ClientUpdate] = list(updates)
+        if self._robust_screener is not None and len(updates) >= 3:
+            t_screen = time.perf_counter()
+            screen_res = self._robust_screener.aggregate(global_flat_params, updates)
+            robust_screen_ms = (time.perf_counter() - t_screen) * 1000.0
+            accepted_set = set(screen_res.accepted_clients)
+            rejected_clients = list(screen_res.rejected_clients)
+            active_updates = [u for u in updates if u.client_id in accepted_set]
+
+        active_participants = tuple(sorted(u.client_id for u in active_updates))
+
         # 1. Tenant-side: quantize -> pairwise mask -> linear checksum -> Ed25519 sign
         submissions: list[SignedTenantSubmission] = []
-        weights_map: dict[str, float] = {}
-        total_samples = sum(max(1, int(u.num_samples)) for u in updates)
-        for upd in updates:
+        weights_map: dict[str, float] = {u.client_id: 0.0 for u in updates}
+        total_samples = sum(max(1, int(u.num_samples)) for u in active_updates)
+        for upd in active_updates:
             if upd.flat_params.numel() != numel:
                 raise ValueError(
                     f"Client '{upd.client_id}' flat_params length ({upd.flat_params.numel()}) "
@@ -126,7 +163,7 @@ class SecureAggregator(Aggregator):
                 key_material=self._materials[upd.client_id],
                 registry=self._registry,
                 group_key=self._group_key,
-                participants=self._registry.client_ids,
+                participants=active_participants,
                 scale_bits=self.scale_bits,
                 modulus=self.modulus,
                 seed=self.seed,
@@ -139,7 +176,7 @@ class SecureAggregator(Aggregator):
             submissions,
             self._registry,
             round_idx=round_idx,
-            expected_clients=self._registry.client_ids,
+            expected_clients=active_participants,
             seen_nonces=self._server_seen_nonces,
             scale_bits=self.scale_bits,
             modulus=self.modulus,
@@ -154,7 +191,7 @@ class SecureAggregator(Aggregator):
                 self._registry,
                 self._group_key,
                 expected_round_idx=round_idx,
-                expected_clients=self._registry.client_ids,
+                expected_clients=active_participants,
                 seen_nonces=self._client_seen_nonces,
                 scale_bits=self.scale_bits,
             )
@@ -178,6 +215,8 @@ class SecureAggregator(Aggregator):
         meta: dict[str, Any] = {
             "total_samples": int(total_samples),
             "num_clients": n_clients,
+            "num_submitted": len(updates),
+            "robust_screen_ms": float(robust_screen_ms),
             "scale_bits": self.scale_bits,
             "merkle_root_hex": proof.merkle_root.hex(),
             "proof_wire_bytes": int(proof.proof_wire_bytes),
@@ -197,7 +236,7 @@ class SecureAggregator(Aggregator):
             new_global_flat_params=new_global,
             aggregation_time_sec=float(total_elapsed),
             accepted_clients=list(proof.included_client_ids),
-            rejected_clients=[],
+            rejected_clients=rejected_clients,
             weights=weights_map,
             metadata=meta,
         )

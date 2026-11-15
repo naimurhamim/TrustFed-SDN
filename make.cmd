@@ -26,14 +26,16 @@ if "%TARGET%"=="" set "TARGET=help"
 
 if /I "%TARGET%"=="help" (
     echo TrustFed-SDN Windows runner targets ^(native fallback - GNU make not required^):
-    echo   install   Install editable package and dev dependencies into .venv
-    echo   status    Compare GitHub sync, packages, datasets, and team checklist
-    echo   lint      Run ruff and black --check
-    echo   format    Format code with black and ruff --fix
-    echo   test      Run pytest test suite
-    echo   check     Run lint + pytest + package import smoke check
-    echo   probe     Run hardware and environment probe script
-    echo   demo      Run quick Step 08 live pipeline end-to-end demo
+    echo   install          Install editable package and dev dependencies into .venv
+    echo   status           Compare GitHub sync, packages, datasets, and team checklist
+    echo   lint             Run ruff and black --check
+    echo   format           Format code with black and ruff --fix
+    echo   test             Run pytest test suite
+    echo   check            Run lint + pytest + package import smoke check
+    echo   probe            Run hardware and environment probe script
+    echo   demo             Run quick Step 08 live pipeline end-to-end demo
+    echo   reproduce        Run full Step 09 evaluation and generate figures/tables
+    echo   reproduce-quick  Run fast Step 09 verification and regenerate figures/tables
     exit /b 0
 )
 
@@ -65,8 +67,8 @@ if /I "%TARGET%"=="test" (
     exit /b %ERRORLEVEL%
 )
 if /I "%TARGET%"=="check" (
-    "%PY%" -m ruff check trustfed scripts tests || exit /b 1
-    "%PY%" -m black --check trustfed scripts tests || exit /b 1
+    "%PY%" -m ruff check trustfed scripts tests testbed || exit /b 1
+    "%PY%" -m black --check trustfed scripts tests testbed || exit /b 1
     "%PY%" -m pytest || exit /b 1
     "%PY%" -c "import trustfed; print('Import check OK: trustfed', trustfed.__version__)" || exit /b 1
     exit /b 0
@@ -77,6 +79,14 @@ if /I "%TARGET%"=="probe" (
 )
 if /I "%TARGET%"=="demo" (
     "%PY%" scripts/run_step08_live.py --demo
+    exit /b %ERRORLEVEL%
+)
+if /I "%TARGET%"=="reproduce" (
+    "%PY%" scripts/run_step09_full_evaluation.py
+    exit /b %ERRORLEVEL%
+)
+if /I "%TARGET%"=="reproduce-quick" (
+    "%PY%" scripts/run_step09_full_evaluation.py --quick
     exit /b %ERRORLEVEL%
 )
 

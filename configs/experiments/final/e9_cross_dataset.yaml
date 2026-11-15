@@ -1,0 +1,20 @@
+# E9 — Cross-Dataset & Sim-to-Live Domain Transfer Summary
+experiment_id: E9_cross_dataset_transfer
+step_sources:
+  - results/07_testbed/sim_to_live_per_seed.csv
+  - results/07_testbed/sim_to_live_gap.csv
+datasets:
+  - insdn
+  - aseados_sdn_iot
+transfer_regimes:
+  - offline_sim_fedavg
+  - live_zero_shot
+  - live_feature_zcal
+  - live_finetuned_adapted
+seeds: [0, 1, 2, 3, 4]
+metrics:
+  - accuracy
+  - f1_macro
+  - attack_detection_rate
+  - false_positive_rate
+  - roc_auc

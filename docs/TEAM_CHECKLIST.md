@@ -11,9 +11,9 @@
 
 - **Last Updated By:** `@Naimur`
 - **Date:** `2026-11-15`
-- **Active Step:** `Step 08 - Live Integration on the SDN Testbed` (`approved`, tagged `step-08-done`; ready for `Step 09 - Full Evaluation` when directed)
-- **What Was Just Completed:** Completed live HTTP/JSON + 48-bit packed wire RPC FL pipeline (`testbed/fl/{tenant_client,aggregation_server,protocol_http}.py`), off-event-loop deployment & OVS `priority=300` temporary drop-rule controller (`testbed/ryu_apps/model_deploy.py`), `make demo` (`Makefile` & `make.cmd`), full 5-seed × 12-round live evaluation + plots (`results/08_live/`), real Ubuntu 22.04 VM Mininet/OVS/OS-Ken verification (`vm_live_mitigation.json`: `0.0%` intra loss, `100.0%` cross-tenant block, `+0.009 ms` control-plane ping delta, `27.38 ms` OVS drop install, `100.0%` attacker block, `0.0%` benign collateral block, TTL auto-expiry verified), `docs/LIVE_PIPELINE.md`, Section 9 of `docs/EXPERIMENT_RESULTS_LOG.md`, `71/71` pytest (`make check`), and `approved step 08`.
-- **Next Task for Team:** Review `docs/LIVE_PIPELINE.md`, `results/08_live/`, and `docs/EXPERIMENT_RESULTS_LOG.md` Section 9, run `git pull --tags`, and start `Step 09 - Full Evaluation` (`09.1`–`09.5`) when directed.
+- **Active Step:** `Step 09 - Full Evaluation, Ablation, Figures, and Tables` (`approved`, tagged `step-09-done`; ready for `Step 10 - Website, Docs, Release` when directed)
+- **What Was Just Completed:** Implemented `SecureAggregator(..., robust_screening=True)` pre-unmask screening (`trustfed/aggregation/secure.py`), created all 11 YAML configs (`configs/experiments/final/`), wired `make reproduce` & `make reproduce-quick` (`Makefile` & `make.cmd`), added `tests/test_final_evaluation.py`, completed all 5-seed (`0..4`) `E6` ablation ladder & `E8` (`N=20`) GPU runs + `N in {3,5,10,20}` crypto overhead + `E10` DP clip sweeps (`results/final/`), generated all 16 publication figures (`figures/fig01..08.{pdf,png}`) and 9 LaTeX booktabs tables (`tables/tab01..09*.tex`), verified `make reproduce-quick` & `make check` (`74/74` pytest), wrote `docs/RESULTS_SUMMARY.md`, appended Section 10 of `docs/EXPERIMENT_RESULTS_LOG.md`, and tagged `step-09-done`.
+- **Next Task for Team:** Review `docs/RESULTS_SUMMARY.md`, `figures/`, `tables/`, and `docs/EXPERIMENT_RESULTS_LOG.md` Section 10, run `git pull --tags`, and start `Step 10 - Website, Docs, Release` (`10.1`–`10.5`) when directed.
 
 ---
 
@@ -91,11 +91,11 @@
 - [x] `08.5` Package `make demo` & `docs/LIVE_PIPELINE.md`, log metrics to `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 08`, and tag `step-08-done` (@Naimur, 2026-11-15)
 
 ### Step 09 — Full Evaluation, Ablation, Figures, and Tables (`docs/steps/STEP_09_full_evaluation.md`)
-- [ ] `09.1` Confirm final experiment matrix (`E1`–`E8` primary, `E9`–`E10` optional), seed count, and figure styling
-- [ ] `09.2` Finalize `configs/experiments/final/` and implement `make reproduce` & `make reproduce-quick`
-- [ ] `09.3` Run complete ablation ladder (`FedAvg -> +DP -> +Robust -> +Verifiable -> Full TrustFed-SDN`) and paired Wilcoxon statistical tests
-- [ ] `09.4` Generate all publication PDF/PNG figures (`figures/`) and LaTeX tables (`tables/`) strictly from scripts
-- [ ] `09.5` Write `docs/RESULTS_SUMMARY.md` & `results/final/key_numbers.json`, update `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 09`, and tag `step-09-done`
+- [x] `09.1` Confirm final experiment matrix (`E1`–`E8` primary, `E9`–`E10` optional), seed count, and figure styling (`@Naimur`, `2026-11-15`)
+- [x] `09.2` Finalize `configs/experiments/final/` and implement `make reproduce` & `make reproduce-quick` (`@Naimur`, `2026-11-15`)
+- [x] `09.3` Run complete ablation ladder (`FedAvg -> +DP -> +Robust -> +Verifiable -> Full TrustFed-SDN`) and paired Wilcoxon statistical tests (`@Naimur`, `2026-11-15`)
+- [x] `09.4` Generate all publication PDF/PNG figures (`figures/`) and LaTeX tables (`tables/`) strictly from scripts (`@Naimur`, `2026-11-15`)
+- [x] `09.5` Write `docs/RESULTS_SUMMARY.md` & `results/final/key_numbers.json`, update `docs/EXPERIMENT_RESULTS_LOG.md`, get `approved step 09`, and tag `step-09-done` (`@Naimur`, `2026-11-15`)
 
 ### Step 10 — Website, QR Code, Documentation, and Release (`docs/steps/STEP_10_website_docs_release.md`)
 - [ ] `10.1` Confirm public visibility scope, dataset-license compliance, and open-source code license

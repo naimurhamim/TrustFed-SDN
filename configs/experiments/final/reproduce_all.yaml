@@ -1,0 +1,20 @@
+# Master Final Evaluation Manifest Used by `make reproduce` & `make reproduce-quick`
+manifest_name: trustfed_sdn_step09_reproduce_all
+runner_script: scripts/run_step09_full_evaluation.py
+output_dirs:
+  results: results/final
+  figures: figures
+  tables: tables
+experiments:
+  E1: configs/experiments/final/e1_baselines_fedavg.yaml
+  E2: configs/experiments/final/e2_non_iid.yaml
+  E3: configs/experiments/final/e3_poisoning_robust.yaml
+  E4: configs/experiments/final/e4_adaptive_dp_mia.yaml
+  E5: configs/experiments/final/e5_verifiable_secagg.yaml
+  E6: configs/experiments/final/e6_ablation_ladder.yaml
+  E7: configs/experiments/final/e7_live_testbed.yaml
+  E8: configs/experiments/final/e8_scalability.yaml
+  E9: configs/experiments/final/e9_cross_dataset.yaml
+  E10: configs/experiments/final/e10_sensitivity.yaml
+seeds: [0, 1, 2, 3, 4]
+wilcoxon_alpha: 0.05

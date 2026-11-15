@@ -1,0 +1,23 @@
+% Generated automatically from results/05_dp/
+\begin{table}[t]
+\centering
+\caption{E4: Uniform vs. Adaptive record-level DP-SGD utility and Finance rare-cohort MIA AUC (\%, 5 seeds).}
+\label{tab:e4_dp_mia}
+\begin{tabular}{llrrrr}
+\toprule
+Dataset & Policy / Mean $\bar{\epsilon}$ & Global F1 (\%) & Finance $\epsilon_1$ & Full MIA AUC (\%) & Cohort MIA AUC (\%) \\
+\midrule
+InSDN & No-DP ($\epsilon=\infty$) & 98.69 $\pm$ 0.07 & $\infty$ & 51.26 & 57.31 $\pm$ 4.51 \\
+InSDN & Uniform ($\bar{\epsilon}=2.0$) & 83.94 $\pm$ 3.83 & 2.00 & 51.32 & 53.60 $\pm$ 2.23 \\
+InSDN & Adaptive ($\bar{\epsilon}=2.0$) & 84.28 $\pm$ 3.55 & 1.42 & 51.16 & 52.86 $\pm$ 1.39 \\
+InSDN & Uniform ($\bar{\epsilon}=4.0$) & 97.16 $\pm$ 1.02 & 4.00 & 51.27 & 54.52 $\pm$ 2.71 \\
+InSDN & Adaptive ($\bar{\epsilon}=4.0$) & 97.14 $\pm$ 1.08 & 2.85 & 51.18 & 54.27 $\pm$ 2.32 \\
+\midrule
+ASEADOS & No-DP ($\epsilon=\infty$) & 80.82 $\pm$ 2.69 & $\infty$ & 50.93 & 66.17 $\pm$ 4.43 \\
+ASEADOS & Uniform ($\bar{\epsilon}=2.0$) & 71.89 $\pm$ 4.93 & 2.00 & 50.94 & 56.73 $\pm$ 3.21 \\
+ASEADOS & Adaptive ($\bar{\epsilon}=2.0$) & 71.78 $\pm$ 4.98 & 1.61 & 50.93 & 56.42 $\pm$ 3.23 \\
+ASEADOS & Uniform ($\bar{\epsilon}=4.0$) & 73.16 $\pm$ 2.92 & 4.00 & 50.92 & 57.78 $\pm$ 3.68 \\
+ASEADOS & Adaptive ($\bar{\epsilon}=4.0$) & 73.64 $\pm$ 2.26 & 3.22 & 50.91 & 57.25 $\pm$ 3.46 \\
+\bottomrule
+\end{tabular}
+\end{table}

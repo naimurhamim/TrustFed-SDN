@@ -1,0 +1,20 @@
+% Generated automatically from results/08_live/summary.json
+\begin{table}[t]
+\centering
+\caption{E7: Live Mininet/OVS/OS-Ken multi-tenant SDN testbed metrics (5 seeds $\times$ 12 rounds + Ubuntu VM OVS verification).}
+\label{tab:e7_live}
+\begin{tabular}{llr}
+\toprule
+Subsystem & Metric & Measured Value \\
+\midrule
+Live HTTP FL (Honest) & Macro-F1 / ADR & 64.26 $\pm$ 1.13\% / 92.87\% \\
+Live HTTP FL (33\% Poison) & TrustFed-SDN vs. Unguarded F1 & 53.72\% vs. 31.43\% (100\% rej.) \\
+Server Tamper Audit & 4-Mode Rejection / Honest False Alarms & 100.0\% (4/4) / 0/11 \\
+Round Latency / Wire & Total Round Time / Proof Overhead & 486.71 ms / 1,781 B \\
+VM L1 Tenant Isolation & Intra-Tenant Loss / Cross-Tenant Block & 0.0\% (18/18) / 100.0\% (6/6) \\
+VM Control-Plane Ping & Idle vs. Load RTT / Controller RSS & 0.071 vs. 0.080 ms / 67.3 MB \\
+VM OVS Flow-Drop Policy & Install Latency / Attack Block / Benign Block & 27.38 ms / 100.0\% / 0.0\% \\
+Live Worker Calibration & False-Block Rate (Raw $\to$ Threshold=0.98) & 64.26\% $\to$ 2.70\% (9/333) \\
+\bottomrule
+\end{tabular}
+\end{table}

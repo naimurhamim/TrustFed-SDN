@@ -1,0 +1,30 @@
+# E4 — Adaptive vs. Uniform Differential Privacy & Membership Inference Attack (MIA) Audit
+experiment_id: E4_adaptive_dp_mia
+step_sources:
+  - results/05_dp/per_seed_summary.csv
+  - results/05_dp/per_tenant_dp_table.csv
+  - results/05_dp/mia_evaluation.csv
+datasets:
+  - insdn
+  - aseados_sdn_iot
+partition_type: natural
+num_tenants: 3
+dp_policies:
+  - none
+  - uniform
+  - adaptive
+mean_epsilons: [0.5, 1.0, 2.0, 4.0, 8.0]
+delta: 1.0e-5
+max_grad_norm: 1.0
+expected_batch_size: 384
+rounds: 14
+local_epochs: 2
+lr: 0.002
+seeds: [0, 1, 2, 3, 4]
+metrics:
+  - global_f1_macro
+  - global_accuracy
+  - allocated_epsilon
+  - noise_multiplier
+  - mia_local_auc_mean
+  - rare_cohort_mia_auc_mean

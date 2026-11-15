@@ -1,0 +1,24 @@
+% Generated automatically from results/final/e8_scalability.csv, e8_overhead_by_n.csv, sim_to_live_gap.csv, e10_sensitivity.csv
+\begin{table}[t]
+\centering
+\caption{E8--E10: Tenant scalability ($N=3..20$), sim-to-live transfer, and hyperparameter sensitivity ($\beta$, $C$, $Q$).}
+\label{tab:e8_e9_e10}
+\begin{tabular}{llrr}
+\toprule
+Study & Setting / Regime & InSDN F1 (\%) / Ratio & ASEADOS F1 (\%) / Value \\
+\midrule
+E8 Scalability & $N=3$ (Crypto 21.5 ms, 1.26$\times$) & 99.10 $\pm$ 0.11 & 82.83 $\pm$ 1.43 \\
+E8 Scalability & $N=5$ (Crypto 28.8 ms, 1.26$\times$) & 99.07 $\pm$ 0.05 & 82.44 $\pm$ 3.59 \\
+E8 Scalability & $N=10$ (Crypto 46.2 ms, 1.27$\times$) & 98.77 $\pm$ 0.07 & 83.21 $\pm$ 1.94 \\
+E8 Scalability & $N=20$ (Crypto 82.8 ms, 1.29$\times$) & 98.67 $\pm$ 0.08 & 82.31 $\pm$ 1.48 \\
+\midrule
+E9 Transfer & Live Zero-Shot & 44.25 $\pm$ 0.42 & 33.46 $\pm$ 2.18 \\
+E9 Transfer & Live Z-Calibrated & 41.31 $\pm$ 7.10 & 49.53 $\pm$ 1.89 \\
+E9 Transfer & Live Adapted & 75.46 $\pm$ 0.14 & 74.62 $\pm$ 4.27 \\
+\midrule
+E10 Clip Norm & C=0.5 (Fin. MIA 51.19\%) & 84.28 $\pm$ 3.55 & --- \\
+E10 Clip Norm & C=1.0 (Fin. MIA 51.20\%) & 85.28 $\pm$ 3.14 & --- \\
+E10 Clip Norm & C=2.0 (Fin. MIA 51.18\%) & 86.40 $\pm$ 3.27 & --- \\
+\bottomrule
+\end{tabular}
+\end{table}

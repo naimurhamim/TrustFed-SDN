@@ -1,0 +1,30 @@
+# E5 — Verifiable Secure Aggregation: Tamper Detection, Overhead & Quantization Equivalence
+experiment_id: E5_verifiable_secagg
+step_sources:
+  - results/06_verify/tamper_test_table.csv
+  - results/06_verify/overhead_breakdown.csv
+  - results/06_verify/accuracy_equivalence.csv
+  - results/06_verify/quantization_error.csv
+  - results/06_verify/per_seed_summary.csv
+datasets:
+  - insdn
+  - aseados_sdn_iot
+tenant_counts: [3, 5, 10]
+scale_bits_list: [16, 20, 24]
+default_scale_bits: 20
+tamper_modes:
+  - modified_aggregate_float
+  - modified_aggregate_lsb
+  - dropped_tenant
+  - replayed_update
+  - substituted_update
+tamper_trials_per_attack: 100
+honest_rounds_per_n: 100
+seeds: [0, 1, 2, 3, 4]
+metrics:
+  - detection_rate_pct
+  - honest_false_alarm_rate_pct
+  - verify_ms_per_tenant
+  - roundtrip_ratio_48bit
+  - upload_ratio_48bit
+  - f1_macro

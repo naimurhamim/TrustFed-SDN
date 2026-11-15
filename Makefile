@@ -58,8 +58,8 @@ demo:
 	$(PYTHON) scripts/run_step08_live.py --demo
 
 reproduce:
-	@echo "Implemented in Step 09 (see docs/steps/STEP_09_full_evaluation.md)"
+	$(PYTHON) scripts/run_step09_full_evaluation.py
 
 reproduce-quick:
-	@echo "Implemented in Step 09 (see docs/steps/STEP_09_full_evaluation.md)"
+	$(PYTHON) scripts/run_step09_full_evaluation.py --quick
 

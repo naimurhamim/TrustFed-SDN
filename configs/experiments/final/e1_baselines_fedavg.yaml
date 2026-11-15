@@ -1,0 +1,37 @@
+# E1 — Centralized Upper Bound vs. Local-Only vs. Plain FedAvg Across All Three Datasets
+experiment_id: E1_baselines_fedavg
+step_sources:
+  - results/02_baselines/per_seed_centralized.csv
+  - results/02_baselines/per_seed_local_only.csv
+  - results/03_fedavg/per_seed_summary.csv
+datasets:
+  - insdn
+  - aseados_sdn_iot
+  - cicids2017
+tasks:
+  - binary
+  - multiclass
+model:
+  type: gru
+  hidden_dim: 64
+  num_layers: 2
+  dropout: 0.1
+  seq_mode: single_step
+partition_type: natural
+num_tenants: 3
+aggregator: fedavg
+rounds: 30
+local_epochs: 3
+batch_size: 128
+lr: 0.001
+weight_decay: 0.0001
+seeds: [0, 1, 2, 3, 4]
+metrics:
+  - accuracy
+  - f1_macro
+  - f1_attack
+  - attack_detection_rate
+  - false_positive_rate
+  - roc_auc
+  - tenant_f1_macro_mean
+  - tenant_f1_macro_min
