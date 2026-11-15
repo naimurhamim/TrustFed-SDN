@@ -6,12 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TrustFed-SDN — Interactive Research Monograph &amp; Thesis Release v1.0</title>
   <meta name="description"
-    content="TrustFed-SDN: Privacy-preserving, Byzantine-robust, cryptographically verifiable federated learning for multi-tenant SDN intrusion detection — interactive 10-chapter digital monograph.">
+    content="TrustFed-SDN: Privacy-preserving, Byzantine-robust, and verifiable federated intrusion detection for multi-tenant SDN cloud networks.">
   <link rel="icon" type="image/png" href="images/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Space+Grotesk:wght@500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <script>
@@ -30,8 +30,8 @@
     <div class="topbar-inner">
       <div class="topbar-left">
         <button id="tocMobileBtn" class="icon-btn toc-mobile-btn" type="button" aria-label="Open book chapter index">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" aria-hidden="true">
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -40,7 +40,7 @@
 
         <a href="#ch01" data-goto="1" class="brand-link">
           <img src="images/logo.png" alt="TrustFed-SDN Mark" class="brand-logo" data-brand-logo>
-          <span>TrustFed-SDN</span>
+          <span>TrustFed<span class="brand-accent">-SDN</span></span>
         </a>
         <span class="edition-pill">Monograph v1.0</span>
       </div>
@@ -52,20 +52,25 @@
       <div class="topbar-right">
         <button id="modeToggleBtn" class="pill-btn" type="button"
           title="Switch between interactive chapter book pages and continuous scrolling">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
           <span id="modeToggleLabel">Scroll All</span>
         </button>
         <a href="Thesis-Poster-TrustFed-Presentationv2-4-by-3.pdf" target="_blank" rel="noopener"
-          class="pill-btn pill-btn-poster">Poster PDF</a>
+          class="pill-btn pill-btn-poster hide-mobile">Poster PDF</a>
         <a href="https://github.com/naimurhamim/TrustFed-SDN" target="_blank" rel="noopener"
-          class="pill-btn">GitHub</a>
+          class="pill-btn hide-mobile">GitHub</a>
         <button id="themeToggleBtn" class="icon-btn" type="button" aria-label="Toggle light and dark theme"
-          title="Toggle light/dark paper theme">
-          <svg class="icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          title="Toggle light/dark theme">
+          <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
           </svg>
-          <svg class="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>
             <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -93,30 +98,35 @@
     <aside id="bookSidebar" class="book-sidebar" aria-label="Book Chapters">
       <div class="sidebar-head">
         <span class="sidebar-kicker">Book Spine · 10 Chapters</span>
-        <button id="sidebarCloseBtn" class="sidebar-close-btn" type="button"
-          aria-label="Close chapter navigation">&times;</button>
+        <button id="sidebarCloseBtn" class="sidebar-close-btn" type="button" aria-label="Close chapter navigation">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
 
       <nav class="toc-list">
         <button class="toc-item active" type="button" data-goto="1">
           <span class="toc-num">01</span>
           <span class="toc-meta">
-            <span class="toc-title">Front Cover &amp; Executive Overview</span>
-            <span class="toc-sub">KPI strip, abstract &amp; thesis scope</span>
+            <span class="toc-title">Front Cover &amp; Overview</span>
+            <span class="toc-sub">KPI strip, abstract &amp; scope</span>
           </span>
         </button>
         <button class="toc-item" type="button" data-goto="2">
           <span class="toc-num">02</span>
           <span class="toc-meta">
-            <span class="toc-title">Abstract, Threat Model &amp; Gap</span>
-            <span class="toc-sub">Adversarial roles &amp; prior art matrix</span>
+            <span class="toc-title">Abstract &amp; Threat Model</span>
+            <span class="toc-sub">Adversarial roles &amp; prior art</span>
           </span>
         </button>
         <button class="toc-item" type="button" data-goto="3">
           <span class="toc-num">03</span>
           <span class="toc-meta">
-            <span class="toc-title">Architecture &amp; Crypto Pipeline</span>
-            <span class="toc-sub">7-stage FL + DP + SecAgg + SDN loop</span>
+            <span class="toc-title">Architecture &amp; Crypto Loop</span>
+            <span class="toc-sub">7-stage FL, DP, SecAgg &amp; SDN</span>
           </span>
         </button>
         <button class="toc-item" type="button" data-goto="4">
@@ -129,52 +139,74 @@
         <button class="toc-item" type="button" data-goto="5">
           <span class="toc-num">05</span>
           <span class="toc-meta">
-            <span class="toc-title">Security, Adaptive DP &amp; SecAgg</span>
-            <span class="toc-sub">E3 poisoning, E4 MIA &amp; E5 tamper proofs</span>
+            <span class="toc-title">Security, DP &amp; SecAgg</span>
+            <span class="toc-sub">E3 poisoning, E4 MIA &amp; E5</span>
           </span>
         </button>
         <button class="toc-item" type="button" data-goto="6">
           <span class="toc-num">06</span>
           <span class="toc-meta">
             <span class="toc-title">Ablation, Scale &amp; Scorecard</span>
-            <span class="toc-sub">E6 ladder, E8/E10 &amp; Wilcoxon tests</span>
+            <span class="toc-sub">E6 ladder, E8/E10 &amp; stats</span>
           </span>
         </button>
         <button class="toc-item" type="button" data-goto="7">
           <span class="toc-num">07</span>
           <span class="toc-meta">
-            <span class="toc-title">Live SDN Testbed &amp; OVS Mitigation</span>
-            <span class="toc-sub">E7/E9 transfer, 27.38 ms OVS blocks</span>
+            <span class="toc-title">Live SDN &amp; OVS Mitigation</span>
+            <span class="toc-sub">E7/E9 transfer, 27.38 ms blocks</span>
           </span>
         </button>
         <button class="toc-item" type="button" data-goto="8">
           <span class="toc-num">08</span>
           <span class="toc-meta">
-            <span class="toc-title">Build Logbook &amp; Deviations</span>
-            <span class="toc-sub">Steps 00–10, honest limits &amp; DEV-001..004</span>
+            <span class="toc-title">Logbook &amp; Deviations</span>
+            <span class="toc-sub">Steps 00–10, limits &amp; DEV-001..004</span>
           </span>
         </button>
         <button class="toc-item" type="button" data-goto="9">
           <span class="toc-num">09</span>
           <span class="toc-meta">
-            <span class="toc-title">Reproducibility &amp; References</span>
-            <span class="toc-sub">Make commands, BibTeX &amp; 8 DOI works</span>
+            <span class="toc-title">Reproducibility &amp; Citations</span>
+            <span class="toc-sub">Commands, BibTeX &amp; 8 DOIs</span>
           </span>
         </button>
         <button class="toc-item" type="button" data-goto="10">
           <span class="toc-num">10</span>
           <span class="toc-meta">
             <span class="toc-title">Team, Poster &amp; QR Colophon</span>
-            <span class="toc-sub">Authors, supervisor, poster &amp; v4-H QR</span>
+            <span class="toc-sub">Authors, poster &amp; v4-H QR</span>
           </span>
         </button>
       </nav>
+
+      <div class="sidebar-quick-links">
+        <a class="sidebar-ext-link" href="Thesis-Poster-TrustFed-Presentationv2-4-by-3.pdf" target="_blank"
+          rel="noopener">
+          <span>Thesis Defense Poster (PDF)</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+        <a class="sidebar-ext-link" href="https://github.com/naimurhamim/TrustFed-SDN" target="_blank" rel="noopener">
+          <span>Source Repository (GitHub)</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+      </div>
 
       <div class="sidebar-colophon">
         <span class="colophon-badge">Release Tag v1.0 · MIT</span>
         <div>Dept. of IoT &amp; Robotics Engineering</div>
         <div>University of Frontier Technology, Bangladesh</div>
-        <div style="margin-top:6px;">All numbers hydrated live from <code>data/key_numbers.json</code>.</div>
+        <div class="colophon-source">Hydrated from <code>data/key_numbers.json</code></div>
       </div>
     </aside>
 
@@ -187,8 +219,22 @@
           <span id="folioRunningLeft" class="folio-running-left">TRUSTFED-SDN MONOGRAPH // CH. 01 · FRONT COVER &amp; EXECUTIVE OVERVIEW</span>
           <div class="folio-running-right">
             <span class="folio-verified-pill">Verified 5-Seed Empirical Edition</span>
-            <button id="prevMiniBtn" class="mini-nav-btn" type="button">&larr; Prev</button>
-            <button id="nextMiniBtn" class="mini-nav-btn" type="button">Next &rarr;</button>
+            <button id="prevMiniBtn" class="mini-nav-btn" type="button">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              <span>Prev</span>
+            </button>
+            <button id="nextMiniBtn" class="mini-nav-btn" type="button">
+              <span>Next</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
           </div>
         </div>
 
@@ -205,8 +251,8 @@
                 <div class="cover-logo-lockup">
                   <img src="images/logo.png" alt="TrustFed-SDN Crest" class="cover-logo" data-brand-logo>
                   <div>
-                    <h1 class="cover-system-name">TrustFed<span class="grad-text">-SDN</span></h1>
-                    <div class="mono" style="font-size:0.78rem;color:var(--text-dim);">
+                    <h1 class="cover-system-name">TrustFed<span class="brand-accent">-SDN</span></h1>
+                    <div class="mono cover-subtag">
                       B.Sc. Thesis Monograph · Steps 00–10 Complete (Tag <code>v1.0</code>)
                     </div>
                   </div>
@@ -231,7 +277,14 @@
               </p>
 
               <div class="cta-row">
-                <button class="btn btn-primary" type="button" data-goto="2">Open Chapter 02: Abstract &amp; Threat Model &rarr;</button>
+                <button class="btn btn-primary" type="button" data-goto="2">
+                  <span>Open Chapter 02: Abstract &amp; Threat Model</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </button>
                 <button class="btn btn-outline" type="button" data-goto="7">Jump to Ch. 07: Live SDN Testbed</button>
                 <a class="btn btn-outline" href="Thesis-Poster-TrustFed-Presentationv2-4-by-3.pdf" target="_blank"
                   rel="noopener">Thesis Poster (4:3 PDF)</a>
@@ -249,7 +302,7 @@
                   <span class="meta-cell-sub">Lecturer, Dept. of IRE · UFTB</span>
                 </div>
                 <div>
-                  <span class="meta-cell-label">Open-Source &amp; Live DOI-Style Portal</span>
+                  <span class="meta-cell-label">Open-Source &amp; Live Portal</span>
                   <span class="meta-cell-val">trustfed.naimurrashid.dev</span>
                   <span class="meta-cell-sub">MIT License · Python 3.12 + PyTorch + OS-Ken</span>
                 </div>
@@ -261,7 +314,7 @@
           <div class="kpi-grid">
             <div class="kpi-card">
               <span class="kpi-label">Clean Non-IID FedAvg F1</span>
-              <span class="kpi-value grad-text" id="kpiFedAvg">99.13 ± 0.06%</span>
+              <span class="kpi-value kpi-value-primary" id="kpiFedAvg">99.13 ± 0.06%</span>
               <span class="kpi-note" id="kpiCentralizedNote">Centralized GRU: 99.74% · InSDN Natural N=3</span>
             </div>
 
@@ -279,7 +332,7 @@
 
             <div class="kpi-card">
               <span class="kpi-label">48-Bit Packed SecAgg Wire Cost</span>
-              <span class="kpi-value" id="kpiWire">1.26× – 1.29×</span>
+              <span class="kpi-value" id="kpiWire">1.26x – 1.29x</span>
               <span class="kpi-note">Plain FedAvg wire ratio across N = 3 to N = 20 tenants</span>
             </div>
 
@@ -297,9 +350,9 @@
           </div>
 
           <div class="callout callout-ok">
-            <strong>How to navigate this Research Book:</strong> Use the left spine or bottom <em>Previous / Next</em>
-            page-turner to read sequentially like a thesis monograph, click any figure to open a crisp high-resolution zoom
-            viewer, or click <strong>Scroll All</strong> in the header for print/continuous reading.
+            <strong>How to navigate this Research Book:</strong> Use the chapter spine or bottom <em>Previous / Next</em>
+            page-turner to read sequentially like a thesis monograph, tap any figure to open a crisp zoom viewer, or
+            select <strong>Scroll All</strong> in the header for continuous reading.
           </div>
         </article>
 
@@ -327,13 +380,13 @@
               scaling), and silent aggregation manipulation.
             </p>
             <p style="margin-top:10px;">
-              <strong>TrustFed-SDN</strong> unifies four coordinated mechanisms over a shared 3-layer Bi-Directional /
-              1-layer sequence GRU detector (43,554 parameters on InSDN): (1) density-aware Adaptive R&eacute;nyi Differential
-              Privacy (DP-SGD) calibrating per-tenant privacy budgets via sample-volume weighting, (2) two-stage
-              cosine-clustering plus coordinate-wise trimmed mean / median Byzantine filtering, (3) 48-bit quantized
-              pairwise Diffie-Hellman Secret Aggregation in Z<sub>q</sub> (<em>q = 2<sup>61</sup>&minus;1</em>) backed by
-              SHA-256 hash commitments and Ed25519 digital signatures, and (4) closed-loop OpenFlow 1.3 Open vSwitch flow
-              mitigation orchestrated via OS-Ken 3.0.1 controllers.
+              <strong>TrustFed-SDN</strong> unifies four coordinated mechanisms over a shared sequence GRU detector
+              (43,554 parameters on InSDN): (1) density-aware Adaptive R&eacute;nyi Differential Privacy (DP-SGD)
+              calibrating per-tenant privacy budgets via sample-volume weighting, (2) two-stage cosine-clustering plus
+              coordinate-wise trimmed mean / median Byzantine filtering, (3) 48-bit quantized pairwise X25519 + SHAKE-256
+              Secret Aggregation in Z<sub>q</sub> (<em>q = 2<sup>61</sup> &minus; 1</em>) backed by SHA-256 Merkle
+              commitments and Ed25519 digital signatures, and (4) closed-loop OpenFlow 1.3 Open vSwitch flow mitigation
+              orchestrated via OS-Ken 3.0.1 controllers.
             </p>
           </div>
 
@@ -359,7 +412,7 @@
               <h4>3. Untrusted Wire &amp; Tampering</h4>
               <p>
                 Active middleboxes or corrupted relays alter ciphertext shares, substitute commitments, or forge
-                aggregation transcripts. Clients reject any global model whose SHA-256 transcript commitment or Ed25519
+                aggregation transcripts. Clients reject any global model whose SHA-256 Merkle commitment or Ed25519
                 server signature fails local verification.
               </p>
             </div>
@@ -386,7 +439,7 @@
                   <td><span class="tag-no">No (21.7% F1)</span></td>
                   <td><span class="tag-no">No</span></td>
                   <td><span class="tag-no">No</span></td>
-                  <td>1.00&times;</td>
+                  <td>1.00x</td>
                   <td><span class="tag-no">Offline only</span></td>
                 </tr>
                 <tr>
@@ -395,7 +448,7 @@
                   <td><span class="tag-no">No (30.3% F1)</span></td>
                   <td><span class="tag-partial">Uniform eps</span></td>
                   <td><span class="tag-no">No</span></td>
-                  <td>1.00&times;</td>
+                  <td>1.00x</td>
                   <td><span class="tag-no">No</span></td>
                 </tr>
                 <tr>
@@ -404,7 +457,7 @@
                   <td><span class="tag-yes">Yes</span></td>
                   <td><span class="tag-no">No</span></td>
                   <td><span class="tag-no">No</span></td>
-                  <td>1.00&times;</td>
+                  <td>1.00x</td>
                   <td><span class="tag-no">No</span></td>
                 </tr>
                 <tr>
@@ -413,7 +466,7 @@
                   <td><span class="tag-partial">Limited</span></td>
                   <td><span class="tag-no">No</span></td>
                   <td><span class="tag-yes">On-chain</span></td>
-                  <td>&gt; 10&times;–50&times;</td>
+                  <td>&gt; 10x–50x</td>
                   <td><span class="tag-no">Seconds/min</span></td>
                 </tr>
                 <tr class="row-highlight">
@@ -422,7 +475,7 @@
                   <td><span class="tag-yes">100% Mal. Rej.</span></td>
                   <td><span class="tag-yes">Yes (51.2% MIA)</span></td>
                   <td><span class="tag-yes">100% (1,500/1,500)</span></td>
-                  <td>1.26&times; – 1.29&times;</td>
+                  <td>1.26x – 1.29x</td>
                   <td><span class="tag-yes">27.38 ms OVS</span></td>
                 </tr>
               </tbody>
@@ -445,7 +498,8 @@
           </div>
 
           <div class="figure-card">
-            <div class="figure-viewport" data-title="TrustFed-SDN High-Level Methodology Architecture"
+            <div class="figure-viewport figure-viewport-methodology"
+              data-title="TrustFed-SDN High-Level Methodology Architecture"
               data-source="06_Branding_and_Assets / TrustFed_SDN_Methodology.png">
               <img src="images/TrustFed_SDN_Methodology.png?v=2" alt="TrustFed-SDN Methodology Architecture Diagram">
               <span class="zoom-chip">Click to enlarge</span>
@@ -464,7 +518,7 @@
               <p>
                 Minority tenant partitions leak disproportionate membership signal under uniform budgets. TrustFed-SDN
                 scales each tenant's per-round privacy budget by √(|D<sub>k</sub>|/mean) with clipping norm <em>C</em> and
-                Opacus R&eacute;nyi accountability:
+                R&eacute;nyi DP accountability:
               </p>
               <div class="formula-box">
                 eps_k = eps_bar * clip(|D_k| / D_mean, 0.5, 1.5)^0.5 ; sigma_k = calibrated_rdp(eps_k, delta=1e-5)
@@ -481,87 +535,94 @@
               <p>
                 Unmasked pairwise-norm-bounded deltas undergo pairwise cosine similarity clustering (cutoff = 0.5) plus
                 coordinate trimmed mean (<em>&beta; = 0.2</em>). Surviving weights are fixed-point quantized at <em>Q = 20</em>
-                fractional bits, packed into 48-bit words, and blinded via X25519 Diffie-Hellman pairwise masks mod
+                fractional bits, packed into 48-bit words, and blinded via X25519 + SHAKE-256 pairwise masks mod
                 <em>q = 2<sup>61</sup> &minus; 1</em>:
               </p>
               <div class="formula-box">
-                u_tilde_k = Q20(w_k) + sum_{j != k} sign(j - k) * PRG(DH(sk_k, pk_j)) mod (2^61 - 1)
+                u_tilde_k = Q20(w_k) + sum_{j != k} sign(j - k) * SHAKE256(DH(sk_k, pk_j)) mod (2^61 - 1)
               </div>
               <p>
-                Each bundle includes a canonical SHA-256 commitment and an Ed25519 signature (1,781-byte aggregate proof
-                overhead), yielding a compact <strong>1.26&times;–1.29&times;</strong> wire ratio vs plain FedAvg.
+                Each bundle includes a canonical SHA-256 Merkle commitment and an Ed25519 signature (1,781-byte aggregate
+                proof overhead), yielding a compact <strong>1.26x–1.29x</strong> wire ratio vs plain FedAvg.
               </p>
             </div>
           </div>
 
-          <div class="figure-card">
-            <div class="figure-viewport" data-title="TrustFed-SDN Step-by-Step Operational Workflow"
-              data-source="07_Website / TrustFed-Workflow.png">
-              <img src="images/TrustFed-Workflow.png" alt="TrustFed-SDN Workflow Diagram">
-              <span class="zoom-chip">Click to enlarge</span>
+          <!-- Compact 2-Column Operational Flow & 7-Stage Pipeline -->
+          <div class="workflow-split">
+            <div class="workflow-stages-col">
+              <h3 class="section-subhead" style="margin-top:0;">Measured 7-Stage Live Round Pipeline Latency (<code>results/08_live/summary.json</code>)</h3>
+              <div class="stage-list" style="margin-bottom:0;">
+                <div class="stage-item">
+                  <span class="stage-num">01</span>
+                  <div>
+                    <h5>Local DP-SGD Update (384.452 ms)</h5>
+                    <p>GRU local epoch with gradient clipping &amp; cohort-calibrated Gaussian noise.</p>
+                  </div>
+                </div>
+                <div class="stage-item">
+                  <span class="stage-num">02</span>
+                  <div>
+                    <h5>Mask + Commit + Sign (11.162 ms)</h5>
+                    <p>48-bit fixed-point quantization, X25519 blinding &amp; Ed25519 signature.</p>
+                  </div>
+                </div>
+                <div class="stage-item">
+                  <span class="stage-num">03</span>
+                  <div>
+                    <h5>Tenant Upload (16.447 ms)</h5>
+                    <p>Packed ciphertext stream dispatched asynchronously over localhost FL TCP control plane.</p>
+                  </div>
+                </div>
+                <div class="stage-item">
+                  <span class="stage-num">04</span>
+                  <div>
+                    <h5>Server Agg &amp; Proof (13.487 ms)</h5>
+                    <p>Pairwise cancellation mod (2<sup>61</sup> &minus; 1), robust filter &amp; 1,781 B proof bundle.</p>
+                  </div>
+                </div>
+                <div class="stage-item">
+                  <span class="stage-num">05</span>
+                  <div>
+                    <h5>Global Download (54.840 ms)</h5>
+                    <p>Signed global weights &amp; Merkle transcript broadcast back to tenant agents.</p>
+                  </div>
+                </div>
+                <div class="stage-item">
+                  <span class="stage-num">06</span>
+                  <div>
+                    <h5>Client Verify (5.554 ms)</h5>
+                    <p>Zero-trust SHA-256 commitment &amp; Ed25519 signature check before swap.</p>
+                  </div>
+                </div>
+                <div class="stage-item">
+                  <span class="stage-num">07</span>
+                  <div>
+                    <h5>Controller Deploy (0.771 ms)</h5>
+                    <p>OS-Ken 3.0.1 updates tenant flow scorer &amp; dispatches OVS OpenFlow 1.3 drop rules.</p>
+                  </div>
+                </div>
+                <div class="stage-item">
+                  <span class="stage-num stage-num-tot">TOT</span>
+                  <div>
+                    <h5>Total Round Time: 486.714 ms</h5>
+                    <p>Sub-second authenticated FL round (DP 79.0% of wall time; crypto under 6.2%).</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="figure-caption">
-              <span class="figure-caption-text"><strong>Operational Flow:</strong> Sequential execution from local flow
-                telemetry to cryptographic proof verification and OpenFlow rule installation.</span>
-            </div>
-          </div>
 
-          <h3 class="section-subhead">Measured 7-Stage Live Round Pipeline Latency (<code>results/08_live/summary.json</code>)</h3>
-          <div class="stage-list">
-            <div class="stage-item">
-              <span class="stage-num">01</span>
-              <div>
-                <h5>Local DP-SGD Update (384.452 ms)</h5>
-                <p>GRU local epoch with Opacus-style gradient clipping &amp; Gaussian noise injection.</p>
-              </div>
-            </div>
-            <div class="stage-item">
-              <span class="stage-num">02</span>
-              <div>
-                <h5>Mask + Commit + Sign (11.162 ms)</h5>
-                <p>48-bit fixed-point quantization, DH pairwise blinding &amp; Ed25519 commitment signature.</p>
-              </div>
-            </div>
-            <div class="stage-item">
-              <span class="stage-num">03</span>
-              <div>
-                <h5>Tenant Upload (16.447 ms)</h5>
-                <p>Packed ciphertext stream dispatched asynchronously over localhost FL TCP control plane.</p>
-              </div>
-            </div>
-            <div class="stage-item">
-              <span class="stage-num">04</span>
-              <div>
-                <h5>Server Agg &amp; Proof (13.487 ms)</h5>
-                <p>Pairwise cancellation mod (2<sup>61</sup>&minus;1), robust defense check &amp; 1,781 B proof bundle.</p>
-              </div>
-            </div>
-            <div class="stage-item">
-              <span class="stage-num">05</span>
-              <div>
-                <h5>Global Download (54.840 ms)</h5>
-                <p>Signed global weights + cryptographic transcript broadcast back to tenant agents.</p>
-              </div>
-            </div>
-            <div class="stage-item">
-              <span class="stage-num">06</span>
-              <div>
-                <h5>Client Verify (5.554 ms)</h5>
-                <p>Zero-trust SHA-256 transcript &amp; Ed25519 signature verification before model swap.</p>
-              </div>
-            </div>
-            <div class="stage-item">
-              <span class="stage-num">07</span>
-              <div>
-                <h5>Controller Deploy (0.771 ms)</h5>
-                <p>OS-Ken 3.0.1 updates tenant flow scorer &amp; dispatches OVS OpenFlow 1.3 drop rules.</p>
-              </div>
-            </div>
-            <div class="stage-item">
-              <span class="stage-num">&Sigma;</span>
-              <div>
-                <h5>Total End-to-End Round: 486.714 ms</h5>
-                <p>Sub-second authenticated FL round (DP accounts for 79.0% of wall time; crypto &lt; 6.2%).</p>
+            <div class="workflow-figure-col">
+              <div class="figure-card figure-card-compact">
+                <div class="figure-viewport" data-title="TrustFed-SDN Step-by-Step Operational Workflow"
+                  data-source="07_Website / TrustFed-Workflow.png">
+                  <img src="images/TrustFed-Workflow.png" alt="TrustFed-SDN Operational Workflow Diagram">
+                  <span class="zoom-chip">Click to zoom</span>
+                </div>
+                <div class="figure-caption">
+                  <span class="figure-caption-text"><strong>Operational Flow:</strong> Compact end-to-end execution
+                    sequence (click to inspect full vertical detail).</span>
+                </div>
               </div>
             </div>
           </div>
@@ -869,7 +930,7 @@
                   <td>21.73%</td>
                   <td>71.42%</td>
                   <td>29.38%</td>
-                  <td>0.0% / 3.48 MB (1.00&times;)</td>
+                  <td>0.0% / 3.48 MB (1.00x)</td>
                 </tr>
                 <tr>
                   <td>R2 · + Adaptive DP</td>
@@ -878,7 +939,7 @@
                   <td>30.33%</td>
                   <td>61.55%</td>
                   <td>28.30%</td>
-                  <td>0.0% / 3.48 MB (1.00&times;)</td>
+                  <td>0.0% / 3.48 MB (1.00x)</td>
                 </tr>
                 <tr>
                   <td>R3 · + Robust Filter</td>
@@ -887,7 +948,7 @@
                   <td>75.97%</td>
                   <td>62.83%</td>
                   <td>64.71%</td>
-                  <td>100.0% / 3.48 MB (1.00&times;)</td>
+                  <td>100.0% / 3.48 MB (1.00x)</td>
                 </tr>
                 <tr class="row-highlight">
                   <td>R4 · Full TrustFed-SDN</td>
@@ -896,7 +957,7 @@
                   <td>75.97 ± 0.29%</td>
                   <td>61.55 ± 0.25%</td>
                   <td>64.71 ± 2.60%</td>
-                  <td>100.0% (0% FP) / 4.41 MB (1.27&times;)</td>
+                  <td>100.0% (0% FP) / 4.41 MB (1.27x)</td>
                 </tr>
               </tbody>
             </table>
@@ -930,7 +991,7 @@
               </div>
               <div class="figure-caption">
                 <span class="figure-caption-text"><strong>Fig. 7 (E8 — Scalability):</strong> Crypto round time grows
-                  gently (21.51 ms &rarr; 82.80 ms at N=20); wire ratio stays <strong>1.256&times;–1.290&times;</strong>;
+                  gently (21.51 ms to 82.80 ms at N=20); wire ratio stays <strong>1.256x–1.290x</strong>;
                   InSDN F1 holds <strong>98.68%</strong> at N=20.</span>
                 <a class="pdf-chip" href="images/figures/fig07_e8_scalability.pdf" target="_blank"
                   rel="noopener">PDF</a>
@@ -976,8 +1037,8 @@
                 </tr>
                 <tr>
                   <td>Wire Overhead</td>
-                  <td>~1.2&times;–1.5&times; plain FedAvg</td>
-                  <td>1.26&times; (N=3) to 1.27&times; (N=10), 1.29&times; (N=20) via 48-bit SecAgg + proofs</td>
+                  <td>~1.2x–1.5x plain FedAvg</td>
+                  <td>1.26x (N=3) to 1.27x (N=10), 1.29x (N=20) via 48-bit SecAgg + proofs</td>
                   <td><span class="tag-yes">Met</span></td>
                 </tr>
                 <tr>
@@ -1053,12 +1114,12 @@
                 <li><strong>Root Cause Found:</strong> Raw synthetic-trained models suffered a high raw False Block Rate
                   (<code>64.26%</code>) when evaluating live Ubuntu kernel socket flows (<em>F1 44.25%</em> zero-shot).</li>
                 <li><strong>Threshold Calibration Fix:</strong> Tuning decision threshold on a small validation window
-                  (<em>&theta; = 0.98</em>) drops live False Block Rate from <strong>64.26% &rarr; 2.70% (9/333)</strong>
+                  (<em>&theta; = 0.98</em>) drops live False Block Rate from <strong>64.26% to 2.70% (9/333)</strong>
                   while preserving high attack recall.</li>
                 <li><strong>3-Epoch Live Fine-Tune:</strong> Few-shot adaptation restores InSDN live F1 from
-                  <code>44.25% &rarr; 75.46 ± 0.14%</code> (ASEADOS: <code>33.46% &rarr; 74.62%</code>).</li>
+                  <code>44.25% to 75.46 ± 0.14%</code> (ASEADOS: <code>33.46% to 74.62%</code>).</li>
                 <li><strong>Data-Plane Overhead:</strong> <code>0.0%</code> intra-tenant loss (18/18), <code>100%</code>
-                  cross-tenant block (6/6), RTT <code>0.071 &rarr; 0.080 ms (+0.009 ms)</code>, controller RSS
+                  cross-tenant block (6/6), RTT <code>0.071 to 0.080 ms (+0.009 ms)</code>, controller RSS
                   <code>67.3 MB</code>.</li>
               </ul>
             </div>
@@ -1075,7 +1136,7 @@
             </div>
             <div class="figure-caption">
               <span class="figure-caption-text"><strong>Fig. 6 (E7 — Live Testbed):</strong> 7-stage mean round time
-                (486.714 ms), 100% OVS attack mitigation in 27.38 ms, and False Block Rate reduction (64.26% &rarr; 2.70%)
+                (486.714 ms), 100% OVS attack mitigation in 27.38 ms, and False Block Rate reduction (64.26% to 2.70%)
                 under calibrated thresholding.</span>
               <a class="pdf-chip" href="images/figures/fig06_e7_live_sdn_testbed.pdf" target="_blank"
                 rel="noopener">Vector PDF</a>
@@ -1131,7 +1192,7 @@
             </div>
             <div class="progress-row">
               <span class="step-badge">Step 06</span>
-              <span class="step-desc">48-Bit Pairwise Diffie-Hellman SecAgg + SHA-256 Commitments + Ed25519 Signed Transcripts</span>
+              <span class="step-desc">48-Bit Pairwise Diffie-Hellman SecAgg + SHA-256 Merkle Commitments + Ed25519 Signed Transcripts</span>
               <span class="status-done">Approved</span>
             </div>
             <div class="progress-row">
@@ -1163,7 +1224,7 @@
               <ul style="margin:8px 0 0;padding-left:18px;">
                 <li>Two-stage cosine + median clustering completely stops InSDN poisoning (<strong>75.97% vs 21.73%</strong>
                   in R4; <strong>0.00% ASR</strong> in E3).</li>
-                <li>48-bit quantized Diffie-Hellman masking keeps wire ratio compact at <strong>1.26&times;–1.29&times;</strong>
+                <li>48-bit quantized Diffie-Hellman masking keeps wire ratio compact at <strong>1.26x–1.29x</strong>
                   while catching <strong>1,500/1,500</strong> tampers with zero false alarms.</li>
                 <li>OS-Ken + OVS closed-loop isolation achieves <strong>27.38 ms</strong> rule deployment and
                   <strong>0% benign drop collateral</strong> after threshold calibration.</li>
@@ -1174,7 +1235,7 @@
               <strong>Open Limitations &amp; Failures Noted Honestly:</strong>
               <ul style="margin:8px 0 0;padding-left:18px;">
                 <li><strong>DP Utility Drop on 12-Round Non-IID:</strong> In E6 InSDN (eps_bar=4.0), clean macro-F1 drops
-                  from <code>96.26% &rarr; 76.04%</code> primarily due to benign-class threshold shift under noise.</li>
+                  from <code>96.26% to 76.04%</code> primarily due to benign-class threshold shift under noise.</li>
                 <li><strong>ASEADOS Adaptive Attack / Extreme Heterogeneity:</strong> Under Dir <em>&alpha;=0.1</em>
                   plain FedAvg degrades to <code>71.43%</code>, and on 20% ASEADOS backdoor E3 mean ASR hits
                   <code>59.88%</code> across heterogeneous seeds (compared to 0.00% on InSDN).</li>
@@ -1218,7 +1279,7 @@
                   <td><code>DEV-004</code></td>
                   <td>Testbed, Threshold &amp; Site</td>
                   <td>L3 VM isolation, 0.5 threshold &amp; SPA</td>
-                  <td>L1 namespace + OVS testbed, calibrated <em>&theta; = 0.98</em> (FBR 64.26% &rarr; 2.70%), and 10-chapter Digital Monograph</td>
+                  <td>L1 namespace + OVS testbed, calibrated <em>&theta; = 0.98</em> (FBR 64.26% to 2.70%), and 10-chapter Digital Monograph</td>
                 </tr>
               </tbody>
             </table>
@@ -1329,7 +1390,14 @@ make reproduce              # full 5-seed E1-E10 sweep + 8 publication figures +
                 <span class="ref-title">Privacy Protection Optimization Method for Cloud Platforms Based on Federated Learning and Homomorphic Encryption</span>
                 <span class="ref-meta">J. Wang &amp; Y. Wang · Sensors, vol. 26, no. 3, p. 890 · 2026</span>
               </span>
-              <span class="ref-doi">DOI &rarr;</span>
+              <span class="ref-doi">
+                <span>DOI</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="7" y1="17" x2="17" y2="7"></line>
+                  <polyline points="7 7 17 7 17 17"></polyline>
+                </svg>
+              </span>
             </a>
 
             <a class="ref-row" href="https://doi.org/10.1109/ICNC59896.2024.10556115" target="_blank" rel="noopener">
@@ -1338,7 +1406,14 @@ make reproduce              # full 5-seed E1-E10 sweep + 8 publication figures +
                 <span class="ref-title">Federated Learning-Based Solution for DDoS Detection in SDN</span>
                 <span class="ref-meta">J. Mateus &amp; G.-A. Lusilao Zodi · Proc. ICNC, Cape Town · 2024</span>
               </span>
-              <span class="ref-doi">DOI &rarr;</span>
+              <span class="ref-doi">
+                <span>DOI</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="7" y1="17" x2="17" y2="7"></line>
+                  <polyline points="7 7 17 7 17 17"></polyline>
+                </svg>
+              </span>
             </a>
 
             <a class="ref-row" href="https://doi.org/10.1109/TIFS.2022.3227435" target="_blank" rel="noopener">
@@ -1347,7 +1422,14 @@ make reproduce              # full 5-seed E1-E10 sweep + 8 publication figures +
                 <span class="ref-title">Privacy-Preserving and Verifiable Federated Learning Framework for Edge Computing</span>
                 <span class="ref-meta">H. Zhou, G. Yang, Y. Huang, H. Dai &amp; Y. Xiang · IEEE Trans. Inf. Forensics Secur., vol. 18, pp. 565–580 · 2023</span>
               </span>
-              <span class="ref-doi">DOI &rarr;</span>
+              <span class="ref-doi">
+                <span>DOI</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="7" y1="17" x2="17" y2="7"></line>
+                  <polyline points="7 7 17 7 17 17"></polyline>
+                </svg>
+              </span>
             </a>
 
             <a class="ref-row" href="https://doi.org/10.1109/JRFID.2023.3279329" target="_blank" rel="noopener">
@@ -1356,7 +1438,14 @@ make reproduce              # full 5-seed E1-E10 sweep + 8 publication figures +
                 <span class="ref-title">SDN-Based Federated Learning Approach for Satellite-IoT Framework to Enhance Data Security and Privacy in Space Communication</span>
                 <span class="ref-meta">R. Uddin &amp; S. A. P. Kumar · IEEE J. Radio Freq. Identif., vol. 7, pp. 424–440 · 2023</span>
               </span>
-              <span class="ref-doi">DOI &rarr;</span>
+              <span class="ref-doi">
+                <span>DOI</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="7" y1="17" x2="17" y2="7"></line>
+                  <polyline points="7 7 17 7 17 17"></polyline>
+                </svg>
+              </span>
             </a>
 
             <a class="ref-row" href="https://doi.org/10.3390/app13031431" target="_blank" rel="noopener">
@@ -1365,7 +1454,14 @@ make reproduce              # full 5-seed E1-E10 sweep + 8 publication figures +
                 <span class="ref-title">Low Rate DDoS Detection Using Weighted Federated Learning in SDN Control Plane in IoT Network</span>
                 <span class="ref-meta">M. N. Ali, M. Imran, M. S. ud din &amp; B.-S. Kim · Appl. Sci., vol. 13, no. 3, p. 1431 · 2023</span>
               </span>
-              <span class="ref-doi">DOI &rarr;</span>
+              <span class="ref-doi">
+                <span>DOI</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="7" y1="17" x2="17" y2="7"></line>
+                  <polyline points="7 7 17 7 17 17"></polyline>
+                </svg>
+              </span>
             </a>
 
             <a class="ref-row" href="https://doi.org/10.1109/TNSE.2021.3050781" target="_blank" rel="noopener">
@@ -1374,7 +1470,14 @@ make reproduce              # full 5-seed E1-E10 sweep + 8 publication figures +
                 <span class="ref-title">VFChain: Enabling Verifiable and Auditable Federated Learning via Blockchain Systems</span>
                 <span class="ref-meta">Z. Peng, J. Xu, X. Chu, S. Gao, Y. Yao, R. Gu &amp; Y. Tang · IEEE Trans. Netw. Sci. Eng., vol. 9, no. 1, pp. 173–186 · 2022</span>
               </span>
-              <span class="ref-doi">DOI &rarr;</span>
+              <span class="ref-doi">
+                <span>DOI</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="7" y1="17" x2="17" y2="7"></line>
+                  <polyline points="7 7 17 7 17 17"></polyline>
+                </svg>
+              </span>
             </a>
 
             <a class="ref-row" href="https://doi.org/10.1109/OJCOMS.2025.3644477" target="_blank" rel="noopener">
@@ -1383,7 +1486,14 @@ make reproduce              # full 5-seed E1-E10 sweep + 8 publication figures +
                 <span class="ref-title">A Survey on Security and Privacy in Federated Learning-Based Intrusion Detection Systems for 5G and Beyond Networks</span>
                 <span class="ref-meta">H. Rezaei, R. Taheri, E. Nowroozi, M. Hajizadeh, S. Shiaeles &amp; T. Bauschert · IEEE Open J. Commun. Soc., vol. 7, pp. 253–300 · 2026</span>
               </span>
-              <span class="ref-doi">DOI &rarr;</span>
+              <span class="ref-doi">
+                <span>DOI</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="7" y1="17" x2="17" y2="7"></line>
+                  <polyline points="7 7 17 7 17 17"></polyline>
+                </svg>
+              </span>
             </a>
 
             <a class="ref-row" href="https://doi.org/10.1007/s44443-026-00625-6" target="_blank" rel="noopener">
@@ -1392,7 +1502,14 @@ make reproduce              # full 5-seed E1-E10 sweep + 8 publication figures +
                 <span class="ref-title">Collaborative Intrusion Detection Systems in SD-WAN Enterprise Networks with Federated Learning: A Comprehensive Survey</span>
                 <span class="ref-meta">W. Almuseelem · J. King Saud Univ. Comput. Inf. Sci., vol. 38, p. 379 · 2026</span>
               </span>
-              <span class="ref-doi">DOI &rarr;</span>
+              <span class="ref-doi">
+                <span>DOI</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="7" y1="17" x2="17" y2="7"></line>
+                  <polyline points="7 7 17 7 17 17"></polyline>
+                </svg>
+              </span>
             </a>
           </div>
         </article>
@@ -1431,7 +1548,15 @@ make reproduce              # full 5-seed E1-E10 sweep + 8 publication figures +
               </div>
               <span class="team-role">Co-Researcher</span>
               <h3 class="team-name">
-                <a href="https://naimurrashid.dev/" target="_blank" rel="noopener">MD Naimur Rashid &#8599;</a>
+                <a class="ext-name-link" href="https://naimurrashid.dev/" target="_blank" rel="noopener">
+                  <span>MD Naimur Rashid</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                </a>
               </h3>
               <p class="team-id">Student ID 2101042</p>
               <p class="team-bio">
@@ -1460,7 +1585,7 @@ make reproduce              # full 5-seed E1-E10 sweep + 8 publication figures +
             <div>
               <div class="badge-row" style="margin-bottom:10px;">
                 <span class="badge badge-ok">Decoder Verified · Zero RS Syndrome</span>
-                <span class="badge">QR Version 4-H · 33&times;33 · 30% ECC</span>
+                <span class="badge">QR Version 4-H · 33x33 · 30% ECC</span>
               </div>
               <h3 style="margin:0 0 8px;font-family:var(--font-head);">Print-Grade Verified Thesis QR &amp; Defense Poster</h3>
               <p style="margin:0 0 14px;font-size:0.9rem;color:var(--text-dim);">
@@ -1490,7 +1615,11 @@ make reproduce              # full 5-seed E1-E10 sweep + 8 publication figures +
         <footer class="page-turn-footer">
           <div class="page-turn-row">
             <button id="prevPageBtn" class="turn-btn prev" type="button" disabled>
-              <span aria-hidden="true">&larr;</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
               <span>
                 <span class="turn-dir">Previous Page</span>
                 <span id="prevPageTitle" class="turn-label">Front Cover</span>
@@ -1515,13 +1644,17 @@ make reproduce              # full 5-seed E1-E10 sweep + 8 publication figures +
                 <span class="turn-dir">Next Page</span>
                 <span id="nextPageTitle" class="turn-label">Ch. 02 · Abstract, Threat Model &amp; Gap</span>
               </span>
-              <span aria-hidden="true">&rarr;</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
             </button>
           </div>
 
           <div class="keyboard-hint">
-            Tip: Press <strong>&larr; / &rarr;</strong> arrow keys to turn book pages, click any figure to zoom, or click
-            <strong>Scroll All</strong> in the header to read continuously.
+            Tip: Use Left / Right arrow keys to turn book pages, tap any figure to zoom, or toggle
+            <strong>Scroll All</strong> in the header for continuous reading.
           </div>
         </footer>
 
@@ -1534,7 +1667,14 @@ make reproduce              # full 5-seed E1-E10 sweep + 8 publication figures +
     <div class="lightbox-card">
       <div class="lightbox-head">
         <span id="lightboxTitle" class="lightbox-title">Figure Preview</span>
-        <button id="lightboxCloseBtn" class="mini-nav-btn" type="button">Close &times;</button>
+        <button id="lightboxCloseBtn" class="mini-nav-btn" type="button">
+          <span>Close</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
       <div class="lightbox-body">
         <img id="lightboxImg" src="" alt="Expanded thesis figure">
