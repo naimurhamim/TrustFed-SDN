@@ -7,9 +7,6 @@ on:
     paths:
       - PROGRESS.md
       - docs/TEAM_CHECKLIST.md
-    tags:
-      - "step-*-done"
-      - "v*"
   workflow_dispatch:
     inputs:
       step:
@@ -20,6 +17,10 @@ on:
         description: "Optional custom note to include in the message"
         required: false
         default: ""
+
+concurrency:
+  group: telegram-notify-${{ github.sha }}
+  cancel-in-progress: true
 
 jobs:
   notify:

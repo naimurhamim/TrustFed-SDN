@@ -1,12 +1,12 @@
 # ruff: noqa: E501
-"""Generate a structured, publication-grade PDF Progress Report (Steps 00 to 03)
+"""Generate a structured, publication-grade PDF Progress Report (Steps 00 to 10, v1.0)
 for the TrustFed-SDN thesis project using embedded high-resolution figures and
 Microsoft Edge / Chrome headless PDF rendering.
 
 Outputs:
-- `d:/StudyFolder/UFTB/study backup/4th year/Thesis/TrustFed_SDN_Progress_Report_Step00_to_Step03.pdf`
-- `d:/StudyFolder/UFTB/study backup/4th year/Thesis/TrustFed-SDN/docs/TrustFed_SDN_Progress_Report_Step00_to_Step03.pdf`
-(Automatically removes older `TrustFed_SDN_Progress_Report_Step00_to_Step02.pdf` copies.)
+- `d:/StudyFolder/UFTB/study backup/4th year/Thesis/TrustFed_SDN_Progress_Report_Step00_to_Step10.pdf`
+- `d:/StudyFolder/UFTB/study backup/4th year/Thesis/TrustFed-SDN/docs/TrustFed_SDN_Progress_Report_Step00_to_Step10.pdf`
+(Automatically removes older `Step00_to_Step02` / `Step00_to_Step03` PDF copies.)
 """
 
 from __future__ import annotations
@@ -62,16 +62,29 @@ def build_report_html() -> str:
     fl_scale_uri = img_to_data_uri(
         REPO_ROOT / "results" / "03_fedavg" / "non_iid_and_scalability_comparison.png"
     )
+    fig02_uri = img_to_data_uri(REPO_ROOT / "figures" / "fig02_e3_poisoning_robustness.png")
+    fig03_uri = img_to_data_uri(REPO_ROOT / "figures" / "fig03_e4_adaptive_dp_mia.png")
+    fig04_uri = img_to_data_uri(REPO_ROOT / "figures" / "fig04_e5_verifiable_secagg.png")
+    fig05_uri = img_to_data_uri(REPO_ROOT / "figures" / "fig05_e6_ablation_ladder.png")
+    fig06_uri = img_to_data_uri(REPO_ROOT / "figures" / "fig06_e7_live_sdn_testbed.png")
+    fig07_uri = img_to_data_uri(REPO_ROOT / "figures" / "fig07_e8_scalability.png")
+    fig08_uri = img_to_data_uri(REPO_ROOT / "figures" / "fig08_e9_e10_transfer_sensitivity.png")
+    qr_uri = img_to_data_uri(REPO_ROOT / "figures" / "qr" / "trustfed_qr.png")
 
     logo_html = (
         f'<img src="{logo_uri}" alt="TrustFed-SDN Logo" class="cover-logo" />' if logo_uri else ""
+    )
+    qr_html = (
+        f'<img src="{qr_uri}" alt="TrustFed-SDN Official QR v4-H" style="width:94px;height:94px;border:1px solid #CBD5E1;border-radius:6px;padding:4px;background:#fff;" />'
+        if qr_uri
+        else ""
     )
 
     return rf"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TrustFed-SDN — Thesis Implementation Progress Report (Step 00 to Step 03)</title>
+  <title>TrustFed-SDN — Thesis Final Progress &amp; Release Report (Steps 00 to 10, v1.0)</title>
   <style>
     @page {{
       size: A4 portrait;
@@ -360,18 +373,18 @@ def build_report_html() -> str:
   <!-- ==================== PAGE 1: COVER, MILESTONES, STEP 00 & STEP 01.1 ==================== -->
   <div class="cover-banner">
     <div class="cover-left">
-      <div class="cover-badge">Undergraduate Thesis Progress Report &bull; Steps 00 &ndash; 03</div>
-      <h1 class="cover-title">TrustFed-SDN: Technical Implementation &amp; Empirical Report</h1>
+      <div class="cover-badge">Undergraduate Thesis Final Report &bull; Steps 00 &ndash; 10 (Release v1.0)</div>
+      <h1 class="cover-title">TrustFed-SDN: Complete Implementation &amp; Empirical Report</h1>
       <p class="cover-subtitle">
         Privacy-Preserving, Verifiable, and Poisoning-Robust Federated Learning for Cross-Tenant Threat Detection in SDN-Enabled Multi-Tenant Cloud Networks
       </p>
       <div class="cover-meta-grid">
         <div><strong>Team:</strong> MD Naimur Rashid, Pritom Kumar Bhowmik, Saurav Chandra Das</div>
-        <div><strong>Date:</strong> November 2026</div>
-        <div><strong>Git Tags:</strong> <code>step-00-done</code> <code>step-01-done</code> <code>step-02-done</code> <code>step-03-done</code></div>
+        <div><strong>Release Date:</strong> November 15, 2026</div>
+        <div><strong>Git Tags:</strong> <code>step-00-done</code> &ndash; <code>step-10-done</code>, <code>v1.0</code></div>
         <div><strong>GitHub:</strong> <code>github.com/naimurhamim/TrustFed-SDN</code></div>
         <div><strong>Website:</strong> <code>trustfed.naimurrashid.dev</code></div>
-        <div><strong>Quality Gate:</strong> <code>31 / 31 pytest passed</code> (<code>make check</code> OK)</div>
+        <div><strong>Quality Gate:</strong> <code>75 / 75 pytest passed</code> (<code>make check</code> OK)</div>
       </div>
     </div>
     {logo_html}
@@ -382,37 +395,79 @@ def build_report_html() -> str:
     <div class="milestone-card done">
       <div class="m-left">
         <span class="m-step">Step 00</span>
-        <span class="m-title">Environment Setup &amp; SDN Testbed Smoke Test</span>
+        <span class="m-title">Environment Setup &amp; SDN Smoke Test</span>
       </div>
-      <span class="m-status-done">&#10003; Completed (step-00-done)</span>
+      <span class="m-status-done">&#10003; Approved (step-00-done)</span>
     </div>
     <div class="milestone-card done">
       <div class="m-left">
         <span class="m-step">Step 01</span>
-        <span class="m-title">Dataset Cleaning, Feature Selection &amp; Non-IID Splits</span>
+        <span class="m-title">Data Cleaning, Features &amp; Non-IID Splits</span>
       </div>
-      <span class="m-status-done">&#10003; Completed (step-01-done)</span>
+      <span class="m-status-done">&#10003; Approved (step-01-done)</span>
     </div>
     <div class="milestone-card done">
       <div class="m-left">
         <span class="m-step">Step 02</span>
-        <span class="m-title">Centralized Baselines &amp; Local Model Selection (GRU)</span>
+        <span class="m-title">Centralized Baselines &amp; GRU Selection</span>
       </div>
-      <span class="m-status-done">&#10003; Completed (step-02-done)</span>
+      <span class="m-status-done">&#10003; Approved (step-02-done)</span>
     </div>
     <div class="milestone-card done">
       <div class="m-left">
         <span class="m-step">Step 03</span>
-        <span class="m-title">Federated Learning Core &amp; FedAvg Baseline (270 Runs)</span>
+        <span class="m-title">FL Core &amp; FedAvg Benchmark (270 Runs)</span>
       </div>
-      <span class="m-status-done">&#10003; Completed (step-03-done)</span>
+      <span class="m-status-done">&#10003; Approved (step-03-done)</span>
     </div>
-    <div class="milestone-card active">
+    <div class="milestone-card done">
       <div class="m-left">
         <span class="m-step">Step 04</span>
-        <span class="m-title">Poisoning Attacks &amp; Robust Aggregation</span>
+        <span class="m-title">Poisoning &amp; Robust Aggregation (660 Runs)</span>
       </div>
-      <span class="m-status-proc">&#9679; Next Up (04.1 Ready)</span>
+      <span class="m-status-done">&#10003; Approved (step-04-done)</span>
+    </div>
+    <div class="milestone-card done">
+      <div class="m-left">
+        <span class="m-step">Step 05</span>
+        <span class="m-title">Adaptive Per-Tenant DP &amp; MIA Defense</span>
+      </div>
+      <span class="m-status-done">&#10003; Approved (step-05-done)</span>
+    </div>
+    <div class="milestone-card done">
+      <div class="m-left">
+        <span class="m-step">Step 06</span>
+        <span class="m-title">Verifiable 48-Bit SecAgg (1,500 Trials)</span>
+      </div>
+      <span class="m-status-done">&#10003; Approved (step-06-done)</span>
+    </div>
+    <div class="milestone-card done">
+      <div class="m-left">
+        <span class="m-step">Step 07</span>
+        <span class="m-title">Ubuntu 22.04 SDN Testbed &amp; Live Flows</span>
+      </div>
+      <span class="m-status-done">&#10003; Approved (step-07-done)</span>
+    </div>
+    <div class="milestone-card done">
+      <div class="m-left">
+        <span class="m-step">Step 08</span>
+        <span class="m-title">Live HTTP FL &amp; OVS Drop Mitigation</span>
+      </div>
+      <span class="m-status-done">&#10003; Approved (step-08-done)</span>
+    </div>
+    <div class="milestone-card done">
+      <div class="m-left">
+        <span class="m-step">Step 09</span>
+        <span class="m-title">Full Evaluation E1&ndash;E10, Figures &amp; Tables</span>
+      </div>
+      <span class="m-status-done">&#10003; Approved (step-09-done)</span>
+    </div>
+    <div class="milestone-card done" style="grid-column: span 2;">
+      <div class="m-left">
+        <span class="m-step">Step 10</span>
+        <span class="m-title">Research Monograph Website, QR v4-H, Release Audit &amp; Packaging</span>
+      </div>
+      <span class="m-status-done">&#10003; Approved (step-10-done / v1.0)</span>
     </div>
   </div>
 
@@ -1051,14 +1106,230 @@ def build_report_html() -> str:
     <div class="fig-caption">Fig 4c. 30-Round FedAvg Convergence Curves vs. Centralized Upper Bound &amp; Local-Only Lower Bound (5 Seeds)</div>
   </div>
 
-  <h2 class="section-title" style="margin-top: 2px; margin-bottom: 2px;">
-    5. Repository Sync, Live Website Tracker &amp; Next Steps (Step 04)
-    <span class="step-pill">Ready for Step 04</span>
+  <!-- ==================== PAGE 6: STEPS 04, 05 & 06 (POISONING, DP & VERIFIABLE SECAGG) ==================== -->
+  <div class="page-break"></div>
+
+  <h2 class="section-title">
+    5. Step 04 &ndash; Step 06 &mdash; Byzantine Defense, Adaptive DP-SGD &amp; Verifiable SecAgg
+    <span class="step-pill">Tags: step-04-done .. step-06-done</span>
   </h2>
-  <ul class="compact-list" style="font-size: 7.7pt;">
-    <li><strong>GitHub Sync &amp; Verification:</strong> All Step 00&ndash;03 code, unit tests (<code>31/31 passed</code>), configs, and Markdown logs are committed and tagged <code>step-00-done</code>, <code>step-01-done</code>, <code>step-02-done</code>, and <code>step-03-done</code> on <code>origin/main</code>.</li>
-    <li><strong>Next Immediate Action (Step 04):</strong> Implement poisoning attacks (label flipping, feature-trigger backdoor, update scaling/sign-flip) in <code>trustfed/attacks/</code> and robust aggregators (coordinate-wise trimmed mean, cosine-similarity clustering filter) in <code>trustfed/aggregation/</code>.</li>
-  </ul>
+  <p>
+    Across Steps 04&ndash;06 (<code>660</code> poisoning runs, <code>220</code> DP+MIA runs, and <code>1,500</code> adversarial tamper trials), we built the three core privacy and integrity modules in <code>trustfed/attacks/</code>, <code>trustfed/aggregation/</code>, <code>trustfed/privacy/</code>, and <code>trustfed/verify/</code>:
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Module &amp; Experiment</th>
+        <th>Configuration</th>
+        <th>Baseline / Attack Effect</th>
+        <th>TrustFed-SDN Defense Result (5 Seeds)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="highlight-row">
+        <td><strong>Step 04 (E3): Poisoning Defense</strong><br/><code>Cosine Clustering</code></td>
+        <td><code>InSDN</code> &amp; <code>ASEADOS</code>, <code>Dir &alpha;=0.5, N=10</code>, 20% &amp; 30% Byzantine</td>
+        <td>FedAvg collapses to <code>53.45%</code> (Label-Flip), <code>25.09%</code> (Scaling), <code>99.96%</code> Backdoor ASR on InSDN 20%</td>
+        <td><strong><code>98.53 &plusmn; 0.07%</code></strong> Macro-F1 at 20% (<code>98.51%</code> at 30%), <strong><code>0.00%</code> ASR</strong> (InSDN, <code>p=0.0625</code>); <code>74.81%</code> F1 on ASEADOS</td>
+      </tr>
+      <tr>
+        <td><strong>Step 05 (E4): Adaptive DP-SGD</strong><br/><code>RDP Accountant + MIA</code></td>
+        <td><code>mean &epsilon;&#772;=4.0</code> &amp; <code>2.0</code>; sensitivity-weighted Finance <code>&epsilon;&#8321;=2.85</code></td>
+        <td>No-DP rare Finance cohort MIA AUC: <code>57.31%</code> (InSDN), <code>66.17%</code> (ASEADOS)</td>
+        <td><strong><code>97.14 &plusmn; 1.08%</code></strong> F1 (vs <code>97.16%</code> Uniform), Finance MIA <strong><code>54.27%</code></strong> (Full <strong><code>51.18%</code></strong> InSDN; ASEADOS <code>57.25%</code>)</td>
+      </tr>
+      <tr class="highlight-row">
+        <td><strong>Step 06 (E5): Verifiable SecAgg</strong><br/><code>Q=20</code>, 48-Bit + Merkle/Ed25519</td>
+        <td>5 tamper modes &times; 300 trials + 300 honest rounds</td>
+        <td>Quantization RMSE <code>2.74e-07</code> vs Float32 FedAvg (<code>99.53%</code> vs <code>99.67%</code>, <code>p=0.6250</code>)</td>
+        <td><strong><code>100.0%</code> tamper rejection (<code>1,500/1,500</code>)</strong>, <strong><code>0.0%</code> honest false alarm</strong>, <strong><code>1.256&times;&ndash;1.290&times;</code></strong> wire overhead</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="fig-grid-2">
+    <div class="fig-box">
+      <img src="{fig02_uri}" alt="Step 04 Poisoning Robustness" />
+      <div class="fig-caption">Fig 5a. E3 Poisoning Attacks vs. Cosine Clustering &amp; Trimmed Mean (InSDN &amp; ASEADOS)</div>
+    </div>
+    <div class="fig-box">
+      <img src="{fig03_uri}" alt="Step 05 Adaptive DP and MIA" />
+      <div class="fig-caption">Fig 5b. E4 Adaptive Per-Tenant DP-SGD Utility vs. Rare-Cohort MIA Privacy</div>
+    </div>
+  </div>
+  <div class="fig-box wide" style="margin-bottom: 4px;">
+    <img src="{fig04_uri}" alt="Step 06 Verifiable Secure Aggregation" style="max-height: 120px;" />
+    <div class="fig-caption">Fig 5c. E5 Verifiable 48-Bit Secure Aggregation: Tamper Detection (1,500 Trials) &amp; Float32 Equivalence</div>
+  </div>
+
+  <!-- ==================== PAGE 7: STEPS 07 & 08 (LIVE SDN TESTBED & INTEGRATION) ==================== -->
+  <div class="page-break"></div>
+
+  <h2 class="section-title">
+    6. Step 07 &amp; Step 08 &mdash; Live Multi-Tenant SDN Testbed &amp; OVS Mitigation
+    <span class="step-pill">Tags: step-07-done .. step-08-done</span>
+  </h2>
+  <p>
+    Executed in <strong>Ubuntu 22.04 LTS</strong> (<code>Mininet 2.3.0</code> + <code>Open vSwitch 2.17.12</code> + <code>OS-Ken 3.0.1</code>) using L1 network namespaces (<code>t1..t3</code>) and per-tenant OpenFlow 1.3 switches (<code>br_t1..br_t3</code>, safe supernet <code>10.10.0.0/16</code>) paired with <code>HTTP/JSON + 48-bit packed binary RPC</code> and off-event-loop OVS flow deployment (<code>ModelDeployController13</code>).
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Live Testbed Benchmark</th>
+        <th>Measured Evidence (5 Seeds / Live Ubuntu VM)</th>
+        <th>Latency / Overhead / Calibration Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>L1 Slice Isolation &amp; Capture (Step 07)</strong></td>
+        <td><code>18/18</code> intra-tenant probes (<code>0.0%</code> loss); <code>6/6</code> cross-tenant blocked (<code>100%</code>); <strong><code>4,392</code></strong> labeled live flows</td>
+        <td>Zero-shot InSDN transfer <code>44.25%</code> F1 &rarr; Adapted <strong><code>75.46%</code></strong> F1 (<code>87.28%</code> AUC)</td>
+      </tr>
+      <tr class="highlight-row">
+        <td><strong>Live HTTP FL + SecAgg (Step 08, E7)</strong></td>
+        <td>Clean <code>64.26 &plusmn; 1.13%</code> F1 (<code>92.87%</code> ADR); <code>33%</code> scaling defended <strong><code>53.72%</code> vs <code>31.43%</code></strong>; <strong><code>100%</code> (45/45)</strong> attack reject; <strong><code>4/4</code></strong> tamper reject</td>
+        <td>Mean round latency: <strong><code>486.71 ms</code></strong>; wire <code>5.24 MB</code>; <code>0/11</code> honest false alarms</td>
+      </tr>
+      <tr>
+        <td><strong>Ubuntu VM OVS Flow Mitigation (Step 08)</strong></td>
+        <td><strong><code>100.0%</code> (3/3)</strong> attacker drop block; <strong><code>0.0%</code> (3/3)</strong> benign collateral block; TTL <code>60s/120s</code> auto-expiry verified</td>
+        <td><code>27.38 ms</code> drop-rule install; <code>+0.009 ms</code> ping delta; threshold <code>&theta;=0.98</code> cuts raw FBR <code>64.26% &rarr; 2.70% (9/333)</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="fig-box wide">
+    <img src="{fig06_uri}" alt="Step 08 Live SDN Testbed Integration" style="max-height: 210px;" />
+    <div class="fig-caption">Fig 6. E7 Live Multi-Tenant SDN Integration, Per-Stage Round Latency &amp; OVS Drop-Rule Verification</div>
+  </div>
+
+  <!-- ==================== PAGE 8: STEP 09 (FULL EVALUATION & ABLATION) ==================== -->
+  <div class="page-break"></div>
+
+  <h2 class="section-title">
+    7. Step 09 &mdash; Master 5-Rung Ablation Ladder, Scalability &amp; Statistics (E6, E8, E10)
+    <span class="step-pill">Tag: step-09-done</span>
+  </h2>
+  <p>
+    Controlled GPU benchmark across 5 seeds (<code>12</code> rounds, <code>N=10</code>, <code>&epsilon;&#772;=4.0</code>, <code>C=0.5</code>, <code>Q=20</code>, <code>20%</code> poisoning) isolating the exact marginal impact of Adaptive DP (<code>R2</code>), Cosine Clustering (<code>R3</code>), and Verifiable SecAgg with pre-unmask screening (<code>R4</code>), plus <code>N=3..20</code> scalability (<code>E8</code>) and <code>33</code> paired two-sided Wilcoxon signed-rank tests (unanimous <code>5/5</code> seed wins attain exact <code>p = 0.0625</code>).
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Dataset</th>
+        <th>Ablation Rung</th>
+        <th class="num">Clean F1 (%)</th>
+        <th class="num">Label-Flip F1 (%)</th>
+        <th class="num">Backdoor F1 (%)</th>
+        <th class="num">Scaling F1 (%)</th>
+        <th class="num">Mal. Rej.</th>
+        <th class="num">Honest False Rej.</th>
+        <th class="num">Wire Ratio</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>InSDN</strong></td>
+        <td><code>R1</code> Plain FedAvg</td>
+        <td class="num">96.26 &plusmn; 1.42</td>
+        <td class="num">18.43 &plusmn; 13.07</td>
+        <td class="num">79.73 &plusmn; 12.21</td>
+        <td class="num">21.73 &plusmn; 8.70</td>
+        <td class="num">0.0%</td>
+        <td class="num">0.0%</td>
+        <td class="num">1.00&times;</td>
+      </tr>
+      <tr>
+        <td><strong>InSDN</strong></td>
+        <td><code>R2</code> + Adaptive DP</td>
+        <td class="num">76.04 &plusmn; 0.22</td>
+        <td class="num">38.76 &plusmn; 9.08</td>
+        <td class="num">72.80 &plusmn; 3.93</td>
+        <td class="num">30.33 &plusmn; 14.10</td>
+        <td class="num">0.0%</td>
+        <td class="num">0.0%</td>
+        <td class="num">1.00&times;</td>
+      </tr>
+      <tr class="highlight-row">
+        <td><strong>InSDN</strong></td>
+        <td><strong><code>R4</code> Full TrustFed-SDN</strong></td>
+        <td class="num"><strong>76.04 &plusmn; 0.22</strong></td>
+        <td class="num"><strong>75.97 &plusmn; 0.29</strong></td>
+        <td class="num"><strong>75.97 &plusmn; 0.29</strong></td>
+        <td class="num"><strong>75.97 &plusmn; 0.29</strong></td>
+        <td class="num"><strong>100.0%</strong></td>
+        <td class="num"><strong>0.0%</strong></td>
+        <td class="num"><strong>~1.26&ndash;1.27&times;</strong></td>
+      </tr>
+      <tr>
+        <td><strong>ASEADOS</strong></td>
+        <td><code>R1</code> Plain FedAvg</td>
+        <td class="num">71.42 &plusmn; 3.41</td>
+        <td class="num">27.79 &plusmn; 7.67</td>
+        <td class="num">64.40 &plusmn; 7.25</td>
+        <td class="num">29.38 &plusmn; 2.74</td>
+        <td class="num">0.0%</td>
+        <td class="num">0.0%</td>
+        <td class="num">1.00&times;</td>
+      </tr>
+      <tr class="highlight-row">
+        <td><strong>ASEADOS</strong></td>
+        <td><strong><code>R4</code> Full TrustFed-SDN</strong></td>
+        <td class="num"><strong>61.55 &plusmn; 0.25</strong></td>
+        <td class="num"><strong>64.71 &plusmn; 2.60</strong></td>
+        <td class="num"><strong>64.71 &plusmn; 2.60</strong></td>
+        <td class="num"><strong>64.71 &plusmn; 2.60</strong></td>
+        <td class="num"><strong>100.0%</strong></td>
+        <td class="num"><strong>0.0%</strong></td>
+        <td class="num"><strong>~1.26&ndash;1.27&times;</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="fig-grid-2">
+    <div class="fig-box">
+      <img src="{fig05_uri}" alt="Step 09 Master 5-Rung Ablation Ladder" />
+      <div class="fig-caption">Fig 7a. E6 Five-Rung Ablation Ladder Across Clean &amp; Poisoned Regimes</div>
+    </div>
+    <div class="fig-box">
+      <img src="{fig07_uri}" alt="Step 09 Scalability N=3 to 20" />
+      <div class="fig-caption">Fig 7b. E8 Scalability (N=3..20): F1, Crypto Latency (21.51&ndash;82.80 ms) &amp; Wire Overhead</div>
+    </div>
+  </div>
+  <div class="fig-box wide" style="margin-bottom: 4px;">
+    <img src="{fig08_uri}" alt="Step 09 Transfer & Sensitivity Analysis" style="max-height: 112px;" />
+    <div class="fig-caption">Fig 7c. E9 Sim-to-Live Gap &amp; E10 Trimming (&beta;), DP Clip Norm (C), and Quantization (Q) Sensitivity</div>
+  </div>
+
+  <!-- ==================== PAGE 9: STEP 10 RELEASE, WEBSITE, QR & SUMMARY ==================== -->
+  <div class="page-break"></div>
+
+  <h2 class="section-title">
+    8. Step 10 &mdash; Research Monograph Portal, ISO/IEC 18004 QR &amp; Release v1.0
+    <span class="step-pill">Tag: step-10-done / v1.0</span>
+  </h2>
+
+  <div style="display:flex; gap:12px; align-items:flex-start; margin-bottom:6px;">
+    <div style="flex:1;">
+      <ul class="compact-list">
+        <li><strong>Interactive 10-Chapter Monograph Website (<code>https://trustfed.naimurrashid.dev/</code>):</strong> Standalone repository (<code>07_Website/trustfed-sdn-site/</code>) built in Obsidian Slate &amp; Oxford Alabaster themes with Plus Jakarta Sans + Inter + JetBrains Mono typography, dynamic hydration from <code>key_numbers.json</code>, zoomable <code>fig01..fig08</code> gallery + thesis defense poster, mobile-first layout, and an interactive draggable/touch-responsive SVG mini-robot companion (<code>#miniRobotWidget</code>).</li>
+        <li><strong>Cryptographically Verified Print QR Code (<code>scripts/make_qr.py</code>):</strong> Version <code>4-H</code> (<code>33 &times; 33</code> modules, mask <code>0</code>, <code>30%</code> ECC), verified via independent image sampler + BCH(15,5) + GF(256) Reed-Solomon syndrome check across all 4 RS blocks in <code>figures/qr/</code>.</li>
+        <li><strong>Release Hygiene &amp; Final Check (<code>make check</code>):</strong> Complete <code>README.md</code>, MIT <code>LICENSE</code>, <code>CITATION.cff</code>, <code>docs/{{ARCHITECTURE,REPRODUCE,FINAL_AUDIT,DEVIATIONS}}.md</code>, clean duplicate-free codebase (<code>site/</code> removed from main code repo), single-notification GitHub Actions CI + <code>bot_server.py</code> / Cloudflare Worker <code>worker.js</code>, and <strong><code>75 / 75</code> pytest tests passing</strong> with zero lint/format diffs.</li>
+      </ul>
+    </div>
+    <div style="text-align:center;">
+      {qr_html}
+      <div style="font-size:6.8pt; color:#475569; margin-top:2px; font-weight:600;">QR v4-H (RS Verified)</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Final Thesis Release Status (v1.0 &mdash; Complete):</strong> All 11 planned milestones (<code>Step 00</code> through <code>Step 10</code>) are implemented, empirically evaluated across <code>InSDN</code>, <code>ASEADOS-SDN-IoT (2026)</code>, <code>CICIDS2017</code>, and our live Ubuntu 22.04 OpenFlow 1.3 SDN testbed, audited honestly against limitations in <code>docs/FINAL_AUDIT.md</code> and <code>docs/RESULTS_SUMMARY.md</code>, and pushed cleanly to GitHub.
+  </div>
 
 </body>
 </html>
@@ -1068,13 +1339,15 @@ def build_report_html() -> str:
 def main() -> int:
     html_content = build_report_html()
     html_path = REPO_ROOT / "docs" / "_temp_progress_report.html"
-    pdf_docs_path = REPO_ROOT / "docs" / "TrustFed_SDN_Progress_Report_Step00_to_Step03.pdf"
-    pdf_root_path = THESIS_ROOT / "TrustFed_SDN_Progress_Report_Step00_to_Step03.pdf"
+    pdf_docs_path = REPO_ROOT / "docs" / "TrustFed_SDN_Progress_Report_Step00_to_Step10.pdf"
+    pdf_root_path = THESIS_ROOT / "TrustFed_SDN_Progress_Report_Step00_to_Step10.pdf"
 
-    # Remove older Step00_to_Step02 PDF files so the new PDF cleanly replaces them
+    # Remove older intermediate progress report PDFs so the complete v1.0 report replaces them cleanly
     for old_pdf in (
         REPO_ROOT / "docs" / "TrustFed_SDN_Progress_Report_Step00_to_Step02.pdf",
         THESIS_ROOT / "TrustFed_SDN_Progress_Report_Step00_to_Step02.pdf",
+        REPO_ROOT / "docs" / "TrustFed_SDN_Progress_Report_Step00_to_Step03.pdf",
+        THESIS_ROOT / "TrustFed_SDN_Progress_Report_Step00_to_Step03.pdf",
     ):
         if old_pdf.exists():
             old_pdf.unlink()

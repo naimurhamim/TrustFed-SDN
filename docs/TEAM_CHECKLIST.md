@@ -12,7 +12,7 @@
 - **Last Updated By:** `@Naimur`
 - **Date:** `2026-11-15`
 - **Active Step:** `Step 10 - Website, QR Code, Documentation, and Release` (`approved`, tagged `step-10-done` & `v1.0` — Thesis Release Complete)
-- **What Was Just Completed:** Built ISO/IEC 18004 QR generator + GF(256) decoder (`scripts/make_qr.py`, generating `v4-H` SVG/PNG/PDF + `qr_verification.json`), redesigned `site/` & `07_Website/trustfed-sdn-site/` as a dual-theme **10-Chapter Interactive Research Monograph** hydrating live KPIs from `data/key_numbers.json` with clickable `fig01..fig08` zoom & defense poster, added `qr` & `site-preview` targets (`Makefile` & `make.cmd`), authored `README.md`, `LICENSE`, `CITATION.cff`, `docs/ARCHITECTURE.md`, `docs/REPRODUCE.md`, `docs/FINAL_AUDIT.md`, and `DEV-004` (`docs/DEVIATIONS.md`), added `test_step10_qr_docs_site_and_release`, and verified clean `make format`, `make lint`, `make reproduce-quick`, and `make check`.
+- **What Was Just Completed:** Built ISO/IEC 18004 QR generator + GF(256) decoder (`scripts/make_qr.py`, generating `v4-H` SVG/PNG/PDF + `qr_verification.json` in `figures/qr/`), redesigned standalone website (`../07_Website/trustfed-sdn-site/`) as a dual-theme **10-Chapter Interactive Research Monograph** hydrating live KPIs from `data/key_numbers.json` with clickable `fig01..fig08` zoom, defense poster, and draggable interactive mini-robot companion (`#miniRobotWidget`), removed duplicate `TrustFed-SDN/site/`, updated `TrustFed_SDN_Progress_Report_Step00_to_Step10.pdf` and single-trigger Telegram CI (`telegram-notify.yml`), authored `README.md`, `LICENSE`, `CITATION.cff`, `docs/ARCHITECTURE.md`, `docs/REPRODUCE.md`, `docs/FINAL_AUDIT.md`, and `DEV-004` (`docs/DEVIATIONS.md`), and verified clean `make format`, `make lint`, and `make check` (`75/75` pytest).
 - **Next Task for Team:** All Steps `00`–`10` approved and tagged (`v1.0`). Pull latest `main` + tags (`git pull --tags`) and open `https://trustfed.naimurrashid.dev/`.
 
 ---
@@ -99,7 +99,7 @@
 
 ### Step 10 — Website, QR Code, Documentation, and Release (`docs/steps/STEP_10_website_docs_release.md`)
 - [x] `10.1` Confirm public visibility scope, dataset-license compliance, and open-source code license (`@Naimur`, `2026-11-15`)
-- [x] `10.2` Build responsive project website in `site/` loading all numbers dynamically from `results/final/key_numbers.json` (`@Naimur`, `2026-11-15`)
+- [x] `10.2` Build responsive project website in `../07_Website/trustfed-sdn-site/` loading all numbers dynamically from `key_numbers.json` (`@Naimur`, `2026-11-15`)
 - [x] `10.3` Deploy to `https://trustfed.naimurrashid.dev/` and verify high-res print QR code via `scripts/make_qr.py` (`@Naimur`, `2026-11-15`)
 - [x] `10.4` Complete `docs/ARCHITECTURE.md`, `docs/REPRODUCE.md`, `CITATION.cff`, `LICENSE`, and `docs/FINAL_AUDIT.md` (`@Naimur`, `2026-11-15`)
 - [x] `10.5` Verify fresh-clone `make reproduce-quick`, tag `v1.0` & `step-10-done`, and get final `approved step 10` (`@Naimur`, `2026-11-15`)

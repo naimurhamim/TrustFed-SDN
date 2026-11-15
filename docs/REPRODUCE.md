@@ -56,8 +56,8 @@ Run preprocessing & leakage checks (Step 01) once raw CSVs are placed:
 | `.\make.cmd check` / `make check` | Runs `ruff`, `black --check`, `pytest` suite & import check | ~5–15 sec | Terminal stdout (`exit 0`) |
 | `.\make.cmd reproduce-quick` | Runs fast end-to-end E1–E10 verification & rebuilds plots/tables from cached/smoke outputs | ~5–15 sec | `results/final/`, `figures/`, `tables/` |
 | `.\make.cmd reproduce` | Full 5-seed E1–E10 evaluation sweep, paired Wilcoxon tests, 8 PNG/PDF plots & LaTeX tables | ~25–90 min (GPU dependent) | `results/final/key_numbers.json`, `figures/fig01..08.*`, `tables/` |
-| `.\make.cmd qr` | Generates SVG, 1080px PNG, PDF QR for `https://trustfed.naimurrashid.dev/` & runs independent RS decoder check | ~1–2 sec | `site/assets/qr/`, `site/images/qr/` |
-| `.\make.cmd site-preview` | Serves the 10-chapter Research Monograph locally at `http://127.0.0.1:8080/` | Interactive | Local HTTP server (`site/`) |
+| `.\make.cmd qr` | Generates SVG, 1080px PNG, PDF QR for `https://trustfed.naimurrashid.dev/` & runs independent RS decoder check | ~1–2 sec | `figures/qr/`, `../07_Website/trustfed-sdn-site/images/qr/` |
+| `.\make.cmd site-preview` | Serves the 10-chapter Research Monograph locally at `http://127.0.0.1:8080/` | Interactive | Local HTTP server (`../07_Website/trustfed-sdn-site/`) |
 | `make demo` *(Ubuntu root)* | Boots OVS bridges `br_t1..br_t3`, namespaces `t1..t3`, OS-Ken 1.3 controller & closed-loop FL mitigation demo | ~30–60 sec | `results/08_live/summary.json` |
 
 ---

@@ -76,7 +76,6 @@ trustfed-sdn/
   sim/                # simulation runners (dataset-driven FL experiments)
   testbed/            # Mininet topology, RYU apps, traffic generators, VM scripts
   results/            # git-tracked small CSV/JSON summaries; large logs ignored
-  figures/  tables/   # generated PDF/PNG figures and LaTeX tables
-  site/               # project website source (Step 10)
+  figures/  tables/   # generated PDF/PNG figures (incl. figures/qr/) and LaTeX tables
   tests/
 ```
