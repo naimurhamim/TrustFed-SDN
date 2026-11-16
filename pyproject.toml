@@ -9,8 +9,8 @@ description = "Privacy-preserving, verifiable, poisoning-robust federated learni
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
-    { name = "MD Naimur Rashid" },
     { name = "Pritom Kumar Bhowmik" },
+    { name = "MD Naimur Rashid" },
     { name = "Saurav Chandra Das" },
 ]
 dependencies = [
