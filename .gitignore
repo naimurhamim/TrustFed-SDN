@@ -19,6 +19,8 @@ data/**
 !data/README.md
 !data/**/MANIFEST.md
 !data/**/.gitkeep
+!data/live/*.csv
+!data/live/*.json
 
 # Large experiment outputs (small CSV/JSON summaries in results/ stay tracked)
 results/**/*.log
