@@ -20,6 +20,12 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+# Append system dist-packages at the end of sys.path to access system Mininet
+# without shadowing any virtualenv packages (e.g. numpy, pandas).
+for p in ["/usr/lib/python3/dist-packages", "/usr/local/lib/python3/dist-packages"]:
+    if p not in sys.path and Path(p).exists():
+        sys.path.append(p)
+
 from testbed.capture.flow_extractor import (  # noqa: E402
     extract_features_for_dataset,
     extract_flows_from_pcap,

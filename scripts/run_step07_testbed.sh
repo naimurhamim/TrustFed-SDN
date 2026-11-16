@@ -440,7 +440,7 @@ fi
 
 if ! "${RYU_VENV}/bin/python" -c "import numpy, pandas, yaml, scapy" >/dev/null 2>&1; then
     echo "      Installing numpy, pandas, PyYAML, scapy into ${RYU_VENV}..."
-    "${RYU_VENV}/bin/python" -m pip install --quiet "numpy>=1.26" "pandas>=2.1" "PyYAML>=6.0" "scapy>=2.5"
+    "${RYU_VENV}/bin/python" -m pip install --quiet "numpy>=2.0.2" "pandas>=2.1" "PyYAML>=6.0" "scapy>=2.5"
 fi
 
 {
@@ -503,8 +503,7 @@ for idx in 0 1 2; do
 done
 
 echo "[4/5] Running multi-tenant Mininet capture & isolation verification..."
-SYS_SITE="$(python3 -c 'import site; print(":".join(site.getsitepackages()))' 2>/dev/null || echo '/usr/lib/python3/dist-packages')"
-PYTHONPATH="${ROOT_DIR}:${SYS_SITE}" "${RYU_VENV}/bin/python" "${DRIVER}"
+PYTHONPATH="${ROOT_DIR}" "${RYU_VENV}/bin/python" "${DRIVER}"
 
 echo "[5/5] Summary saved under ${RES_DIR} and ${LIVE_DIR}:"
 cat "${RES_DIR}/capture_summary.json"

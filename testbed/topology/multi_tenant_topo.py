@@ -15,8 +15,10 @@ from __future__ import annotations
 import argparse
 import ipaddress
 import subprocess
+import sys
 import time
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 
@@ -174,6 +176,9 @@ def _validate_topology_invariants() -> None:
 def start_mininet_topology(controller_ip: str = "127.0.0.1") -> Any:
     """Construct and start the multi-tenant Mininet + OVS network (Linux root only)."""
     _validate_topology_invariants()
+    for p in ["/usr/lib/python3/dist-packages", "/usr/local/lib/python3/dist-packages"]:
+        if p not in sys.path and Path(p).exists():
+            sys.path.append(p)
     from mininet.net import Mininet
     from mininet.node import OVSSwitch, RemoteController
     from mininet.topo import Topo

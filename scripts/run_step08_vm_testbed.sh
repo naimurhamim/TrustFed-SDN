@@ -69,7 +69,6 @@ for idx in 0 1 2; do
 done
 
 echo "[3/4] Running Step 08 live Mininet mitigation & responsiveness driver..."
-SYS_SITE="$(python3 -c 'import site; print(":".join(site.getsitepackages()))' 2>/dev/null || echo '/usr/lib/python3/dist-packages')"
-PYTHONPATH="${ROOT_DIR}:${SYS_SITE}" "${RYU_VENV}/bin/python" "${DRIVER}"
+PYTHONPATH="${ROOT_DIR}" "${RYU_VENV}/bin/python" "${DRIVER}"
 
 echo "[4/4] Live VM verification complete -> ${RES_DIR}/vm_live_mitigation.json"
