@@ -179,9 +179,26 @@ def start_mininet_topology(controller_ip: str = "127.0.0.1") -> Any:
     for p in ["/usr/lib/python3/dist-packages", "/usr/local/lib/python3/dist-packages"]:
         if p not in sys.path and Path(p).exists():
             sys.path.append(p)
+    import codecs
+
     from mininet.net import Mininet
-    from mininet.node import OVSSwitch, RemoteController
+    from mininet.node import Node, OVSSwitch, RemoteController
     from mininet.topo import Topo
+
+    # Ensure Mininet node shell reader handles non-UTF8 binary bytes cleanly
+    _orig_node_init = Node.__init__
+
+    def _safe_node_init(self, *args, **kwargs):
+        _orig_node_init(self, *args, **kwargs)
+        self.decoder = codecs.getincrementaldecoder("utf-8")("replace")
+
+    Node.__init__ = _safe_node_init
+
+    class SafeRemoteController(RemoteController):
+        """RemoteController that skips telnet-based checkListening to avoid UnicodeDecodeError."""
+
+        def checkListening(self) -> None:
+            pass
 
     class MultiTenantSDNTopo(Topo):
         def build(self) -> None:
@@ -218,7 +235,7 @@ def start_mininet_topology(controller_ip: str = "127.0.0.1") -> Any:
     for tenant in TOPOLOGY_SPEC:
         ctrl = net.addController(
             tenant.controller_name,
-            controller=RemoteController,
+            controller=SafeRemoteController,
             ip=controller_ip,
             port=tenant.controller_port,
         )
