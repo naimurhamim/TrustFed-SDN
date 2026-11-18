@@ -100,3 +100,31 @@ def test_installed_packages_and_report_formatting() -> None:
     text = format_status_report(fake_status)
     assert "UP TO DATE with GitHub" in text
     assert "7/50 sub-tasks completed" in text
+
+
+def test_build_push_message_formats_commit_and_files() -> None:
+    """Verify git push notification builder formats title, body, and changed files cleanly."""
+    from scripts.notify_telegram import build_push_message, collect_git_push_info
+
+    info = collect_git_push_info(Path(__file__).resolve().parents[1])
+    assert info["short_sha"]
+    assert info["subject"]
+
+    msg = build_push_message(
+        {
+            "short_sha": "abc1234",
+            "author": "Pritom",
+            "date": "2026-11-18",
+            "subject": "feat(demo): improve dashboard",
+            "body": "Added telemetry chart and updated docs.",
+            "commits": ["abc1234 feat(demo): improve dashboard (Pritom)"],
+            "changed_files": [("M", "demo/engine.py"), ("A", "demo/new.py")],
+            "commit_url": "https://github.com/naimurhamim/TrustFed-SDN/commit/abc1234",
+        },
+        actor="pritom",
+        branch="main",
+    )
+    assert "feat(demo): improve dashboard" in msg
+    assert "Added telemetry chart and updated docs." in msg
+    assert "[M] demo/engine.py" in msg
+    assert "@pritom" in msg

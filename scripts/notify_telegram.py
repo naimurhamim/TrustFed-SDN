@@ -18,6 +18,7 @@ import json
 import mimetypes
 import os
 import re
+import subprocess
 import sys
 import urllib.error
 import urllib.request
@@ -237,12 +238,160 @@ def build_message(
     return msg
 
 
-def build_inline_keyboard() -> dict[str, Any]:
+def _run_git(repo_root: Path, args: list[str]) -> str:
+    """Execute a git subcommand cleanly and return stripped stdout or empty string."""
+    try:
+        proc = subprocess.run(
+            ["git", *args],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=10,
+            check=False,
+        )
+        return proc.stdout.strip() if proc.returncode == 0 else ""
+    except (OSError, subprocess.SubprocessError):
+        return ""
+
+
+def collect_git_push_info(
+    repo_root: Path | None = None,
+    *,
+    before_sha: str | None = None,
+    after_sha: str | None = None,
+) -> dict[str, Any]:
+    """Collect commit subject, description, author, and changed files for a git push."""
+    root = repo_root or REPO_ROOT
+    target_ref = (after_sha or "HEAD").strip() or "HEAD"
+    head_sha = _run_git(root, ["rev-parse", target_ref])
+    short_sha = _run_git(root, ["rev-parse", "--short", target_ref]) or target_ref[:7]
+    author = _run_git(root, ["log", "-1", "--pretty=%an", target_ref]) or "Team Member"
+    commit_date = _run_git(root, ["log", "-1", "--pretty=%ad", "--date=short", target_ref])
+    subject = _run_git(root, ["log", "-1", "--pretty=%s", target_ref]) or "Repository update"
+    body = _run_git(root, ["log", "-1", "--pretty=%b", target_ref])
+
+    has_before = (
+        bool(before_sha) and set(before_sha.strip()) != {"0"} and before_sha.strip() != head_sha
+    )
+    commit_list: list[str] = []
+    if has_before and before_sha:
+        raw_log = _run_git(
+            root,
+            ["log", "--pretty=format:%h %s (%an)", f"{before_sha.strip()}..{target_ref}"],
+        )
+        if raw_log:
+            commit_list = [ln.strip() for ln in raw_log.splitlines() if ln.strip()]
+
+    diff_args = (
+        ["diff", "--name-status", f"{before_sha.strip()}..{target_ref}"]
+        if has_before and before_sha and commit_list
+        else ["diff-tree", "--no-commit-id", "--name-status", "-r", target_ref]
+    )
+    raw_files = _run_git(root, diff_args)
+    changed_files: list[tuple[str, str]] = []
+    for line in raw_files.splitlines():
+        parts = line.split("\t")
+        if len(parts) >= 2:
+            changed_files.append((parts[0][:1], parts[-1].strip()))
+
+    milestone_paths = {"PROGRESS.md", "docs/TEAM_CHECKLIST.md"}
+    is_milestone = any(path in milestone_paths for _, path in changed_files)
+    commit_url = f"{GITHUB_REPO_URL}/commit/{head_sha or short_sha}"
+    if has_before and before_sha and len(commit_list) > 1:
+        commit_url = f"{GITHUB_REPO_URL}/compare/{before_sha[:7]}...{short_sha}"
+
+    return {
+        "head_sha": head_sha or short_sha,
+        "short_sha": short_sha,
+        "author": author,
+        "date": commit_date,
+        "subject": subject,
+        "body": body,
+        "commits": commit_list,
+        "changed_files": changed_files,
+        "is_milestone": is_milestone,
+        "commit_url": commit_url,
+    }
+
+
+def build_push_message(
+    push_info: dict[str, Any],
+    *,
+    actor: str = "",
+    branch: str = "main",
+    custom_note: str | None = None,
+) -> str:
+    """Build concise, zero-emoji Telegram HTML summary describing what was pushed."""
+    short_sha = html.escape(push_info.get("short_sha", "HEAD"))
+    author = html.escape(push_info.get("author", "Unknown"))
+    actor_clean = actor.strip()
+    by_line = f"{author} (@{html.escape(actor_clean)})" if actor_clean else author
+    date_str = html.escape(push_info.get("date") or "today")
+    subject = html.escape(push_info.get("subject") or "Repository update")
+    body = (push_info.get("body") or "").strip()
+    commits = push_info.get("commits") or []
+    changed_files = push_info.get("changed_files") or []
+    commit_url = push_info.get("commit_url") or GITHUB_REPO_URL
+
+    lines: list[str] = [
+        f"<b>TrustFed-SDN | Git Push ({html.escape(branch)})</b>",
+        f"<b>Pushed By:</b> {by_line} | <b>Date:</b> {date_str}",
+        f"<b>Commit:</b> <code>{short_sha}</code>",
+        "",
+        "<b>What Was Pushed &amp; Description:</b>",
+        f"- <b>Title:</b> {subject}",
+    ]
+    if body:
+        for para_line in body.splitlines():
+            clean_p = para_line.strip()
+            if clean_p:
+                lines.append(f"- {html.escape(clean_p)}")
+    if len(commits) > 1:
+        lines.append("")
+        lines.append(f"<b>Commits Included ({len(commits)}):</b>")
+        for c_line in commits[:8]:
+            lines.append(f"- <code>{html.escape(c_line)}</code>")
+        if len(commits) > 8:
+            lines.append(f"- ... (+{len(commits) - 8} more commits)")
+    if custom_note:
+        lines.append(f"- <b>Note:</b> {html.escape(_clean_md_inline(custom_note))}")
+
+    if changed_files:
+        lines.append("")
+        lines.append(f"<b>Changed Files ({len(changed_files)}):</b>")
+        for st, fpath in changed_files[:14]:
+            lines.append(f"- <code>[{html.escape(st)}] {html.escape(fpath)}</code>")
+        if len(changed_files) > 14:
+            lines.append(f"- ... (+{len(changed_files) - 14} more files)")
+
+    lines.extend(
+        [
+            "",
+            "<b>Sync &amp; Links:</b>",
+            "- Team Sync: <code>git pull</code>",
+            f'- View Changes: <a href="{commit_url}">GitHub Commit / Diff</a>',
+            f'- Live Website: <a href="{WEBSITE_URL}">trustfed.naimurrashid.dev</a>',
+        ]
+    )
+    msg = "\n".join(lines)
+    if len(msg) > MAX_TELEGRAM_TEXT_LEN:
+        msg = msg[: MAX_TELEGRAM_TEXT_LEN - 20] + "\n...(truncated)"
+    return msg
+
+
+def build_inline_keyboard(commit_url: str | None = None) -> dict[str, Any]:
     """Build inline URL buttons attached below the Telegram message."""
+    first_btn = (
+        {"text": "View Commit Diff", "url": commit_url}
+        if commit_url
+        else {"text": "GitHub Repo", "url": GITHUB_REPO_URL}
+    )
     return {
         "inline_keyboard": [
             [
-                {"text": "GitHub Repo", "url": GITHUB_REPO_URL},
+                first_btn,
                 {
                     "text": "Team Checklist",
                     "url": f"{GITHUB_REPO_URL}/blob/main/docs/TEAM_CHECKLIST.md",
@@ -370,15 +519,47 @@ def main() -> int:
         help="File path to send after the message (repeatable)",
     )
     parser.add_argument("--env-file", default=str(DEFAULT_ENV_FILE), help="Path to .env file")
+    parser.add_argument(
+        "--push-event",
+        action="store_true",
+        help="Format commit diff/description message for git push events",
+    )
+    parser.add_argument("--before", default="", help="Before commit SHA (from GitHub push event)")
+    parser.add_argument("--after", default="", help="After commit SHA (from GitHub push event)")
+    parser.add_argument("--actor", default="", help="GitHub pusher username")
+    parser.add_argument("--branch", default="main", help="Git branch name")
     parser.add_argument("--dry-run", action="store_true", help="Print message without sending")
     args = parser.parse_args()
 
     load_env_file(Path(args.env_file))
 
-    rows = parse_progress_md(REPO_ROOT / "PROGRESS.md")
-    checklist = parse_team_checklist(REPO_ROOT / "docs" / "TEAM_CHECKLIST.md")
-    msg = build_message(rows, checklist, explicit_step=args.step, custom_note=args.note)
-    keyboard = build_inline_keyboard()
+    push_info: dict[str, Any] | None = None
+    if args.push_event:
+        push_info = collect_git_push_info(
+            REPO_ROOT, before_sha=args.before or None, after_sha=args.after or None
+        )
+
+    if push_info and not args.step and not push_info["is_milestone"]:
+        msg = build_push_message(
+            push_info,
+            actor=args.actor,
+            branch=args.branch,
+            custom_note=args.note,
+        )
+        keyboard = build_inline_keyboard(commit_url=push_info["commit_url"])
+    else:
+        rows = parse_progress_md(REPO_ROOT / "PROGRESS.md")
+        checklist = parse_team_checklist(REPO_ROOT / "docs" / "TEAM_CHECKLIST.md")
+        note_parts: list[str] = []
+        if push_info:
+            note_parts.append(f"Push {push_info['short_sha']}: {push_info['subject']}")
+            if push_info["body"]:
+                note_parts.append(push_info["body"])
+        if args.note:
+            note_parts.append(args.note)
+        combined_note = " | ".join(note_parts) if note_parts else None
+        msg = build_message(rows, checklist, explicit_step=args.step, custom_note=combined_note)
+        keyboard = build_inline_keyboard(commit_url=push_info["commit_url"] if push_info else None)
 
     if args.dry_run:
         print("=== TELEGRAM DRY RUN ===")
