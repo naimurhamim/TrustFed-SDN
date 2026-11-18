@@ -38,8 +38,15 @@ results/**/*.pcapng
 
 # Notebooks and IDEs
 .ipynb_checkpoints/
-.vscode/
+.vscode/*
+!.vscode/launch.json
 .idea/
+
+# Interactive studio runtime files
+demo/artifacts/vm_tmp/
+demo/artifacts/vm_config.json
+demo/artifacts/studio_blocklist.json
+results/08_live/live_ovs_flows.txt
 
 # Website build output
 site/dist/

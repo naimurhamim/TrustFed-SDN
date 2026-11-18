@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrustFed-SDN — Interactive Visual Studio</title>
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="studio.css">
+  <script>
+    (function () {
+      var saved = localStorage.getItem("theme") || "dark";
+      document.documentElement.setAttribute("data-theme", saved);
+    })();
+  </script>
+</head>
+
+<body>
+  <div class="studio-shell">
+    <!-- ============ TOPBAR HEADER ============ -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="brand-link">
+          <img src="images/logo.png" alt="TrustFed-SDN" class="brand-logo" data-brand-logo>
+          <span>TrustFed<span class="brand-accent">-SDN</span></span>
+        </div>
+        <span class="edition-pill" id="engineBadge">Real Data Engine · Ready</span>
+      </div>
+
+      <!-- One-click Switcher between Option A and Option B -->
+      <div class="view-switcher" role="tablist" aria-label="Switch demo workspace">
+        <button type="button" class="switch-btn active" data-view="a" role="tab" aria-selected="true">
+          Option A · Live SDN Simulation
+        </button>
+        <button type="button" class="switch-btn" data-view="b" role="tab" aria-selected="false">
+          Option B · AI Flow &amp; FL Inspector
+        </button>
+        <button type="button" class="switch-btn" data-view="c" role="tab" aria-selected="false">
+          Option C · Live Ubuntu VM
+        </button>
+      </div>
+
+      <div class="topbar-right">
+        <button type="button" class="icon-btn" id="themeToggleBtn" aria-label="Toggle light/dark theme"
+          title="Toggle light/dark theme">
+          <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============ OPTION A: SINGLE-SCREEN PACKET STUDIO ============ -->
+    <main id="viewOptionA" class="workspace-a active">
+      <!-- LEFT: 5 Sequential Steps (All visible in 100vh without scrolling) -->
+      <aside class="dock-left" aria-label="Sequential SDN Execution Steps">
+        <div class="panel-head-inline">
+          <span class="panel-kicker">Execution Pipeline</span>
+          <div class="pipeline-meta-actions">
+            <span class="step-progress-text" id="stepProgressText">0 / 5 Done</span>
+            <button type="button" class="pill-btn compact-pill" id="resetPipelineBtn"
+              title="Reset Option A Pipeline">Reset</button>
+          </div>
+        </div>
+
+        <div class="steps-stack" id="stepsStack">
+          <div class="step-card is-ready" data-step="1">
+            <div class="step-top">
+              <span class="step-tag">STEP 01</span>
+              <span class="status-badge status-ready" id="status1">Ready</span>
+            </div>
+            <h3 class="step-title">Initialize SDN &amp; Tenant Slices</h3>
+            <p class="step-desc">Boot OS-Ken controllers (c1–c3), OVS s0–s3, and 9 hosts</p>
+            <button type="button" class="step-btn" data-run-step="1">
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="btn-label">Start Step 01</span>
+            </button>
+          </div>
+
+          <div class="step-card is-locked" data-step="2">
+            <div class="step-top">
+              <span class="step-tag">STEP 02</span>
+              <span class="status-badge status-locked" id="status2">Locked</span>
+            </div>
+            <h3 class="step-title">Verify L1 Tenant Isolation</h3>
+            <p class="step-desc">Probe intra-tenant allow vs s0 cross-tenant drop</p>
+            <button type="button" class="step-btn" data-run-step="2" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="btn-label">Start Step 02</span>
+            </button>
+          </div>
+
+          <div class="step-card is-locked" data-step="3">
+            <div class="step-top">
+              <span class="step-tag">STEP 03</span>
+              <span class="status-badge status-locked" id="status3">Locked</span>
+            </div>
+            <h3 class="step-title">Run Benign &amp; Multi-Tenant Attacks</h3>
+            <p class="step-desc">Stream pcaps on s1, s2, s3 &amp; extract 19 features</p>
+            <button type="button" class="step-btn" data-run-step="3" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="btn-label">Start Step 03</span>
+            </button>
+          </div>
+
+          <div class="step-card is-locked" data-step="4">
+            <div class="step-top">
+              <span class="step-tag">STEP 04</span>
+              <span class="status-badge status-locked" id="status4">Locked</span>
+            </div>
+            <h3 class="step-title">Run AI &amp; Crypto Verification</h3>
+            <p class="step-desc">Score flows with GRU, Cosine filter &amp; 48-bit SecAgg</p>
+            <button type="button" class="step-btn" data-run-step="4" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="btn-label">Start Step 04</span>
+            </button>
+          </div>
+
+          <div class="step-card is-locked" data-step="5">
+            <div class="step-top">
+              <span class="step-tag">STEP 05</span>
+              <span class="status-badge status-locked" id="status5">Locked</span>
+            </div>
+            <h3 class="step-title">Enforce OVS Drop &amp; Verify Safety</h3>
+            <p class="step-desc">Install priority=300 block; confirm 0% benign loss</p>
+            <button type="button" class="step-btn" data-run-step="5" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="btn-label">Start Step 05</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CENTER: Live SDN Topology Canvas + Throughput Chart + OVS Flow Table -->
+      <section class="stage-center">
+        <!-- Interactive Packet Tracer Topology Canvas -->
+        <div class="card-box topo-card">
+          <div class="card-head">
+            <span class="card-title">Live Multi-Tenant SDN Topology (Packet Tracer View)</span>
+            <div class="topo-legend">
+              <span class="leg-item"><i class="dot dot-green"></i>Benign Allowed</span>
+              <span class="leg-item"><i class="dot dot-red"></i>Attack / Blocked</span>
+              <span class="leg-item"><i class="dot dot-blue"></i>Control / FL</span>
+            </div>
+          </div>
+          <div class="topo-wrap">
+            <svg id="topoSvg" viewBox="0 0 820 350" preserveAspectRatio="xMidYMid meet">
+              <defs>
+                <filter id="glowGreen" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="2.5" result="b" />
+                  <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+                </filter>
+                <filter id="glowRed" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="2.5" result="b" />
+                  <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+                </filter>
+              </defs>
+
+              <!-- Network Links -->
+              <g id="topoLinks" class="topo-links">
+                <!-- FL Aggregator to Controllers -->
+                <line id="lnk_fl_c1" x1="410" y1="36" x2="145" y2="96" class="link-ctrl" />
+                <line id="lnk_fl_c2" x1="410" y1="36" x2="410" y2="96" class="link-ctrl" />
+                <line id="lnk_fl_c3" x1="410" y1="36" x2="675" y2="96" class="link-ctrl" />
+                <!-- Controllers to Switches -->
+                <line id="lnk_c1_s1" x1="145" y1="125" x2="145" y2="189" class="link-ctrl" />
+                <path id="lnk_c2_s2" d="M 446 125 C 514 142, 514 174, 434 189" fill="none" class="link-ctrl" />
+                <line id="lnk_c3_s3" x1="675" y1="125" x2="675" y2="189" class="link-ctrl" />
+                <!-- Core Switch s0 to Tenant Switches s1, s2, s3 -->
+                <line id="lnk_s0_s1" x1="336" y1="162" x2="162" y2="189" class="link-core" />
+                <line id="lnk_s0_s2" x1="410" y1="172" x2="410" y2="189" class="link-core" />
+                <line id="lnk_s0_s3" x1="484" y1="162" x2="658" y2="189" class="link-core" />
+                <!-- Hosts to Switches -->
+                <line id="lnk_h1_ben" x1="72" y1="274" x2="132" y2="217" class="link-data" />
+                <line id="lnk_h1_vic" x1="145" y1="274" x2="145" y2="217" class="link-data" />
+                <line id="lnk_h1_atk" x1="218" y1="274" x2="158" y2="217" class="link-data" />
+
+                <line id="lnk_h2_ben" x1="337" y1="274" x2="397" y2="217" class="link-data" />
+                <line id="lnk_h2_vic" x1="410" y1="274" x2="410" y2="217" class="link-data" />
+                <line id="lnk_h2_atk" x1="483" y1="274" x2="423" y2="217" class="link-data" />
+
+                <line id="lnk_h3_ben" x1="602" y1="274" x2="662" y2="217" class="link-data" />
+                <line id="lnk_h3_vic" x1="675" y1="274" x2="675" y2="217" class="link-data" />
+                <line id="lnk_h3_atk" x1="748" y1="274" x2="688" y2="217" class="link-data" />
+              </g>
+
+              <!-- Dynamic Animated Packet Layer -->
+              <g id="packetLayer"></g>
+
+              <!-- Tenant Subnet Backgrounds -->
+              <rect x="34" y="174" width="222" height="162" rx="10" class="subnet-box" />
+              <text x="44" y="328" class="subnet-label">Tenant 1 · Finance (10.10.1.0/24)</text>
+
+              <rect x="299" y="174" width="222" height="162" rx="10" class="subnet-box" />
+              <text x="309" y="328" class="subnet-label">Tenant 2 · Healthcare (10.10.2.0/24)</text>
+
+              <rect x="564" y="174" width="222" height="162" rx="10" class="subnet-box" />
+              <text x="574" y="328" class="subnet-label">Tenant 3 · Education (10.10.3.0/24)</text>
+
+              <!-- FL Aggregator Node -->
+              <g id="node_fl" class="node-group node-offline" transform="translate(410, 32)">
+                <rect x="-92" y="-18" width="184" height="36" rx="8" class="node-box node-agg" />
+                <text y="-1" class="node-name">TrustFed FL Aggregator</text>
+                <text y="12" class="node-sub">Cosine + 48-Bit SecAgg</text>
+              </g>
+
+              <!-- Core Switch s0 -->
+              <g id="node_s0" class="node-group node-offline" transform="translate(410, 158)">
+                <rect x="-74" y="-14" width="148" height="28" rx="6" class="node-box node-core" />
+                <text y="-1" class="node-name">Core Switch s0</text>
+                <text y="10" class="node-sub">priority=200 DROP</text>
+              </g>
+              <g id="s0BlockMark" class="shield-overlay" transform="translate(324, 162)" opacity="0">
+                <circle r="11" class="block-circle" />
+                <text y="4" class="shield-text">X</text>
+              </g>
+              <g id="s0BlockMarkR" class="shield-overlay" transform="translate(496, 162)" opacity="0">
+                <circle r="11" class="block-circle" />
+                <text y="4" class="shield-text">X</text>
+              </g>
+
+              <!-- Controllers c1, c2, c3 -->
+              <g id="node_c1" class="node-group node-offline" transform="translate(145, 108)">
+                <rect x="-64" y="-17" width="128" height="34" rx="7" class="node-box node-ctrl" />
+                <text y="-1" class="node-name">OS-Ken c1</text>
+                <text y="11" class="node-sub">:6653 · GRU Ready</text>
+              </g>
+              <g id="node_c2" class="node-group node-offline" transform="translate(410, 108)">
+                <rect x="-64" y="-17" width="128" height="34" rx="7" class="node-box node-ctrl" />
+                <text y="-1" class="node-name">OS-Ken c2</text>
+                <text y="11" class="node-sub">:6654 · GRU Ready</text>
+              </g>
+              <g id="node_c3" class="node-group node-offline" transform="translate(675, 108)">
+                <rect x="-64" y="-17" width="128" height="34" rx="7" class="node-box node-ctrl" />
+                <text y="-1" class="node-name">OS-Ken c3</text>
+                <text y="11" class="node-sub">:6655 · GRU Ready</text>
+              </g>
+
+              <!-- Switches s1, s2, s3 -->
+              <g id="node_s1" class="node-group node-offline" transform="translate(145, 203)">
+                <rect x="-36" y="-14" width="72" height="28" rx="6" class="node-box node-sw" />
+                <text y="4" class="node-name">OVS s1</text>
+              </g>
+              <g id="s1Shield" class="shield-overlay" transform="translate(193, 203)" opacity="0">
+                <rect x="-32" y="-11" width="64" height="22" rx="5" class="shield-pill" />
+                <text y="3" class="shield-text">DROP p300</text>
+              </g>
+              <g id="node_s2" class="node-group node-offline" transform="translate(410, 203)">
+                <rect x="-36" y="-14" width="72" height="28" rx="6" class="node-box node-sw" />
+                <text y="4" class="node-name">OVS s2</text>
+              </g>
+              <g id="s2Shield" class="shield-overlay" transform="translate(458, 203)" opacity="0">
+                <rect x="-32" y="-11" width="64" height="22" rx="5" class="shield-pill" />
+                <text y="3" class="shield-text">DROP p300</text>
+              </g>
+              <g id="node_s3" class="node-group node-offline" transform="translate(675, 203)">
+                <rect x="-36" y="-14" width="72" height="28" rx="6" class="node-box node-sw" />
+                <text y="4" class="node-name">OVS s3</text>
+              </g>
+              <g id="s3Shield" class="shield-overlay" transform="translate(723, 203)" opacity="0">
+                <rect x="-32" y="-11" width="64" height="22" rx="5" class="shield-pill" />
+                <text y="3" class="shield-text">DROP p300</text>
+              </g>
+
+              <!-- Hosts (Tenant 1) -->
+              <g id="node_h1_ben" class="node-group node-offline" transform="translate(72, 290)">
+                <circle r="16" class="node-host host-benign" />
+                <text y="4" class="host-tag">h1_b</text>
+                <text y="26" class="host-ip">.1.10</text>
+              </g>
+              <g id="node_h1_vic" class="node-group node-offline" transform="translate(145, 290)">
+                <circle r="16" class="node-host host-victim" />
+                <text y="4" class="host-tag">h1_v</text>
+                <text y="26" class="host-ip">.1.50</text>
+              </g>
+              <g id="node_h1_atk" class="node-group node-offline" transform="translate(218, 290)">
+                <circle r="16" class="node-host host-atk" />
+                <text y="4" class="host-tag">h1_a</text>
+                <text y="26" class="host-ip">.1.100</text>
+              </g>
+
+              <!-- Hosts (Tenant 2) -->
+              <g id="node_h2_ben" class="node-group node-offline" transform="translate(337, 290)">
+                <circle r="16" class="node-host host-benign" />
+                <text y="4" class="host-tag">h2_b</text>
+                <text y="26" class="host-ip">.2.10</text>
+              </g>
+              <g id="node_h2_vic" class="node-group node-offline" transform="translate(410, 290)">
+                <circle r="16" class="node-host host-victim" />
+                <text y="4" class="host-tag">h2_v</text>
+                <text y="26" class="host-ip">.2.50</text>
+              </g>
+              <g id="node_h2_atk" class="node-group node-offline" transform="translate(483, 290)">
+                <circle r="16" class="node-host host-atk" />
+                <text y="4" class="host-tag">h2_a</text>
+                <text y="26" class="host-ip">.2.100</text>
+              </g>
+
+              <!-- Hosts (Tenant 3) -->
+              <g id="node_h3_ben" class="node-group node-offline" transform="translate(602, 290)">
+                <circle r="16" class="node-host host-benign" />
+                <text y="4" class="host-tag">h3_b</text>
+                <text y="26" class="host-ip">.3.10</text>
+              </g>
+              <g id="node_h3_vic" class="node-group node-offline" transform="translate(675, 290)">
+                <circle r="16" class="node-host host-victim" />
+                <text y="4" class="host-tag">h3_v</text>
+                <text y="26" class="host-ip">.3.50</text>
+              </g>
+              <g id="node_h3_atk" class="node-group node-offline" transform="translate(748, 290)">
+                <circle r="16" class="node-host host-atk" />
+                <text y="4" class="host-tag">h3_a</text>
+                <text y="26" class="host-ip">.3.100</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Bottom Telemetry Row: Traffic Chart + OVS Flow Table / Logs -->
+        <div class="bottom-split">
+          <div class="card-box chart-card">
+            <div class="card-head">
+              <span class="card-title">Live Traffic Rate (Benign vs Attacker)</span>
+              <span class="mini-kpi" id="collateralBadge">Waiting Step 01</span>
+            </div>
+            <div class="canvas-wrap">
+              <canvas id="trafficCanvas"></canvas>
+            </div>
+          </div>
+
+          <div class="card-box table-card">
+            <div class="card-head">
+              <span class="card-title">OpenFlow 1.3 Rules &amp; System Events</span>
+              <div class="mini-tabs">
+                <button type="button" class="mini-tab active" data-subtab="flows">OVS Flows</button>
+                <button type="button" class="mini-tab" data-subtab="logs">Event Log</button>
+              </div>
+            </div>
+            <div class="subtab-body active" id="subtabFlows">
+              <table class="mini-table">
+                <thead>
+                  <tr>
+                    <th>Switch</th>
+                    <th>Prio</th>
+                    <th>Match</th>
+                    <th>Action</th>
+                    <th>Pkts</th>
+                  </tr>
+                </thead>
+                <tbody id="ovsFlowsBody">
+                  <tr>
+                    <td colspan="5" class="muted-cell">Run Step 01 to initialize switches s0–s3.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="subtab-body" id="subtabLogs">
+              <div class="log-feed" id="eventLogFeed">
+                <div class="log-line">[Studio] Pipeline ready. Click Step 01 to start.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Real AI Verdict + Extracted Features + FL & Crypto Telemetry -->
+      <aside class="dock-right">
+        <div class="card-box verdict-card">
+          <div class="card-head">
+            <span class="card-title">Live GRU Detection</span>
+            <span class="mono-dim" id="thresholdLabel">θ = 0.98</span>
+          </div>
+          <div class="verdict-pill verdict-idle" id="verdictBannerA">
+            Awaiting Traffic (Step 04)
+          </div>
+          <div class="gauge-row">
+            <div class="gauge-meta">
+              <span>Attack Probability</span>
+              <strong id="probValueA">0.000</strong>
+            </div>
+            <div class="prob-track">
+              <div class="prob-fill" id="probFillA" style="width:0%"></div>
+              <div class="prob-thresh" id="probThreshA" style="left:98%" title="Calibrated threshold 0.98"></div>
+            </div>
+          </div>
+          <div class="kpi-pair">
+            <div class="kpi-mini">
+              <span>OVS Install</span>
+              <strong id="ovsLatencyA">—</strong>
+            </div>
+            <div class="kpi-mini">
+              <span>Benign Loss</span>
+              <strong id="benignLossA">—</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-box feat-card">
+          <div class="card-head">
+            <span class="card-title">Real Extracted Flow Features</span>
+            <span class="mono-dim" id="flowCountLabel">0 flows</span>
+          </div>
+          <div class="bars-list" id="featureBarsA">
+            <div class="muted-cell">Features extracted from real PCAPs will appear at Step 03–04.</div>
+          </div>
+        </div>
+
+        <div class="card-box crypto-card">
+          <div class="card-head">
+            <span class="card-title">Cosine Filter &amp; 48-Bit SecAgg</span>
+          </div>
+          <div class="crypto-rows" id="cryptoSummaryA">
+            <div class="c-row"><span>Poisoning Screen</span><strong>Pending Step 04</strong></div>
+            <div class="c-row"><span>Merkle + Ed25519</span><strong>Pending Step 04</strong></div>
+            <div class="c-row"><span>Wire Ratio</span><strong>—</strong></div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- ============ OPTION B: AI FLOW INSPECTOR, POISONING & CRYPTO LAB ============ -->
+    <main id="viewOptionB" class="workspace-b">
+      <!-- COL 1: Input Upload / Sample Traffic Selector + Settings -->
+      <aside class="card-box col-b-input">
+        <div class="card-head">
+          <span class="card-title">1. Network Input (.pcap / .csv)</span>
+        </div>
+        <label class="drop-zone" id="dropZoneB">
+          <input type="file" id="fileUploadB" accept=".pcap,.pcapng,.cap,.csv" hidden>
+          <strong>Upload Custom PCAP / CSV</strong>
+          <span>Click or drop captured network flows</span>
+        </label>
+
+        <div class="slider-row">
+          <div class="gauge-meta">
+            <span>Decision Threshold (θ)</span>
+            <strong id="threshValB">0.98</strong>
+          </div>
+          <input type="range" id="threshSliderB" min="0.30" max="0.99" step="0.01" value="0.98">
+        </div>
+
+        <span class="sub-label">Or Inspect Real Testbed Captures (12 PCAPs)</span>
+        <div class="sample-list" id="sampleListB"></div>
+      </aside>
+
+      <!-- COL 2: Real GRU Output, Confidence, OVS Rule & Top Feature Attribution -->
+      <section class="card-box col-b-output">
+        <div class="card-head">
+          <span class="card-title">2. Real GRU Model Output &amp; Mitigation</span>
+          <span class="mono-dim" id="sourceTagB">Select or upload a file</span>
+        </div>
+
+        <div class="verdict-pill verdict-idle" id="verdictBannerB">
+          Select a real capture on the left to inspect
+        </div>
+
+        <div class="b-metrics-grid">
+          <div class="kpi-mini"><span>Flows Parsed</span><strong id="bFlowsCount">—</strong></div>
+          <div class="kpi-mini"><span>Flagged Attack</span><strong id="bAtkCount">—</strong></div>
+          <div class="kpi-mini"><span>Max Prob</span><strong id="bMaxProb">—</strong></div>
+          <div class="kpi-mini"><span>Inference Time</span><strong id="bElapsed">—</strong></div>
+        </div>
+
+        <div class="rule-preview" id="bOvsRule">OVS OpenFlow 1.3 action preview will appear here.</div>
+
+        <div class="b-bottom-grid">
+          <div class="b-subbox">
+            <span class="sub-label">Why Flagged (Top Features Attribution)</span>
+            <div class="bars-list" id="featureBarsB"></div>
+          </div>
+          <div class="b-subbox">
+            <span class="sub-label">Sample Scored Bidirectional Flows</span>
+            <div class="scroll-inner">
+              <table class="mini-table">
+                <thead>
+                  <tr><th>Src IP</th><th>Dst IP</th><th>Pkts</th><th>Prob</th><th>OVS</th></tr>
+                </thead>
+                <tbody id="bFlowsTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COL 3: Poisoning Arena + Zero-Trust Crypto Tamper Verifier -->
+      <aside class="col-b-labs">
+        <div class="card-box lab-card">
+          <div class="card-head">
+            <span class="card-title">3. Byzantine Poisoning Arena</span>
+            <button type="button" class="mini-run-btn" id="runPoisonBtn">Run Defense</button>
+          </div>
+          <div class="lab-controls">
+            <label>Attack
+              <select id="poisonAttackType">
+                <option value="scaling">Update Scaling (10x)</option>
+                <option value="label_flip">Label Flipping</option>
+                <option value="backdoor">Backdoor Trigger</option>
+              </select>
+            </label>
+            <label>Malicious %
+              <select id="poisonPct">
+                <option value="17">17% (1/6)</option>
+                <option value="33" selected>33% (2/6)</option>
+              </select>
+            </label>
+          </div>
+          <div class="scroll-inner" id="poisonOutputB">
+            <div class="muted-cell">Click Run Defense to run CosineClusteringAggregator.</div>
+          </div>
+        </div>
+
+        <div class="card-box lab-card">
+          <div class="card-head">
+            <span class="card-title">4. Server Tamper Verifier (Step 06)</span>
+            <button type="button" class="mini-run-btn" id="runTamperBtn">Verify Round</button>
+          </div>
+          <div class="lab-controls">
+            <label style="grid-column:1 / -1">Adversarial Server Action
+              <select id="tamperModeSelect">
+                <option value="none">Honest Round (No Tamper)</option>
+                <option value="add_mod_0.05">Attack: Modify Aggregate (+0.05)</option>
+                <option value="lsb_plus_1">Attack: Tweak Aggregate (+1 LSB)</option>
+                <option value="drop_tenant">Attack: Drop Honest Tenant</option>
+                <option value="replay">Attack: Replay Old Update</option>
+                <option value="substitute">Attack: Forge Tenant Vector</option>
+              </select>
+            </label>
+          </div>
+          <div class="crypto-rows" id="tamperOutputB">
+            <div class="c-row"><span>Verdict</span><strong>Click Verify Round</strong></div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- ============ OPTION C: LIVE UBUNTU VM RUNNER + CRASH DEFENSE ============ -->
+    <main id="viewOptionC" class="workspace-c">
+      <!-- COL 1: 5-Layer Crash Defense + Sequential Ubuntu VM Steps -->
+      <aside class="dock-left col-c-left" aria-label="Live Ubuntu VM Runner and Crash Defense">
+        <div class="safety-strip">
+          <div class="card-head" style="margin-bottom:4px">
+            <span class="card-title">5-Layer Crash Defense</span>
+            <span class="status-badge status-locked" id="vmStateBadge">STOPPED</span>
+          </div>
+          <div class="safety-kpis">
+            <div class="kpi-mini"><span>Free RAM</span><strong id="vmHostRam">—</strong></div>
+            <div class="kpi-mini"><span>Host CPU</span><strong id="vmHostCpu">—</strong></div>
+          </div>
+          <div class="guard-note" id="vmGuardNote">Checking VMware Workstation &amp; RAM floor...</div>
+          <label class="toggle-inline">
+            <input type="checkbox" id="vmAutoFallback" checked>
+            <span>Auto-Safe Fallback if RAM &lt; 1.6 GB / Tools slow</span>
+          </label>
+          <div class="safety-actions">
+            <button type="button" class="danger-mini-btn" id="vmEmergencyStopBtn">
+              Stop VM &amp; Free RAM
+            </button>
+            <button type="button" class="pill-btn compact-pill" id="vmResetBtn" title="Reset VM Steps">
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <div class="steps-stack compact-steps" id="vmStepsStack">
+          <div class="step-card is-ready" data-vm-step="1">
+            <div class="step-top">
+              <span class="step-tag">VM 01</span>
+              <span class="status-badge status-ready" id="vmStatus1">Ready</span>
+            </div>
+            <h3 class="step-title">Boot Ubuntu VM &amp; Stack</h3>
+            <p class="step-desc">Headless nogui start + uname, OVS, Mininet</p>
+            <button type="button" class="step-btn vm-step-btn" data-run-vm-step="1">
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="btn-label">Run VM Step 01</span>
+            </button>
+          </div>
+
+          <div class="step-card is-locked" data-vm-step="2">
+            <div class="step-top">
+              <span class="step-tag">VM 02</span>
+              <span class="status-badge status-locked" id="vmStatus2">Locked</span>
+            </div>
+            <h3 class="step-title">OS-Ken c1–c3 &amp; Clean OVS</h3>
+            <p class="step-desc">Start controllers on :6653–:6655 + mn -c</p>
+            <button type="button" class="step-btn vm-step-btn" data-run-vm-step="2" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="btn-label">Run VM Step 02</span>
+            </button>
+          </div>
+
+          <div class="step-card is-locked" data-vm-step="3">
+            <div class="step-top">
+              <span class="step-tag">VM 03</span>
+              <span class="status-badge status-locked" id="vmStatus3">Locked</span>
+            </div>
+            <h3 class="step-title">OVS s0–s3 &amp; L1 Isolation</h3>
+            <p class="step-desc">Create OpenFlow 1.3 bridges + priority=200</p>
+            <button type="button" class="step-btn vm-step-btn" data-run-vm-step="3" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="btn-label">Run VM Step 03</span>
+            </button>
+          </div>
+
+          <div class="step-card is-locked" data-vm-step="4">
+            <div class="step-top">
+              <span class="step-tag">VM 04</span>
+              <span class="status-badge status-locked" id="vmStatus4">Locked</span>
+            </div>
+            <h3 class="step-title">Mitigate Drops &amp; Sync Logs</h3>
+            <p class="step-desc">Enforce p300 drops + pull OVS dump to host</p>
+            <button type="button" class="step-btn vm-step-btn" data-run-vm-step="4" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="btn-label">Run VM Step 04</span>
+            </button>
+          </div>
+
+          <div class="step-card is-locked" data-vm-step="5">
+            <div class="step-top">
+              <span class="step-tag">VM 05</span>
+              <span class="status-badge status-locked" id="vmStatus5">Locked</span>
+            </div>
+            <h3 class="step-title">Cleanup &amp; Suspend VM</h3>
+            <p class="step-desc">Run mn -c &amp; safely suspend Ubuntu to free RAM</p>
+            <button type="button" class="step-btn vm-step-btn" data-run-vm-step="5" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="btn-label">Run VM Step 05</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- COL 2: Real Ubuntu 22.04 Command & Terminal Stream -->
+      <section class="card-box col-c-terminal">
+        <div class="card-head">
+          <span class="card-title">Live Ubuntu 22.04 Command &amp; Terminal Output</span>
+          <div class="term-actions">
+            <span class="status-badge status-locked" id="vmExecModeBadge">READY</span>
+            <span class="mono-dim" id="vmExecTime">0 ms</span>
+            <button type="button" class="pill-btn compact-pill" id="vmCopyTermBtn">Copy</button>
+            <button type="button" class="pill-btn compact-pill" id="vmClearTermBtn">Clear</button>
+          </div>
+        </div>
+        <div class="vm-auth-bar" aria-label="Ubuntu VM Credentials and Path">
+          <label class="auth-field auth-user">
+            <span>Guest User</span>
+            <input type="text" id="vmUserInput" value="ubuntu" placeholder="ubuntu" autocomplete="username">
+          </label>
+          <label class="auth-field auth-pass">
+            <span>sudo / Guest Pass</span>
+            <div class="pass-wrap">
+              <input type="password" id="vmPassInput" value="ubuntu" placeholder="password" autocomplete="current-password">
+              <button type="button" class="pass-eye-btn" id="vmPassToggleBtn" title="Show or hide password">Show</button>
+            </div>
+          </label>
+          <label class="auth-field auth-vmx">
+            <span>VMware .vmx Path</span>
+            <input type="text" id="vmVmxInput" placeholder="D:\...\Ubuntu_22.04_VM.vmx">
+          </label>
+          <button type="button" class="mini-run-btn auth-setup-btn" id="vmAutoSetupBtn"
+            title="Check VMware, Ubuntu VM, Login & SDN dependencies (no conflict)">
+            Auto-Setup VM
+          </button>
+          <span class="status-badge status-done" id="vmAuthBadge">Auth Ready</span>
+        </div>
+        <div class="cmd-preview-bar" id="vmCmdBar">$ Waiting for VM Step 01...</div>
+        <pre class="vm-terminal-out" id="vmTerminalOut">[Crash Guard Ready] Click "Run VM Step 01" on the left to execute inside Ubuntu 22.04 (headless nogui), or toggle Auto-Safe Fallback to protect host RAM when free memory is tight.</pre>
+      </section>
+
+      <!-- COL 3: VM Artifacts List & Click-to-Analyze Inspector -->
+      <aside class="col-c-files">
+        <div class="card-box">
+          <div class="card-head">
+            <span class="card-title">VM Artifacts &amp; Captures</span>
+            <span class="mono-dim" id="vmFileCount">0 files</span>
+          </div>
+          <div class="sample-list" id="vmFileList">
+            <div class="muted-cell">Loading VM logs &amp; PCAP files...</div>
+          </div>
+        </div>
+
+        <div class="card-box">
+          <div class="card-head">
+            <span class="card-title" id="vmSelectedFileName">Click any file above to inspect</span>
+            <button type="button" class="mini-run-btn" id="vmOpenInBBtn" hidden>Open in Option B</button>
+          </div>
+          <div class="scroll-inner" id="vmFileAnalysisOut">
+            <div class="muted-cell">Click any .pcap to run real GRU flow scoring + OVS preview, or any .json/.txt/.log to view synced Linux output.</div>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="studio.js"></script>
+</body>
+
+</html>

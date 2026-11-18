@@ -37,6 +37,7 @@ if /I "%TARGET%"=="help" (
     echo   reproduce        Run full Step 09 evaluation and generate figures/tables
     echo   reproduce-quick  Run fast Step 09 verification and regenerate figures/tables
     echo   qr               Regenerate and verify SVG/PNG/PDF QR codes
+    echo   studio           Launch TrustFed-SDN Visual Studio ^(Option A, B + Live VM C^)
     echo   site-preview     Serve ..\07_Website\trustfed-sdn-site locally at http://127.0.0.1:8080
     exit /b 0
 )
@@ -93,6 +94,10 @@ if /I "%TARGET%"=="reproduce-quick" (
 )
 if /I "%TARGET%"=="qr" (
     "%PY%" scripts/make_qr.py
+    exit /b %ERRORLEVEL%
+)
+if /I "%TARGET%"=="studio" (
+    "%PY%" demo/studio_server.py
     exit /b %ERRORLEVEL%
 )
 if /I "%TARGET%"=="site-preview" (

@@ -6,7 +6,7 @@ else
 	PIP := .venv/bin/pip
 endif
 
-.PHONY: help install status lint format test check probe smoke-testbed testbed-up testbed-down notify demo reproduce reproduce-quick qr site-preview
+.PHONY: help install status lint format test check probe smoke-testbed testbed-up testbed-down notify demo studio reproduce reproduce-quick qr site-preview
 
 help:
 	@echo TrustFed-SDN Makefile targets:
@@ -67,6 +67,9 @@ reproduce-quick:
 
 qr:
 	$(PYTHON) scripts/make_qr.py
+
+studio:
+	$(PYTHON) demo/studio_server.py
 
 site-preview:
 	$(PYTHON) -m http.server 8080 --directory ../07_Website/trustfed-sdn-site
