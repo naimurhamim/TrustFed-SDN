@@ -380,11 +380,11 @@ def build_report_html() -> str:
       </p>
       <div class="cover-meta-grid">
         <div><strong>Team:</strong> MD Naimur Rashid, Pritom Kumar Bhowmik, Saurav Chandra Das</div>
-        <div><strong>Release Date:</strong> November 15, 2026</div>
+        <div><strong>Release Date:</strong> November 18, 2026</div>
         <div><strong>Git Tags:</strong> <code>step-00-done</code> &ndash; <code>step-10-done</code>, <code>v1.0</code></div>
         <div><strong>GitHub:</strong> <code>github.com/naimurhamim/TrustFed-SDN</code></div>
         <div><strong>Website:</strong> <code>trustfed.naimurrashid.dev</code></div>
-        <div><strong>Quality Gate:</strong> <code>75 / 75 pytest passed</code> (<code>make check</code> OK)</div>
+        <div><strong>Quality Gate:</strong> <code>77 / 77 pytest passed</code> (<code>make check</code> OK)</div>
       </div>
     </div>
     {logo_html}
@@ -465,7 +465,7 @@ def build_report_html() -> str:
     <div class="milestone-card done" style="grid-column: span 2;">
       <div class="m-left">
         <span class="m-step">Step 10</span>
-        <span class="m-title">Research Monograph Website, QR v4-H, Release Audit &amp; Packaging</span>
+        <span class="m-title">Research Monograph Website, QR v4-H, Interactive Visual Studio (Options A/B/C) &amp; Release v1.0</span>
       </div>
       <span class="m-status-done">&#10003; Approved (step-10-done / v1.0)</span>
     </div>
@@ -1309,7 +1309,7 @@ def build_report_html() -> str:
   <div class="page-break"></div>
 
   <h2 class="section-title">
-    8. Step 10 &mdash; Research Monograph Portal, ISO/IEC 18004 QR &amp; Release v1.0
+    8. Step 10 &mdash; Research Monograph Portal, Interactive Visual Studio (Options A/B/C) &amp; Release v1.0
     <span class="step-pill">Tag: step-10-done / v1.0</span>
   </h2>
 
@@ -1317,8 +1317,12 @@ def build_report_html() -> str:
     <div style="flex:1;">
       <ul class="compact-list">
         <li><strong>Interactive 10-Chapter Monograph Website (<code>https://trustfed.naimurrashid.dev/</code>):</strong> Standalone repository (<code>07_Website/trustfed-sdn-site/</code>) built in Obsidian Slate &amp; Oxford Alabaster themes with Plus Jakarta Sans + Inter + JetBrains Mono typography, dynamic hydration from <code>key_numbers.json</code>, zoomable <code>fig01..fig08</code> gallery + thesis defense poster, mobile-first layout, and an interactive draggable/touch-responsive SVG mini-robot companion (<code>#miniRobotWidget</code>).</li>
+        <li><strong>3-Mode Interactive Visual Studio (<code>make studio</code> / VS Code <code>F5</code>, <code>demo/</code>):</strong>
+          (1) <strong>Option A (Live SDN + 4-Pillar FL Simulation):</strong> Real PCAP packet replay (<code>testbed_packets.pcap</code>), GRU (<code>20,162</code> params) scoring, and <code>priority=300</code> OpenFlow 1.3 drop rules across all 3 tenant OVS switches (<code>s1, s2, s3</code>) + Core Switch (<code>s0</code>), paired with 12-round 4-Pillar FL;
+          (2) <strong>Option B (Dataset &amp; PCAP Autograd Lab):</strong> Custom <code>.pcap/.pcapng/.csv</code> upload, 30-feature extraction, live GRU inference, and real PyTorch autograd local client fine-tuning (<code>FedAvg</code> vs <code>TrustFed-SDN</code>);
+          (3) <strong>Option C (Live Ubuntu 22.04 VM Hardware Execution):</strong> Real <code>vmrun</code> execution across 5 pipeline stages (<code>Preflight</code> &rarr; <code>Sync Code</code> &rarr; <code>Mininet + OVS Smoke</code> &rarr; <code>L1 Subnet Isolation</code> &rarr; <code>12-Round Live HTTP/JSON FL + OVS Drop Mitigation</code>) with <strong>5-Layer Crash Defense</strong> (<code>MemoryMax=900M</code>, <code>CPUQuota=140%</code>, <code>nice -n 10</code>, <code>torch threads=1</code>), one-click <strong>Auto-Setup VM</strong> wizard, and a 19-file interactive artifact analyzer.</li>
         <li><strong>Cryptographically Verified Print QR Code (<code>scripts/make_qr.py</code>):</strong> Version <code>4-H</code> (<code>33 &times; 33</code> modules, mask <code>0</code>, <code>30%</code> ECC), verified via independent image sampler + BCH(15,5) + GF(256) Reed-Solomon syndrome check across all 4 RS blocks in <code>figures/qr/</code>.</li>
-        <li><strong>Release Hygiene &amp; Final Check (<code>make check</code>):</strong> Complete <code>README.md</code>, MIT <code>LICENSE</code>, <code>CITATION.cff</code>, <code>docs/{{ARCHITECTURE,REPRODUCE,FINAL_AUDIT,DEVIATIONS}}.md</code>, clean duplicate-free codebase (<code>site/</code> removed from main code repo), single-notification GitHub Actions CI + <code>bot_server.py</code> / Cloudflare Worker <code>worker.js</code>, and <strong><code>75 / 75</code> pytest tests passing</strong> with zero lint/format diffs.</li>
+        <li><strong>Release Hygiene, Per-Push Telegram CI &amp; Final Check (<code>make check</code>):</strong> Complete <code>README.md</code>, MIT <code>LICENSE</code>, <code>CITATION.cff</code> (first author: <code>MD Naimur Rashid</code>), <code>docs/{{ARCHITECTURE,REPRODUCE,FINAL_AUDIT,DEVIATIONS}}.md</code>, dual-mode GitHub Actions Telegram bot notifications (per-push commit summary + milestone report attachments via <code>scripts/notify_telegram.py</code>), and <strong><code>77 / 77</code> pytest tests passing</strong> with zero lint/format diffs.</li>
       </ul>
     </div>
     <div style="text-align:center;">
@@ -1328,7 +1332,7 @@ def build_report_html() -> str:
   </div>
 
   <div class="callout">
-    <strong>Final Thesis Release Status (v1.0 &mdash; Complete):</strong> All 11 planned milestones (<code>Step 00</code> through <code>Step 10</code>) are implemented, empirically evaluated across <code>InSDN</code>, <code>ASEADOS-SDN-IoT (2026)</code>, <code>CICIDS2017</code>, and our live Ubuntu 22.04 OpenFlow 1.3 SDN testbed, audited honestly against limitations in <code>docs/FINAL_AUDIT.md</code> and <code>docs/RESULTS_SUMMARY.md</code>, and pushed cleanly to GitHub.
+    <strong>Final Thesis Release Status (v1.0 &mdash; Complete):</strong> All 11 planned milestones (<code>Step 00</code> through <code>Step 10</code>) plus the 3-mode Interactive Visual Studio (<code>Options A, B, and Live Ubuntu VM Option C</code>) are implemented, empirically evaluated across <code>InSDN</code>, <code>ASEADOS-SDN-IoT (2026)</code>, <code>CICIDS2017</code>, and our live Ubuntu 22.04 OpenFlow 1.3 SDN testbed, audited in <code>docs/FINAL_AUDIT.md</code>, and verified at <code>77 / 77</code> passing tests.
   </div>
 
 </body>

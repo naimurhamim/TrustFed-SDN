@@ -10,10 +10,10 @@
 ## Latest Handoff Note
 
 - **Last Updated By:** `@Naimur`
-- **Date:** `2026-11-15`
-- **Active Step:** `Step 10 - Website, QR Code, Documentation, and Release` (`approved`, tagged `step-10-done` & `v1.0` — Thesis Release Complete)
-- **What Was Just Completed:** Built ISO/IEC 18004 QR generator + GF(256) decoder (`scripts/make_qr.py`, generating `v4-H` SVG/PNG/PDF + `qr_verification.json` in `figures/qr/`), redesigned standalone website (`../07_Website/trustfed-sdn-site/`) as a dual-theme **10-Chapter Interactive Research Monograph** hydrating live KPIs from `data/key_numbers.json` with clickable `fig01..fig08` zoom, defense poster, and draggable interactive mini-robot companion (`#miniRobotWidget`), removed duplicate `TrustFed-SDN/site/`, updated `TrustFed_SDN_Progress_Report_Step00_to_Step10.pdf` and single-trigger Telegram CI (`telegram-notify.yml`), authored `README.md`, `LICENSE`, `CITATION.cff`, `docs/ARCHITECTURE.md`, `docs/REPRODUCE.md`, `docs/FINAL_AUDIT.md`, and `DEV-004` (`docs/DEVIATIONS.md`), and verified clean `make format`, `make lint`, and `make check` (`75/75` pytest).
-- **Next Task for Team:** All Steps `00`–`10` approved and tagged (`v1.0`). Pull latest `main` + tags (`git pull --tags`) and open `https://trustfed.naimurrashid.dev/`.
+- **Date:** `2026-11-18`
+- **Active Step:** `Step 10 - Website, QR Code, Documentation, Interactive Visual Studio & Release` (`approved`, tagged `step-10-done` & `v1.0` — Thesis Release Complete)
+- **What Was Just Completed:** Built and verified the **3-Mode Interactive Visual Studio (`make studio` / VS Code `F5`, `demo/`)** featuring **Option A** (all 3 tenant switches `s1, s2, s3` + Core Switch `s0` real PCAP replay, GRU scoring & `priority=300` OVS drop rules + 12-round 4-Pillar FL), **Option B** (custom `.pcap/.csv` upload, 30-feature extraction & real PyTorch autograd FL lab), and **Option C (`Live Ubuntu 22.04 VM`)** with **5-Layer Crash Defense** (`MemoryMax=900M`, `CPUQuota=140%`, `nice -n 10`, `torch threads=1`), one-click **Auto-Setup VM** wizard, and 19-file artifact analyzer; updated `CITATION.cff` (`MD Naimur Rashid` first author), enabled per-push Telegram CI notifications (`scripts/notify_telegram.py --push-event`), regenerated `TrustFed_SDN_Progress_Report_Step00_to_Step10.pdf`, and verified `make check` (`77/77` pytest).
+- **Next Task for Team:** All Steps `00`–`10` + Interactive Visual Studio (`Options A, B, C`) complete and verified (`77/77` pytest). Pull latest `main` (`git pull --tags`) and press `F5` in VS Code or run `.\make.cmd studio`.
 
 ---
 
@@ -103,3 +103,4 @@
 - [x] `10.3` Deploy to `https://trustfed.naimurrashid.dev/` and verify high-res print QR code via `scripts/make_qr.py` (`@Naimur`, `2026-11-15`)
 - [x] `10.4` Complete `docs/ARCHITECTURE.md`, `docs/REPRODUCE.md`, `CITATION.cff`, `LICENSE`, and `docs/FINAL_AUDIT.md` (`@Naimur`, `2026-11-15`)
 - [x] `10.5` Verify fresh-clone `make reproduce-quick`, tag `v1.0` & `step-10-done`, and get final `approved step 10` (`@Naimur`, `2026-11-15`)
+- [x] `10.6` Build 3-Mode Interactive Visual Studio (`make studio` / `F5`: Option A Multi-Switch PCAP+FL, Option B Custom Dataset/PCAP Autograd Lab, Option C Live Ubuntu 22.04 VM with 5-Layer Crash Defense & Auto-Setup VM) + per-push Telegram bot CI (`77/77` pytest) (`@Naimur` & `@Pritom`, `2026-11-18`)
